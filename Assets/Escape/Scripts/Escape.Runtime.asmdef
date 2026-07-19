@@ -1,0 +1,10 @@
+{
+  "name": "Escape.Runtime",
+  "rootNamespace": "MachineLearning.Escape",
+  "references": [
+    "Unity.ML-Agents",
+    "Unity.InputSystem",
+    "Unity.InferenceEngine"
+  ],
+  "autoReferenced": true
+}

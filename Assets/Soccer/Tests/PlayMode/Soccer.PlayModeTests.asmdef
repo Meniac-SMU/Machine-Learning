@@ -1,0 +1,10 @@
+{
+  "name": "Soccer.PlayModeTests",
+  "rootNamespace": "MachineLearning.Soccer.Tests",
+  "references": [
+    "Soccer.Runtime",
+    "Unity.ML-Agents"
+  ],
+  "optionalUnityReferences": ["TestAssemblies"],
+  "autoReferenced": false
+}

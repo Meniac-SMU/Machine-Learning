@@ -1,0 +1,11 @@
+{
+  "name": "Escape.Editor",
+  "rootNamespace": "MachineLearning.Escape.Editor",
+  "references": [
+    "Escape.Runtime",
+    "Unity.ML-Agents",
+    "Unity.InputSystem"
+  ],
+  "includePlatforms": ["Editor"],
+  "autoReferenced": true
+}
