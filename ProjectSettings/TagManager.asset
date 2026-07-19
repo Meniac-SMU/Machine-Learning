@@ -6,6 +6,16 @@ TagManager:
   tags:
   - Wall
   - Goal
+  - Enemy
+  - Building
+  - Gate
+  - Button
+  - ball
+  - blueGoal
+  - purpleGoal
+  - wall
+  - blueAgent
+  - purpleAgent
   layers:
   - Default
   - TransparentFX

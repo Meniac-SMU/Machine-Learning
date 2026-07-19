@@ -1,0 +1,10 @@
+{
+  "name": "Escape.EditModeTests",
+  "rootNamespace": "MachineLearning.Escape.Tests",
+  "references": [
+    "Escape.Runtime"
+  ],
+  "includePlatforms": ["Editor"],
+  "optionalUnityReferences": ["TestAssemblies"],
+  "autoReferenced": false
+}

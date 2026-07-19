@@ -1,0 +1,9 @@
+{
+  "name": "Soccer.EditModeTests",
+  "references": [
+    "Soccer.Runtime"
+  ],
+  "includePlatforms": ["Editor"],
+  "optionalUnityReferences": ["TestAssemblies"],
+  "autoReferenced": false
+}

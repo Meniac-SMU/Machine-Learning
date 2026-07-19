@@ -1,0 +1,9 @@
+{
+  "name": "Escape.PlayModeTests",
+  "rootNamespace": "MachineLearning.Escape.Tests",
+  "references": [
+    "Escape.Runtime"
+  ],
+  "optionalUnityReferences": ["TestAssemblies"],
+  "autoReferenced": false
+}

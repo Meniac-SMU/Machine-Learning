@@ -1,0 +1,10 @@
+{
+  "name": "Soccer.Runtime",
+  "rootNamespace": "MachineLearning.Soccer",
+  "references": [
+    "Unity.ML-Agents",
+    "Unity.InputSystem",
+    "Unity.InferenceEngine"
+  ],
+  "autoReferenced": true
+}

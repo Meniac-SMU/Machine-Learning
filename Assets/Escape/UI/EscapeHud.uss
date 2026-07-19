@@ -1,0 +1,36 @@
+.hud-root {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    color: rgb(240, 245, 250);
+    font-size: 20px;
+}
+
+.hud-box {
+    position: absolute;
+    padding: 10px 14px;
+    background-color: rgba(15, 20, 28, 0.82);
+    border-radius: 8px;
+}
+
+.top-left { left: 20px; top: 20px; }
+.top-right { right: 20px; top: 20px; flex-direction: row; align-items: center; }
+.top-center { left: 50%; top: 20px; translate: -50% 0; }
+.bottom-left { left: 20px; bottom: 20px; }
+.bottom-right { right: 20px; bottom: 20px; }
+.mode-label { margin-left: 10px; color: rgb(160, 230, 255); }
+
+.result-label {
+    position: absolute;
+    left: 50%;
+    top: 42%;
+    translate: -50% -50%;
+    padding: 18px 30px;
+    background-color: rgba(10, 10, 10, 0.88);
+    border-radius: 10px;
+    font-size: 36px;
+    -unity-font-style: bold;
+    display: none;
+}

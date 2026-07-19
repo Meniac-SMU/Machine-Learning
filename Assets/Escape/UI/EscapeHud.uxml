@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:Style src="EscapeHud.uss" />
+    <ui:VisualElement name="hud-root" class="hud-root">
+        <ui:Label name="reward-label" text="보상 0.000" class="hud-box top-left" />
+        <ui:VisualElement class="hud-box top-right">
+            <ui:Toggle name="ai-toggle" label="AI (I 키)" />
+            <ui:Label name="mode-label" text="Human" class="mode-label" />
+        </ui:VisualElement>
+        <ui:Label name="time-label" text="남은 시간 120.0" class="hud-box top-center" />
+        <ui:Label name="button-label" text="버튼 0/3" class="hud-box bottom-left" />
+        <ui:Label name="health-label" text="체력 3/3" class="hud-box bottom-right" />
+        <ui:Label name="result-label" text="" class="result-label" />
+    </ui:VisualElement>
+</ui:UXML>

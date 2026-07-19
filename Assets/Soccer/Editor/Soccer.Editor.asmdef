@@ -1,0 +1,11 @@
+{
+  "name": "Soccer.Editor",
+  "rootNamespace": "MachineLearning.Soccer.Editor",
+  "references": [
+    "Soccer.Runtime",
+    "Unity.ML-Agents",
+    "Unity.InputSystem"
+  ],
+  "includePlatforms": ["Editor"],
+  "autoReferenced": true
+}
