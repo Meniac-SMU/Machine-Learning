@@ -1,0 +1,8 @@
+{
+  "name": "Soccer.Team.Press",
+  "rootNamespace": "MachineLearning.Soccer.Teams.Press",
+  "references": [
+    "Soccer.Runtime"
+  ],
+  "autoReferenced": true
+}

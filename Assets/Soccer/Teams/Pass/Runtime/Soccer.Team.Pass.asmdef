@@ -1,0 +1,8 @@
+{
+  "name": "Soccer.Team.Pass",
+  "rootNamespace": "MachineLearning.Soccer.Teams.Pass",
+  "references": [
+    "Soccer.Runtime"
+  ],
+  "autoReferenced": true
+}

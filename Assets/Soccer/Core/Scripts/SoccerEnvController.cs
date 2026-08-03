@@ -44,6 +44,8 @@ namespace MachineLearning.Soccer
         bool m_IsTraining;
         bool m_AIEnabled;
         Team m_LastScoringTeam;
+        SoccerMatchSetup m_MatchSetup;
+        SoccerRewardEngine m_RewardEngine;
 
         public int BlueScore { get; private set; }
         public int PurpleScore { get; private set; }
@@ -54,6 +56,7 @@ namespace MachineLearning.Soccer
         public bool IsAIEnabled => m_AIEnabled;
         public bool IsTraining => m_IsTraining;
         public GameObject Ball => ball;
+        public Team? PossessionTeam => m_RewardEngine != null ? m_RewardEngine.PossessionTeam : null;
         public AgentSoccer HumanControlledAgent { get; private set; }
 
         void Start()
@@ -67,6 +70,10 @@ namespace MachineLearning.Soccer
 
             m_BlueAgentGroup = new SimpleMultiAgentGroup();
             m_PurpleAgentGroup = new SimpleMultiAgentGroup();
+            m_MatchSetup = GetComponent<SoccerMatchSetup>();
+            m_RewardEngine = GetComponent<SoccerRewardEngine>();
+            m_RewardEngine?.Configure(this, m_MatchSetup);
+            m_MatchSetup?.ApplyDefinitions();
             ballRb = ball.GetComponent<Rigidbody>();
             m_BallStartingPos = ball.transform.position;
             m_BallStartingRotation = ball.transform.rotation;
@@ -164,7 +171,25 @@ namespace MachineLearning.Soccer
                 }
 
                 var useHumanInput = !m_IsTraining && !m_AIEnabled && item.Agent == HumanControlledAgent;
-                item.Agent.ConfigureControlMode(m_IsTraining, useHumanInput);
+                var trainable = m_MatchSetup == null || m_MatchSetup.IsTrainable(item.Agent.Team);
+                item.Agent.ConfigureControlMode(m_IsTraining, useHumanInput, trainable);
+            }
+        }
+
+        public void NotifyBallTouch(AgentSoccer agent)
+        {
+            m_RewardEngine?.NotifyBallTouch(agent);
+        }
+
+        public void AddTeamReward(Team rewardTeam, float reward)
+        {
+            if (rewardTeam == Team.Blue)
+            {
+                m_BlueAgentGroup?.AddGroupReward(reward);
+            }
+            else
+            {
+                m_PurpleAgentGroup?.AddGroupReward(reward);
             }
         }
 
@@ -179,14 +204,20 @@ namespace MachineLearning.Soccer
             if (scoredTeam == Team.Blue)
             {
                 BlueScore++;
-                m_BlueAgentGroup.AddGroupReward(1f);
-                m_PurpleAgentGroup.AddGroupReward(-1f);
             }
             else
             {
                 PurpleScore++;
-                m_PurpleAgentGroup.AddGroupReward(1f);
-                m_BlueAgentGroup.AddGroupReward(-1f);
+            }
+
+            if (m_RewardEngine != null)
+            {
+                m_RewardEngine.AwardGoal(scoredTeam);
+            }
+            else
+            {
+                AddTeamReward(scoredTeam, 1f);
+                AddTeamReward(scoredTeam == Team.Blue ? Team.Purple : Team.Blue, -1f);
             }
 
             State = SoccerMatchState.GoalPause;
@@ -248,6 +279,7 @@ namespace MachineLearning.Soccer
             }
 
             ResetBall();
+            m_RewardEngine?.ResetPossession();
             State = SoccerMatchState.Playing;
             m_GoalResetRemaining = 0f;
         }
@@ -281,13 +313,27 @@ namespace MachineLearning.Soccer
 
             if (BlueScore > PurpleScore)
             {
-                m_BlueAgentGroup.AddGroupReward(0.5f);
-                m_PurpleAgentGroup.AddGroupReward(-0.5f);
+                if (m_RewardEngine != null)
+                {
+                    m_RewardEngine.AwardMatchResult(Team.Blue);
+                }
+                else
+                {
+                    AddTeamReward(Team.Blue, 0.5f);
+                    AddTeamReward(Team.Purple, -0.5f);
+                }
             }
             else if (PurpleScore > BlueScore)
             {
-                m_PurpleAgentGroup.AddGroupReward(0.5f);
-                m_BlueAgentGroup.AddGroupReward(-0.5f);
+                if (m_RewardEngine != null)
+                {
+                    m_RewardEngine.AwardMatchResult(Team.Purple);
+                }
+                else
+                {
+                    AddTeamReward(Team.Purple, 0.5f);
+                    AddTeamReward(Team.Blue, -0.5f);
+                }
             }
 
             m_BlueAgentGroup.EndGroupEpisode();
@@ -305,10 +351,20 @@ namespace MachineLearning.Soccer
                 return transform.position;
             }
 
-            if (requester.PositionRole == AgentSoccer.Position.Goalie)
+            if (requester.PositionRole == AgentSoccer.Position.DefenderKeeper)
             {
-                var goalieOffset = Mathf.Clamp(ball.transform.position.z * 0.35f, -9f, 9f);
-                return requester.StartingPosition + Vector3.forward * goalieOffset;
+                var attackSign = requester.Team == Team.Blue ? 1f : -1f;
+                var distanceFromHome = (ball.transform.position.x - requester.StartingPosition.x) * attackSign;
+                if (distanceFromHome < 26f)
+                {
+                    return ball.transform.position;
+                }
+
+                var advance = Mathf.Clamp(distanceFromHome * 0.35f, 0f, 18f);
+                var lateralCover = Mathf.Clamp(ball.transform.position.z * 0.35f, -9f, 9f);
+                return requester.StartingPosition
+                    + Vector3.right * (advance * attackSign)
+                    + Vector3.forward * lateralCover;
             }
 
             AgentSoccer closest = null;
@@ -316,7 +372,8 @@ namespace MachineLearning.Soccer
             foreach (var item in AgentsList)
             {
                 var teammate = item?.Agent;
-                if (teammate == null || teammate.Team != requester.Team || teammate.PositionRole == AgentSoccer.Position.Goalie)
+                if (teammate == null || teammate.Team != requester.Team
+                    || teammate.PositionRole == AgentSoccer.Position.DefenderKeeper)
                 {
                     continue;
                 }

@@ -2,7 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using MachineLearning.Soccer.Teams.Attack;
+using MachineLearning.Soccer.Teams.Defense;
+using MachineLearning.Soccer.Teams.Pass;
+using MachineLearning.Soccer.Teams.Press;
+using Unity.InferenceEngine;
 using Unity.MLAgents;
+using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
 using Unity.MLAgents.Sensors;
 using UnityEditor;
@@ -22,6 +28,14 @@ namespace MachineLearning.Soccer.Editor
         const string SourcePrefabPath = Root + "/Prefabs/SoccerFieldTwos.prefab";
         const string OutputPrefabPath = Root + "/Prefabs/SoccerField4v4.prefab";
         const string ScenePath = Root + "/Scenes/Soccer4v4.unity";
+        const string BaseScenePath = Root + "/Core/Scenes/Soccer4v4_Base.unity";
+        const string AttackScenePath = Root + "/Teams/Attack/Scenes/Soccer4v4_Attack.unity";
+        const string DefenseScenePath = Root + "/Teams/Defense/Scenes/Soccer4v4_Defense.unity";
+        const string PressScenePath = Root + "/Teams/Press/Scenes/Soccer4v4_Press.unity";
+        const string PassScenePath = Root + "/Teams/Pass/Scenes/Soccer4v4_Pass.unity";
+        const string BaseProfilePath = Root + "/Core/Profiles/BaseRewardProfile.asset";
+        const string BaseDefinitionPath = Root + "/Core/Profiles/BaseTeamDefinition.asset";
+        const string BaseModelPath = Root + "/Core/Models/Base4v4V2.onnx";
         const string PanelSettingsPath = Root + "/UI/SoccerPanelSettings.asset";
         const string UxmlPath = Root + "/UI/SoccerHud.uxml";
         const string ThemePath = Root + "/UI/SoccerRuntimeTheme.tss";
@@ -60,7 +74,20 @@ namespace MachineLearning.Soccer.Editor
             var visualMaterials = CreateVisualMaterialSet();
             var fieldPrefab = Create4v4Prefab(visualMaterials, kickPlateLayers);
             var panelSettings = CreatePanelSettings();
-            CreateScene(fieldPrefab, panelSettings);
+            var baseProfile = CreateRewardProfile(BaseProfilePath, null);
+            var baseModel = AssetDatabase.LoadAssetAtPath<ModelAsset>(BaseModelPath);
+            var baseDefinition = CreateTeamDefinition(BaseDefinitionPath, "base", "Base", "Soccer4v4_Base", baseProfile, baseModel);
+            var attackDefinition = CreateTeamWorkspace("Attack", "attack", "Soccer4v4_Attack", baseProfile, baseModel);
+            var defenseDefinition = CreateTeamWorkspace("Defense", "defense", "Soccer4v4_Defense", baseProfile, baseModel);
+            var pressDefinition = CreateTeamWorkspace("Press", "press", "Soccer4v4_Press", baseProfile, baseModel);
+            var passDefinition = CreateTeamWorkspace("Pass", "pass", "Soccer4v4_Pass", baseProfile, baseModel);
+
+            CreateScene(fieldPrefab, panelSettings, ScenePath, baseDefinition, baseDefinition, typeof(BaseRewardPolicy), true);
+            CreateScene(fieldPrefab, panelSettings, BaseScenePath, baseDefinition, baseDefinition, typeof(BaseRewardPolicy), true);
+            CreateScene(fieldPrefab, panelSettings, AttackScenePath, attackDefinition, baseDefinition, typeof(AttackRewardPolicy), false);
+            CreateScene(fieldPrefab, panelSettings, DefenseScenePath, defenseDefinition, baseDefinition, typeof(DefenseRewardPolicy), false);
+            CreateScene(fieldPrefab, panelSettings, PressScenePath, pressDefinition, baseDefinition, typeof(PressRewardPolicy), false);
+            CreateScene(fieldPrefab, panelSettings, PassScenePath, passDefinition, baseDefinition, typeof(PassRewardPolicy), false);
             AddSceneToBuildSettings();
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
@@ -116,10 +143,12 @@ namespace MachineLearning.Soccer.Editor
                 {
                     var behavior = agent.GetComponent<BehaviorParameters>();
                     var requester = agent.GetComponent<DecisionRequester>();
-                    Require(behavior != null && behavior.BehaviorName == "Soccer4v4", $"{agent.name} behavior mismatch.");
+                    Require(behavior != null && behavior.BehaviorName == "Soccer4v4_Base", $"{agent.name} behavior mismatch.");
                     Require(behavior.TeamId == (int)agent.Team, $"{agent.name} team id mismatch.");
-                    Require(behavior.BrainParameters.ActionSpec.BranchSizes.SequenceEqual(new[] { 3, 3, 3 }),
-                        $"{agent.name} must retain the source [3,3,3] action model.");
+                    Require(behavior.BrainParameters.VectorObservationSize == AgentSoccer.VectorObservationSize,
+                        $"{agent.name} vector observation size mismatch.");
+                    Require(behavior.BrainParameters.ActionSpec.BranchSizes.SequenceEqual(new[] { 3, 3, 3, 3 }),
+                        $"{agent.name} must use the v2 [3,3,3,3] action model.");
                     Require(requester != null && requester.DecisionPeriod == 5, $"{agent.name} DecisionRequester mismatch.");
                     var kickPlate = agent.GetComponentInChildren<SoccerKickPlate>(true);
                     Require(kickPlate != null && kickPlate.Owner == agent, $"{agent.name} kick plate owner mismatch.");
@@ -152,15 +181,44 @@ namespace MachineLearning.Soccer.Editor
                         }
                     }
                 }
+
+                foreach (var team in new[] { Team.Blue, Team.Purple })
+                {
+                    var teamAgents = agents.Where(agent => agent.Team == team).ToArray();
+                    Require(teamAgents.Count(agent => agent.PositionRole == AgentSoccer.Position.DefenderKeeper) == 1,
+                        $"{team} must have one defender-keeper.");
+                    Require(teamAgents.Count(agent => agent.PositionRole == AgentSoccer.Position.Midfielder) == 2,
+                        $"{team} must have two free midfielders.");
+                    Require(teamAgents.Count(agent => agent.PositionRole == AgentSoccer.Position.Striker) == 1,
+                        $"{team} must have one striker.");
+                }
             }
             finally
             {
                 PrefabUtility.UnloadPrefabContents(root);
             }
 
-            Require(File.Exists(Path.GetFullPath(ScenePath)), "Soccer4v4 scene is missing.");
+            foreach (var requiredScene in new[]
+                     {
+                         ScenePath, BaseScenePath, AttackScenePath, DefenseScenePath, PressScenePath, PassScenePath
+                     })
+            {
+                Require(File.Exists(Path.GetFullPath(requiredScene)), $"Required Soccer scene is missing: {requiredScene}");
+            }
+
+            var definitions = new[]
+            {
+                AssetDatabase.LoadAssetAtPath<SoccerTeamDefinition>(BaseDefinitionPath),
+                AssetDatabase.LoadAssetAtPath<SoccerTeamDefinition>(Root + "/Teams/Attack/Profiles/AttackTeamDefinition.asset"),
+                AssetDatabase.LoadAssetAtPath<SoccerTeamDefinition>(Root + "/Teams/Defense/Profiles/DefenseTeamDefinition.asset"),
+                AssetDatabase.LoadAssetAtPath<SoccerTeamDefinition>(Root + "/Teams/Press/Profiles/PressTeamDefinition.asset"),
+                AssetDatabase.LoadAssetAtPath<SoccerTeamDefinition>(Root + "/Teams/Pass/Profiles/PassTeamDefinition.asset")
+            };
+            Require(definitions.All(definition => definition != null), "All five Soccer team definitions must exist.");
+            Require(definitions.All(definition => definition.PolicyContractVersion == SoccerTeamDefinition.CurrentPolicyContractVersion),
+                "All Soccer teams must use policy contract v2.");
             Require(AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(UxmlPath) != null, "Soccer HUD UXML is missing.");
-            Debug.Log("Soccer validation passed: 4x field, 4v4 teams, 180s match, 3s deterministic reset, Human/AI HUD.");
+            Debug.Log("Soccer validation passed: v2 actions, 4v4 roles, shared Base model slot and four team workspaces.");
         }
 
         public static void ValidateBatch()
@@ -175,7 +233,7 @@ namespace MachineLearning.Soccer.Editor
             Directory.CreateDirectory(Path.GetDirectoryName(WindowsBuildPath));
             var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
             {
-                scenes = new[] { ScenePath },
+                scenes = new[] { BaseScenePath },
                 locationPathName = WindowsBuildPath,
                 target = BuildTarget.StandaloneWindows64,
                 options = BuildOptions.Development
@@ -192,6 +250,22 @@ namespace MachineLearning.Soccer.Editor
         public static void BuildWindowsBatch()
         {
             BuildWindowsPlayer();
+        }
+
+        public static void StartBaseTrainingInEditor()
+        {
+            if (Application.isBatchMode)
+            {
+                throw new InvalidOperationException("Base editor training must run in a normal Unity Editor process.");
+            }
+
+            var scene = EditorSceneManager.OpenScene(BaseScenePath, OpenSceneMode.Single);
+            Require(scene.IsValid(), $"Could not open the Base training scene: {BaseScenePath}");
+            EditorApplication.delayCall += () =>
+            {
+                Debug.Log("Starting Base 4v4 v2 training scene in Play Mode.");
+                EditorApplication.isPlaying = true;
+            };
         }
 
         static GameObject Create4v4Prefab(VisualMaterialSet visualMaterials, IReadOnlyList<int> kickPlateLayers)
@@ -285,7 +359,7 @@ namespace MachineLearning.Soccer.Editor
                 var agent = agents[index];
                 var role = index == 0
                     ? AgentSoccer.Position.Striker
-                    : index == 3 ? AgentSoccer.Position.Goalie : AgentSoccer.Position.Generic;
+                    : index == 3 ? AgentSoccer.Position.DefenderKeeper : AgentSoccer.Position.Midfielder;
                 agent.name = $"{team}Player{index + 1}_{role}";
                 agent.gameObject.tag = team == Team.Blue ? "blueAgent" : "purpleAgent";
                 agent.transform.localPosition = spawns[index];
@@ -293,9 +367,13 @@ namespace MachineLearning.Soccer.Editor
                 agent.Configure(team, role, team == Team.Blue && index == 0, spawns[index]);
 
                 var behavior = agent.GetComponent<BehaviorParameters>();
-                behavior.BehaviorName = "Soccer4v4";
+                behavior.BehaviorName = "Soccer4v4_Base";
                 behavior.TeamId = (int)team;
                 behavior.BehaviorType = BehaviorType.Default;
+                behavior.Model = null;
+                behavior.BrainParameters.VectorObservationSize = AgentSoccer.VectorObservationSize;
+                behavior.BrainParameters.NumStackedVectorObservations = 1;
+                behavior.BrainParameters.ActionSpec = ActionSpec.MakeDiscrete(3, 3, 3, 3);
                 var requester = agent.GetComponent<DecisionRequester>();
                 requester.DecisionPeriod = 5;
                 requester.TakeActionsBetweenDecisions = true;
@@ -437,12 +515,25 @@ namespace MachineLearning.Soccer.Editor
             return settings;
         }
 
-        static void CreateScene(GameObject fieldPrefab, PanelSettings panelSettings)
+        static void CreateScene(
+            GameObject fieldPrefab,
+            PanelSettings panelSettings,
+            string scenePath,
+            SoccerTeamDefinition blueDefinition,
+            SoccerTeamDefinition purpleDefinition,
+            Type bluePolicyType,
+            bool trainPurple)
         {
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             var fieldObject = (GameObject)PrefabUtility.InstantiatePrefab(fieldPrefab, scene);
             fieldObject.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
             var environment = fieldObject.GetComponent<SoccerEnvController>();
+            var bluePolicy = (SoccerTeamRewardPolicyBase)fieldObject.AddComponent(bluePolicyType);
+            var purplePolicy = fieldObject.AddComponent<BaseRewardPolicy>();
+            var matchSetup = fieldObject.AddComponent<SoccerMatchSetup>();
+            matchSetup.Configure(blueDefinition, purpleDefinition, bluePolicy, purplePolicy, true, trainPurple);
+            var rewardEngine = fieldObject.AddComponent<SoccerRewardEngine>();
+            rewardEngine.Configure(environment, matchSetup);
 
             var settingsObject = new GameObject("SoccerSettings");
             var settings = settingsObject.AddComponent<SoccerSettings>();
@@ -480,23 +571,91 @@ namespace MachineLearning.Soccer.Editor
             document.visualTreeAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(UxmlPath);
             hudObject.AddComponent<SoccerHudController>().Configure(environment);
 
-            EditorSceneManager.SaveScene(scene, ScenePath);
+            EditorSceneManager.SaveScene(scene, scenePath);
         }
 
         static void AddSceneToBuildSettings()
         {
-            var scenes = EditorBuildSettings.scenes.ToList();
-            var existing = scenes.FindIndex(scene => scene.path == ScenePath);
-            if (existing >= 0)
+            var requiredScenes = new[]
             {
-                scenes[existing] = new EditorBuildSettingsScene(ScenePath, true);
-            }
-            else
+                BaseScenePath,
+                AttackScenePath,
+                DefenseScenePath,
+                PressScenePath,
+                PassScenePath,
+                ScenePath
+            };
+            var scenes = EditorBuildSettings.scenes
+                .Where(scene => !requiredScenes.Contains(scene.path))
+                .ToList();
+            for (var index = requiredScenes.Length - 1; index >= 0; index--)
             {
-                scenes.Add(new EditorBuildSettingsScene(ScenePath, true));
+                scenes.Insert(0, new EditorBuildSettingsScene(requiredScenes[index], true));
             }
 
             EditorBuildSettings.scenes = scenes.ToArray();
+        }
+
+        static SoccerRewardProfile CreateRewardProfile(string assetPath, SoccerRewardProfile baseProfile)
+        {
+            var profile = AssetDatabase.LoadAssetAtPath<SoccerRewardProfile>(assetPath);
+            if (profile != null)
+            {
+                return profile;
+            }
+
+            profile = ScriptableObject.CreateInstance<SoccerRewardProfile>();
+            if (baseProfile != null)
+            {
+                EditorUtility.CopySerialized(baseProfile, profile);
+            }
+            else
+            {
+                profile.ApplyBaseDefaults();
+            }
+
+            AssetDatabase.CreateAsset(profile, assetPath);
+            return profile;
+        }
+
+        static SoccerTeamDefinition CreateTeamDefinition(
+            string assetPath,
+            string teamId,
+            string displayName,
+            string behaviorName,
+            SoccerRewardProfile profile,
+            ModelAsset baseModel)
+        {
+            var definition = AssetDatabase.LoadAssetAtPath<SoccerTeamDefinition>(assetPath);
+            var isNew = definition == null;
+            if (isNew)
+            {
+                definition = ScriptableObject.CreateInstance<SoccerTeamDefinition>();
+                AssetDatabase.CreateAsset(definition, assetPath);
+            }
+
+            var selectedModel = definition.InferenceModel != null ? definition.InferenceModel : baseModel;
+            definition.Configure(teamId, displayName, behaviorName, profile, selectedModel);
+            EditorUtility.SetDirty(definition);
+            return definition;
+        }
+
+        static SoccerTeamDefinition CreateTeamWorkspace(
+            string displayName,
+            string teamId,
+            string behaviorName,
+            SoccerRewardProfile baseProfile,
+            ModelAsset baseModel)
+        {
+            var teamRoot = $"{Root}/Teams/{displayName}";
+            var profile = CreateRewardProfile($"{teamRoot}/Profiles/{displayName}RewardProfile.asset", baseProfile);
+            return CreateTeamDefinition(
+                $"{teamRoot}/Profiles/{displayName}TeamDefinition.asset",
+                teamId,
+                displayName,
+                behaviorName,
+                profile,
+                baseModel);
         }
 
         static VisualMaterialSet CreateVisualMaterialSet()
@@ -656,7 +815,26 @@ namespace MachineLearning.Soccer.Editor
 
         static void EnsureDirectories()
         {
-            foreach (var directory in new[] { Root + "/Prefabs", Root + "/Scenes", Root + "/Materials", Root + "/UI" })
+            var directories = new List<string>
+            {
+                Root + "/Prefabs",
+                Root + "/Scenes",
+                Root + "/Materials",
+                Root + "/UI",
+                Root + "/Core/Profiles",
+                Root + "/Core/Models",
+                Root + "/Core/Scenes",
+                Root + "/Core/Training"
+            };
+            foreach (var teamName in new[] { "Attack", "Defense", "Press", "Pass" })
+            {
+                directories.Add($"{Root}/Teams/{teamName}/Profiles");
+                directories.Add($"{Root}/Teams/{teamName}/Models");
+                directories.Add($"{Root}/Teams/{teamName}/Scenes");
+                directories.Add($"{Root}/Teams/{teamName}/Training");
+            }
+
+            foreach (var directory in directories)
             {
                 if (!Directory.Exists(directory))
                 {

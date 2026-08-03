@@ -3,8 +3,13 @@
   "rootNamespace": "MachineLearning.Soccer.Editor",
   "references": [
     "Soccer.Runtime",
+    "Soccer.Team.Attack",
+    "Soccer.Team.Defense",
+    "Soccer.Team.Press",
+    "Soccer.Team.Pass",
     "Unity.ML-Agents",
-    "Unity.InputSystem"
+    "Unity.InputSystem",
+    "Unity.InferenceEngine"
   ],
   "includePlatforms": ["Editor"],
   "autoReferenced": true

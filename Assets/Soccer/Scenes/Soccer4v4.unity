@@ -119,76 +119,148 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &365149058
-GameObject:
+--- !u!1001 &133853143
+PrefabInstance:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 365149061}
-  - component: {fileID: 365149060}
-  - component: {fileID: 365149059}
-  m_Layer: 0
-  m_Name: Soccer HUD
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &365149059
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 365149058}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e648877619931941aac61c392529e2c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Soccer.Runtime::MachineLearning.Soccer.SoccerHudController
-  environment: {fileID: 1122170299}
---- !u!114 &365149060
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 365149058}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
-  m_PanelSettings: {fileID: 11400000, guid: e08e84182f63f684a8459eb1d7619d87, type: 2}
-  m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: 5a874a2324768054895df469631b66ba, type: 3}
-  m_SortingOrder: 0
-  m_Position: 0
-  m_WorldSpaceSizeMode: 1
-  m_WorldSpaceWidth: 1920
-  m_WorldSpaceHeight: 1080
-  m_PivotReferenceSize: 0
-  m_Pivot: 0
-  m_WorldSpaceCollider: {fileID: 0}
---- !u!4 &365149061
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 365149058}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &421287124
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 6984733580801604566, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
+      propertyPath: m_Name
+      value: SoccerField4v4
+      objectReference: {fileID: 0}
+    - target: {fileID: 9019147824781025079, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9019147824781025079, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9019147824781025079, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9019147824781025079, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9019147824781025079, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9019147824781025079, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9019147824781025079, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9019147824781025079, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9019147824781025079, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9019147824781025079, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6984733580801604566, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 133853149}
+    - targetCorrespondingSourceObject: {fileID: 6984733580801604566, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 133853148}
+    - targetCorrespondingSourceObject: {fileID: 6984733580801604566, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 133853147}
+    - targetCorrespondingSourceObject: {fileID: 6984733580801604566, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 133853146}
+  m_SourcePrefab: {fileID: 100100000, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
+--- !u!114 &133853144 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6207669732214236898, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
+  m_PrefabInstance: {fileID: 133853143}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 133853145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e397bc3ae78c466a8d44400f5b68e38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &133853145 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6984733580801604566, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
+  m_PrefabInstance: {fileID: 133853143}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &133853146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 133853145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d7c548e96fc5d24886a94c57ec25cdd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Soccer.Runtime::MachineLearning.Soccer.SoccerRewardEngine
+--- !u!114 &133853147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 133853145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 515e9b1f77d288044bb8e7d7c22131d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Soccer.Runtime::MachineLearning.Soccer.SoccerMatchSetup
+  blueTeam: {fileID: 11400000, guid: 94edaf92b2f9e2840a4835b8e16184f3, type: 2}
+  purpleTeam: {fileID: 11400000, guid: 94edaf92b2f9e2840a4835b8e16184f3, type: 2}
+  blueRewardPolicy: {fileID: 133853149}
+  purpleRewardPolicy: {fileID: 133853148}
+  trainBlue: 1
+  trainPurple: 1
+--- !u!114 &133853148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 133853145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1067674943}
+  m_Name: 
+  m_EditorClassIdentifier: Soccer.Runtime::MachineLearning.Soccer.BaseRewardPolicy
+  teamDefinition: {fileID: 11400000, guid: 94edaf92b2f9e2840a4835b8e16184f3, type: 2}
+--- !u!114 &133853149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 133853145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1067674943}
+  m_Name: 
+  m_EditorClassIdentifier: Soccer.Runtime::MachineLearning.Soccer.BaseRewardPolicy
+  teamDefinition: {fileID: 11400000, guid: 94edaf92b2f9e2840a4835b8e16184f3, type: 2}
+--- !u!1 &317733117
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -196,8 +268,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 421287126}
-  - component: {fileID: 421287125}
+  - component: {fileID: 317733119}
+  - component: {fileID: 317733118}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -205,13 +277,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!108 &421287125
+--- !u!108 &317733118
 Light:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 421287124}
+  m_GameObject: {fileID: 317733117}
   m_Enabled: 1
   serializedVersion: 12
   m_Type: 1
@@ -270,13 +342,13 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
---- !u!4 &421287126
+--- !u!4 &317733119
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 421287124}
+  m_GameObject: {fileID: 317733117}
   serializedVersion: 2
   m_LocalRotation: {x: 0.4213894, y: -0.24774122, z: 0.12083147, w: 0.8639763}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -285,7 +357,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &542838134
+--- !u!1 &932041409
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -293,10 +365,94 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 542838138}
-  - component: {fileID: 542838137}
-  - component: {fileID: 542838136}
-  - component: {fileID: 542838135}
+  - component: {fileID: 932041412}
+  - component: {fileID: 932041411}
+  - component: {fileID: 932041410}
+  m_Layer: 0
+  m_Name: Soccer HUD
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &932041410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 932041409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e648877619931941aac61c392529e2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Soccer.Runtime::MachineLearning.Soccer.SoccerHudController
+  environment: {fileID: 133853144}
+--- !u!114 &932041411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 932041409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: e08e84182f63f684a8459eb1d7619d87, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: 5a874a2324768054895df469631b66ba, type: 3}
+  m_SortingOrder: 0
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
+--- !u!4 &932041412
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 932041409}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!115 &1067674943
+MonoScript:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  serializedVersion: 7
+  m_DefaultReferences: {}
+  m_Icon: {fileID: 0}
+  m_Type: 0
+  m_ExecutionOrder: 0
+  m_ClassName: BaseRewardPolicy
+  m_Namespace: MachineLearning.Soccer
+  m_AssemblyName: Soccer.Runtime
+--- !u!1 &1184920361
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1184920365}
+  - component: {fileID: 1184920364}
+  - component: {fileID: 1184920363}
+  - component: {fileID: 1184920362}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -304,39 +460,39 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &542838135
+--- !u!114 &1184920362
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 542838134}
+  m_GameObject: {fileID: 1184920361}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ae38a4855dfe8314c95c76f50717c182, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Soccer.Runtime::MachineLearning.Soccer.SoccerPlayerCamera
-  environment: {fileID: 1122170299}
+  environment: {fileID: 133853144}
   followDistance: 7.5
   followHeight: 3.4
   lookAhead: 2.6
   followSharpness: 11
   humanFieldOfView: 62
---- !u!81 &542838136
+--- !u!81 &1184920363
 AudioListener:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 542838134}
+  m_GameObject: {fileID: 1184920361}
   m_Enabled: 1
---- !u!20 &542838137
+--- !u!20 &1184920364
 Camera:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 542838134}
+  m_GameObject: {fileID: 1184920361}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
@@ -381,13 +537,13 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!4 &542838138
+--- !u!4 &1184920365
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 542838134}
+  m_GameObject: {fileID: 1184920361}
   serializedVersion: 2
   m_LocalRotation: {x: 0.39270127, y: 0, z: 0, w: 0.9196661}
   m_LocalPosition: {x: 0, y: 94, z: -90}
@@ -396,75 +552,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &1122170298
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 6984733580801604566, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
-      propertyPath: m_Name
-      value: SoccerField4v4
-      objectReference: {fileID: 0}
-    - target: {fileID: 9019147824781025079, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9019147824781025079, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9019147824781025079, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9019147824781025079, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9019147824781025079, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9019147824781025079, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9019147824781025079, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9019147824781025079, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9019147824781025079, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9019147824781025079, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
---- !u!114 &1122170299 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6207669732214236898, guid: 6ac331a12291a5c49a91bf37e93f055c, type: 3}
-  m_PrefabInstance: {fileID: 1122170298}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e397bc3ae78c466a8d44400f5b68e38, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1 &1283865960
+--- !u!1 &1261632440
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -472,8 +560,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1283865962}
-  - component: {fileID: 1283865961}
+  - component: {fileID: 1261632442}
+  - component: {fileID: 1261632441}
   m_Layer: 0
   m_Name: SoccerSettings
   m_TagString: Untagged
@@ -481,13 +569,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1283865961
+--- !u!114 &1261632441
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1283865960}
+  m_GameObject: {fileID: 1261632440}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4c32d32dfa994d14a009cc1f393c634, type: 3}
@@ -499,13 +587,13 @@ MonoBehaviour:
   agentRunSpeed: 2.2
   maximumPlanarSpeed: 9
   rotationSpeed: 125
---- !u!4 &1283865962
+--- !u!4 &1261632442
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1283865960}
+  m_GameObject: {fileID: 1261632440}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -518,8 +606,8 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1122170298}
-  - {fileID: 1283865962}
-  - {fileID: 421287126}
-  - {fileID: 542838138}
-  - {fileID: 365149061}
+  - {fileID: 133853143}
+  - {fileID: 1261632442}
+  - {fileID: 317733119}
+  - {fileID: 1184920365}
+  - {fileID: 932041412}

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Linq;
 using NUnit.Framework;
+using Unity.MLAgents.Policies;
 using Unity.MLAgents.Sensors;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -21,6 +22,15 @@ namespace MachineLearning.Soccer.Tests
             Assert.AreEqual(8, environment.AgentsList.Count);
             Assert.AreEqual(4, environment.AgentsList.Count(item => item.Agent.Team == Team.Blue));
             Assert.AreEqual(4, environment.AgentsList.Count(item => item.Agent.Team == Team.Purple));
+            foreach (var team in new[] { Team.Blue, Team.Purple })
+            {
+                var teamAgents = environment.AgentsList.Where(item => item.Agent.Team == team).Select(item => item.Agent).ToArray();
+                Assert.AreEqual(1, teamAgents.Count(agent => agent.PositionRole == AgentSoccer.Position.DefenderKeeper));
+                Assert.AreEqual(2, teamAgents.Count(agent => agent.PositionRole == AgentSoccer.Position.Midfielder));
+                Assert.AreEqual(1, teamAgents.Count(agent => agent.PositionRole == AgentSoccer.Position.Striker));
+                Assert.IsTrue(teamAgents.All(agent => agent.GetComponent<BehaviorParameters>()
+                    .BrainParameters.ActionSpec.BranchSizes.SequenceEqual(new[] { 3, 3, 3, 3 })));
+            }
             Assert.IsNotNull(environment.HumanControlledAgent);
             Assert.IsTrue(environment.HumanControlledAgent.IsUsingHumanInput);
             Assert.IsFalse(environment.IsAIEnabled);
