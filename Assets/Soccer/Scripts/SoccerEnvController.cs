@@ -238,6 +238,7 @@ namespace MachineLearning.Soccer
                 }
 
                 item.Agent.transform.SetPositionAndRotation(item.StartingPos, item.StartingRot);
+                item.Agent.ResetKickPlate();
                 if (item.Rb != null)
                 {
                     item.Rb.linearVelocity = Vector3.zero;
