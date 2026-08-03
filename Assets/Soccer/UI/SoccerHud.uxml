@@ -16,6 +16,7 @@
             <ui:Label text="W / RT  FORWARD" />
             <ui:Label text="S / LT  REVERSE" />
             <ui:Label text="A D / LEFT STICK  TURN" />
+            <ui:Label text="SPACE / XBOX A  KICK" />
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

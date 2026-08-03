@@ -27,6 +27,8 @@ namespace MachineLearning.Soccer.Editor
         const string ThemePath = Root + "/UI/SoccerRuntimeTheme.tss";
         const string HumanMarkerMaterialPath = Root + "/Materials/HumanMarker.mat";
         const string WindowsBuildPath = "Builds/Soccer/Soccer4v4.exe";
+        const string KickPlateLayerPrefix = "SoccerPlate";
+        const int KickPlateLayerCount = 8;
         const float FieldScaleMultiplier = 4f;
         const float SourceFieldScale = 0.01f;
         const float SensorRange = 80f;
@@ -52,10 +54,11 @@ namespace MachineLearning.Soccer.Editor
         {
             EnsureDirectories();
             EnsureTags("ball", "blueGoal", "purpleGoal", "wall", "blueAgent", "purpleAgent");
+            var kickPlateLayers = EnsureKickPlateLayers();
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
             UpgradeCopiedMaterialsForUrp();
             var visualMaterials = CreateVisualMaterialSet();
-            var fieldPrefab = Create4v4Prefab(visualMaterials);
+            var fieldPrefab = Create4v4Prefab(visualMaterials, kickPlateLayers);
             var panelSettings = CreatePanelSettings();
             CreateScene(fieldPrefab, panelSettings);
             AddSceneToBuildSettings();
@@ -102,6 +105,13 @@ namespace MachineLearning.Soccer.Editor
                     "All player headbands must be removed.");
                 ValidateRendererMaterials(root);
 
+                var kickPlates = root.GetComponentsInChildren<SoccerKickPlate>(true);
+                Require(kickPlates.Length == KickPlateLayerCount,
+                    $"Expected {KickPlateLayerCount} kick plates, found {kickPlates.Length}.");
+                var kickPlateLayers = kickPlates.Select(plate => plate.gameObject.layer).ToArray();
+                Require(kickPlateLayers.Distinct().Count() == KickPlateLayerCount,
+                    "Every player's kick plate must use a unique owner-filter layer.");
+
                 foreach (var agent in agents)
                 {
                     var behavior = agent.GetComponent<BehaviorParameters>();
@@ -111,9 +121,35 @@ namespace MachineLearning.Soccer.Editor
                     Require(behavior.BrainParameters.ActionSpec.BranchSizes.SequenceEqual(new[] { 3, 3, 3 }),
                         $"{agent.name} must retain the source [3,3,3] action model.");
                     Require(requester != null && requester.DecisionPeriod == 5, $"{agent.name} DecisionRequester mismatch.");
+                    var kickPlate = agent.GetComponentInChildren<SoccerKickPlate>(true);
+                    Require(kickPlate != null && kickPlate.Owner == agent, $"{agent.name} kick plate owner mismatch.");
+                    var plateParts = kickPlate.GetComponentsInChildren<Collider>(true);
+                    Require(plateParts.Length == 3, $"{agent.name} kick plate must contain a center and two retaining wings.");
+                    Require(plateParts.All(part => part.gameObject.layer == kickPlate.gameObject.layer),
+                        $"{agent.name} kick plate parts must share their owner-filter layer.");
+                    Require(plateParts.All(part => part.CompareTag(agent.Team == Team.Blue ? "blueAgent" : "purpleAgent")),
+                        $"{agent.name} kick plate parts must identify as their owning player team.");
+                    Require(plateParts.All(part => Mathf.Approximately(part.transform.localScale.y, SoccerKickPlate.PlayerHeightRatio)),
+                        $"{agent.name} kick plate height must be 30% of the original player height.");
+                    var leftWing = kickPlate.transform.Find("KickPlateLeftWing");
+                    var rightWing = kickPlate.transform.Find("KickPlateRightWing");
+                    Require(leftWing != null && leftWing.localPosition.x < -0.6f
+                        && Mathf.Abs(Mathf.DeltaAngle(leftWing.localEulerAngles.y, 45f)) < 0.1f,
+                        $"{agent.name} left kick-plate wing must open outward.");
+                    Require(rightWing != null && rightWing.localPosition.x > 0.6f
+                        && Mathf.Abs(Mathf.DeltaAngle(rightWing.localEulerAngles.y, -45f)) < 0.1f,
+                        $"{agent.name} right kick-plate wing must open outward.");
                     foreach (var sensor in agent.GetComponentsInChildren<RayPerceptionSensorComponent3D>(true))
                     {
                         Require(Mathf.Approximately(sensor.RayLength, SensorRange), $"{agent.name} ray range must be {SensorRange}.");
+                        var sensorMask = (int)sensor.RayLayerMask;
+                        Require((sensorMask & (1 << kickPlate.gameObject.layer)) == 0,
+                            $"{agent.name} ray sensor must see through its own kick plate.");
+                        foreach (var otherLayer in kickPlateLayers.Where(layer => layer != kickPlate.gameObject.layer))
+                        {
+                            Require((sensorMask & (1 << otherLayer)) != 0,
+                                $"{agent.name} ray sensor must detect other players' kick plates.");
+                        }
                     }
                 }
             }
@@ -158,7 +194,7 @@ namespace MachineLearning.Soccer.Editor
             BuildWindowsPlayer();
         }
 
-        static GameObject Create4v4Prefab(VisualMaterialSet visualMaterials)
+        static GameObject Create4v4Prefab(VisualMaterialSet visualMaterials, IReadOnlyList<int> kickPlateLayers)
         {
             Require(AssetDatabase.LoadAssetAtPath<GameObject>(SourcePrefabPath) != null,
                 "Copied source SoccerFieldTwos.prefab is missing.");
@@ -182,8 +218,10 @@ namespace MachineLearning.Soccer.Editor
                 ExpandTeam(purpleAgents, 4);
 
                 var humanMarkerMaterial = CreateHumanMarkerMaterial();
-                ConfigureTeam(blueAgents, Team.Blue, BlueSpawns, 90f, humanMarkerMaterial);
-                ConfigureTeam(purpleAgents, Team.Purple, PurpleSpawns, -90f, null);
+                ConfigureTeam(blueAgents, Team.Blue, BlueSpawns, 90f, humanMarkerMaterial,
+                    visualMaterials.BlueKickPlate, kickPlateLayers.Take(4).ToArray());
+                ConfigureTeam(purpleAgents, Team.Purple, PurpleSpawns, -90f, null,
+                    visualMaterials.PurpleKickPlate, kickPlateLayers.Skip(4).Take(4).ToArray());
                 RemoveHeadbands(root);
 
                 var controller = root.GetComponent<SoccerEnvController>();
@@ -238,7 +276,9 @@ namespace MachineLearning.Soccer.Editor
             Team team,
             IReadOnlyList<Vector3> spawns,
             float facingYaw,
-            Material humanMarkerMaterial)
+            Material humanMarkerMaterial,
+            Material kickPlateMaterial,
+            IReadOnlyList<int> kickPlateLayers)
         {
             for (var index = 0; index < agents.Count; index++)
             {
@@ -260,10 +300,15 @@ namespace MachineLearning.Soccer.Editor
                 requester.DecisionPeriod = 5;
                 requester.TakeActionsBetweenDecisions = true;
 
+                var kickPlate = CreateKickPlate(agent, kickPlateMaterial, kickPlateLayers[index]);
+
                 foreach (var sensor in agent.GetComponentsInChildren<RayPerceptionSensorComponent3D>(true))
                 {
                     sensor.RayLength = SensorRange;
                     sensor.UseBatchedRaycasts = true;
+                    var sensorMask = sensor.RayLayerMask;
+                    sensorMask.value &= ~(1 << kickPlate.gameObject.layer);
+                    sensor.RayLayerMask = sensorMask;
                 }
 
                 if (humanMarkerMaterial != null && index == 0)
@@ -271,6 +316,51 @@ namespace MachineLearning.Soccer.Editor
                     CreateHumanMarker(agent.transform, humanMarkerMaterial);
                 }
             }
+        }
+
+        static SoccerKickPlate CreateKickPlate(AgentSoccer agent, Material material, int layer)
+        {
+            var previous = agent.transform.Find("KickPlate");
+            if (previous != null)
+            {
+                UnityEngine.Object.DestroyImmediate(previous.gameObject);
+            }
+
+            var teamTag = agent.Team == Team.Blue ? "blueAgent" : "purpleAgent";
+            var root = new GameObject("KickPlate") { layer = layer, tag = teamTag };
+            root.transform.SetParent(agent.transform, false);
+            var plate = root.AddComponent<SoccerKickPlate>();
+
+            CreateKickPlatePart(root.transform, "KickPlateCenter", new Vector3(0f, 0f, 0.66f),
+                new Vector3(1.05f, SoccerKickPlate.PlayerHeightRatio, 0.18f), 0f, material, layer, teamTag);
+            CreateKickPlatePart(root.transform, "KickPlateLeftWing", new Vector3(-0.66f, 0f, 0.80f),
+                new Vector3(0.40f, SoccerKickPlate.PlayerHeightRatio, 0.18f), 45f, material, layer, teamTag);
+            CreateKickPlatePart(root.transform, "KickPlateRightWing", new Vector3(0.66f, 0f, 0.80f),
+                new Vector3(0.40f, SoccerKickPlate.PlayerHeightRatio, 0.18f), -45f, material, layer, teamTag);
+
+            plate.Configure(agent, Vector3.zero, new Vector3(0f, 0f, 0.68f));
+            return plate;
+        }
+
+        static void CreateKickPlatePart(
+            Transform parent,
+            string name,
+            Vector3 localPosition,
+            Vector3 localScale,
+            float localYaw,
+            Material material,
+            int layer,
+            string teamTag)
+        {
+            var part = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            part.name = name;
+            part.layer = layer;
+            part.tag = teamTag;
+            part.transform.SetParent(parent, false);
+            part.transform.localPosition = localPosition;
+            part.transform.localRotation = Quaternion.Euler(0f, localYaw, 0f);
+            part.transform.localScale = localScale;
+            part.GetComponent<Renderer>().sharedMaterial = material;
         }
 
         static void CreateHumanMarker(Transform parent, Material material)
@@ -415,6 +505,8 @@ namespace MachineLearning.Soccer.Editor
             {
                 Blue = CreateOrUpdateUrpMaterial("AgentBlue", new Color(0.13f, 0.59f, 0.95f)),
                 Purple = CreateOrUpdateUrpMaterial("AgentPurple", new Color(0.55f, 0.43f, 0.78f)),
+                BlueKickPlate = CreateOrUpdateUrpMaterial("KickPlateBlue", new Color(0.03f, 0.30f, 0.46f)),
+                PurpleKickPlate = CreateOrUpdateUrpMaterial("KickPlatePurple", new Color(0.29f, 0.17f, 0.48f)),
                 Eye = CreateOrUpdateUrpMaterial("Eye", new Color(0.06f, 0.06f, 0.06f)),
                 Wall = CreateOrUpdateUrpMaterial("GrayMiddle", new Color(0.39f, 0.39f, 0.39f)),
                 Black = CreateOrUpdateUrpMaterial("Black", new Color(0.05f, 0.05f, 0.05f)),
@@ -607,6 +699,53 @@ namespace MachineLearning.Soccer.Editor
             serializedTagManager.ApplyModifiedProperties();
         }
 
+        static int[] EnsureKickPlateLayers()
+        {
+            var assets = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset");
+            if (assets.Length == 0)
+            {
+                throw new BuildFailedException("TagManager.asset could not be loaded.");
+            }
+
+            var serializedTagManager = new SerializedObject(assets[0]);
+            var layers = serializedTagManager.FindProperty("layers");
+            var assignedLayers = new int[KickPlateLayerCount];
+            for (var plateIndex = 0; plateIndex < KickPlateLayerCount; plateIndex++)
+            {
+                var requiredName = $"{KickPlateLayerPrefix}{plateIndex + 1}";
+                var layerIndex = -1;
+                for (var index = 8; index < layers.arraySize; index++)
+                {
+                    if (layers.GetArrayElementAtIndex(index).stringValue == requiredName)
+                    {
+                        layerIndex = index;
+                        break;
+                    }
+                }
+
+                if (layerIndex < 0)
+                {
+                    for (var index = 8; index < layers.arraySize; index++)
+                    {
+                        if (!string.IsNullOrEmpty(layers.GetArrayElementAtIndex(index).stringValue))
+                        {
+                            continue;
+                        }
+
+                        layerIndex = index;
+                        layers.GetArrayElementAtIndex(index).stringValue = requiredName;
+                        break;
+                    }
+                }
+
+                Require(layerIndex >= 0, $"No free Unity layer is available for {requiredName}.");
+                assignedLayers[plateIndex] = layerIndex;
+            }
+
+            serializedTagManager.ApplyModifiedProperties();
+            return assignedLayers;
+        }
+
         static void Require(bool condition, string message)
         {
             if (!condition)
@@ -619,6 +758,8 @@ namespace MachineLearning.Soccer.Editor
         {
             public Material Blue;
             public Material Purple;
+            public Material BlueKickPlate;
+            public Material PurpleKickPlate;
             public Material Eye;
             public Material Wall;
             public Material Black;
