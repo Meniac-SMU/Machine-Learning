@@ -1,6 +1,7 @@
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
+using Unity.MLAgents.Sensors;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,16 +18,20 @@ namespace MachineLearning.Soccer
     {
         public enum Position
         {
-            Striker,
-            Goalie,
-            Generic
+            Striker = 0,
+            DefenderKeeper = 1,
+            Midfielder = 2
         }
 
-        const float KickPower = 5000f;
+        public const int VectorObservationSize = 43;
+        public const int KickActionBranch = 3;
+
+        const float ControlledKickPower = 1800f;
+        const float StrongKickPower = 5000f;
         const float DribblePushPower = 120f;
         const float InputDeadZone = 0.15f;
-        const float AutonomousKickRange = 1.8f;
-        const float AutonomousKickFacingDot = 0.55f;
+        const float ObservationDistanceScale = 80f;
+        const float ObservationVelocityScale = 20f;
 
         [HideInInspector] public Team team;
         public Position position;
@@ -45,6 +50,8 @@ namespace MachineLearning.Soccer
         float m_ForwardSpeed;
         bool m_UseHumanInput;
         SoccerKickPlate m_KickPlate;
+        SoccerTeamDefinition m_TeamDefinition;
+        float m_ActiveKickPower = StrongKickPower;
 
         public Team Team => team;
         public Position PositionRole => position;
@@ -67,17 +74,17 @@ namespace MachineLearning.Soccer
             rotSign = team == Team.Blue ? 1f : -1f;
             switch (position)
             {
-                case Position.Goalie:
-                    m_LateralSpeed = 1f;
-                    m_ForwardSpeed = 1f;
+                case Position.DefenderKeeper:
+                    m_LateralSpeed = 0.8f;
+                    m_ForwardSpeed = 1.05f;
                     break;
                 case Position.Striker:
-                    m_LateralSpeed = 0.3f;
-                    m_ForwardSpeed = 1.3f;
+                    m_LateralSpeed = 0.4f;
+                    m_ForwardSpeed = 1.25f;
                     break;
                 default:
-                    m_LateralSpeed = 0.3f;
-                    m_ForwardSpeed = 1f;
+                    m_LateralSpeed = 0.6f;
+                    m_ForwardSpeed = 1.1f;
                     break;
             }
 
@@ -86,21 +93,6 @@ namespace MachineLearning.Soccer
             agentRb.maxAngularVelocity = 500f;
             m_KickPlate = GetComponentInChildren<SoccerKickPlate>(true);
             m_ResetParameters = Academy.Instance.EnvironmentParameters;
-        }
-
-        void Update()
-        {
-            if (!m_UseHumanInput || m_KickPlate == null || (m_Environment != null && !m_Environment.IsPlayActive))
-            {
-                return;
-            }
-
-            var keyboardKick = Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
-            var gamepadKick = Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame;
-            if (keyboardKick || gamepadKick)
-            {
-                m_KickPlate.TryKick();
-            }
         }
 
         public void Configure(Team configuredTeam, Position configuredPosition, bool canUseHumanInput, Vector3 startingPosition)
@@ -112,13 +104,26 @@ namespace MachineLearning.Soccer
             rotSign = configuredTeam == Team.Blue ? 1f : -1f;
         }
 
-        public void ConfigureControlMode(bool training, bool useHumanInput)
+        public void ApplyTeamDefinition(SoccerTeamDefinition definition)
+        {
+            if (definition == null)
+            {
+                return;
+            }
+
+            m_TeamDefinition = definition;
+            m_BehaviorParameters ??= GetComponent<BehaviorParameters>();
+            m_BehaviorParameters.BehaviorName = definition.BehaviorName;
+            m_BehaviorParameters.Model = definition.InferenceModel;
+        }
+
+        public void ConfigureControlMode(bool training, bool useHumanInput, bool trainable)
         {
             m_UseHumanInput = humanControllable && useHumanInput;
             m_BehaviorParameters ??= GetComponent<BehaviorParameters>();
             m_DecisionRequester ??= GetComponent<DecisionRequester>();
 
-            if (training)
+            if (training && trainable)
             {
                 m_BehaviorParameters.BehaviorType = BehaviorType.Default;
                 m_DecisionRequester.DecisionPeriod = 5;
@@ -164,7 +169,7 @@ namespace MachineLearning.Soccer
         public override void OnActionReceived(ActionBuffers actionBuffers)
         {
             MoveAgent(actionBuffers.DiscreteActions);
-            TryAutonomousKick(actionBuffers.DiscreteActions);
+            ApplyKickAction(actionBuffers.DiscreteActions);
         }
 
         public override void Heuristic(in ActionBuffers actionsOut)
@@ -216,6 +221,14 @@ namespace MachineLearning.Soccer
 
             actions[0] = throttle > InputDeadZone ? 1 : throttle < -InputDeadZone ? 2 : 0;
             actions[2] = turn > InputDeadZone ? 2 : turn < -InputDeadZone ? 1 : 0;
+            if (actions.Length > KickActionBranch)
+            {
+                var controlledKick = (keyboard != null && keyboard.leftCtrlKey.wasPressedThisFrame)
+                    || (gamepad != null && gamepad.buttonWest.wasPressedThisFrame);
+                var strongKick = (keyboard != null && keyboard.spaceKey.wasPressedThisFrame)
+                    || (gamepad != null && gamepad.buttonSouth.wasPressedThisFrame);
+                actions[KickActionBranch] = strongKick ? 2 : controlledKick ? 1 : 0;
+            }
         }
 
         void ReadAutonomousInput(ActionSegment<int> actions)
@@ -236,26 +249,109 @@ namespace MachineLearning.Soccer
             var localDirection = transform.InverseTransformDirection(toTarget.normalized);
             actions[0] = localDirection.z < -0.45f ? 2 : 1;
             actions[2] = localDirection.x > 0.08f ? 2 : localDirection.x < -0.08f ? 1 : 0;
-        }
-
-        void TryAutonomousKick(ActionSegment<int> actions)
-        {
-            if (m_UseHumanInput || m_KickPlate == null || actions.Length == 0 || actions[0] != 1
-                || m_Environment == null || m_Environment.Ball == null || !m_Environment.IsPlayActive)
+            if (actions.Length <= KickActionBranch || m_Environment.Ball == null)
             {
                 return;
             }
 
             var toBall = m_Environment.Ball.transform.position - transform.position;
             toBall.y = 0f;
-            if (toBall.sqrMagnitude > AutonomousKickRange * AutonomousKickRange || toBall.sqrMagnitude < 0.0001f)
+            actions[KickActionBranch] = toBall.sqrMagnitude <= 1.8f * 1.8f
+                && toBall.sqrMagnitude > 0.0001f
+                && Vector3.Dot(transform.forward, toBall.normalized) >= 0.55f
+                ? 2
+                : 0;
+        }
+
+        void ApplyKickAction(ActionSegment<int> actions)
+        {
+            if (m_KickPlate == null || actions.Length <= KickActionBranch || !m_KickPlate.CanKick)
             {
                 return;
             }
 
-            if (Vector3.Dot(transform.forward, toBall.normalized) >= AutonomousKickFacingDot)
+            switch (actions[KickActionBranch])
             {
-                m_KickPlate.TryKick();
+                case 1:
+                    m_ActiveKickPower = ControlledKickPower;
+                    m_KickPlate.TryKick();
+                    break;
+                case 2:
+                    m_ActiveKickPower = StrongKickPower;
+                    m_KickPlate.TryKick();
+                    break;
+            }
+        }
+
+        public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
+        {
+            if (m_KickPlate != null && !m_KickPlate.CanKick)
+            {
+                actionMask.SetActionEnabled(KickActionBranch, 1, false);
+                actionMask.SetActionEnabled(KickActionBranch, 2, false);
+            }
+        }
+
+        public override void CollectObservations(VectorSensor sensor)
+        {
+            sensor.AddOneHotObservation((int)position, 3);
+            var attackSign = team == Team.Blue ? 1f : -1f;
+            sensor.AddObservation(transform.position.x * attackSign / 60f);
+            sensor.AddObservation(transform.position.z / 40f);
+            var velocity = agentRb != null ? agentRb.linearVelocity : Vector3.zero;
+            sensor.AddObservation(velocity.x * attackSign / ObservationVelocityScale);
+            sensor.AddObservation(velocity.z / ObservationVelocityScale);
+
+            var ball = m_Environment != null ? m_Environment.Ball : null;
+            var ballOffset = ball != null ? ball.transform.position - transform.position : Vector3.zero;
+            sensor.AddObservation(ballOffset.x * attackSign / ObservationDistanceScale);
+            sensor.AddObservation(ballOffset.z / ObservationDistanceScale);
+            var ballVelocity = m_Environment != null && m_Environment.ballRb != null
+                ? m_Environment.ballRb.linearVelocity
+                : Vector3.zero;
+            sensor.AddObservation(ballVelocity.x * attackSign / ObservationVelocityScale);
+            sensor.AddObservation(ballVelocity.z / ObservationVelocityScale);
+
+            var possession = m_Environment != null ? m_Environment.PossessionTeam : null;
+            sensor.AddObservation(!possession.HasValue ? 1f : 0f);
+            sensor.AddObservation(possession == team ? 1f : 0f);
+            sensor.AddObservation(possession.HasValue && possession != team ? 1f : 0f);
+            sensor.AddObservation(m_KickPlate != null && m_KickPlate.CanKick ? 1f : 0f);
+
+            AddOtherAgentObservations(sensor, team, 3, attackSign);
+            AddOtherAgentObservations(sensor, team == Team.Blue ? Team.Purple : Team.Blue, 4, attackSign);
+        }
+
+        void AddOtherAgentObservations(VectorSensor sensor, Team observedTeam, int requiredCount, float attackSign)
+        {
+            var added = 0;
+            if (m_Environment != null)
+            {
+                foreach (var item in m_Environment.AgentsList)
+                {
+                    var other = item?.Agent;
+                    if (other == null || other == this || other.Team != observedTeam || added >= requiredCount)
+                    {
+                        continue;
+                    }
+
+                    var offset = other.transform.position - transform.position;
+                    var otherVelocity = other.agentRb != null ? other.agentRb.linearVelocity : Vector3.zero;
+                    sensor.AddObservation(offset.x * attackSign / ObservationDistanceScale);
+                    sensor.AddObservation(offset.z / ObservationDistanceScale);
+                    sensor.AddObservation(otherVelocity.x * attackSign / ObservationVelocityScale);
+                    sensor.AddObservation(otherVelocity.z / ObservationVelocityScale);
+                    added++;
+                }
+            }
+
+            while (added < requiredCount)
+            {
+                sensor.AddObservation(0f);
+                sensor.AddObservation(0f);
+                sensor.AddObservation(0f);
+                sensor.AddObservation(0f);
+                added++;
             }
         }
 
@@ -279,6 +375,7 @@ namespace MachineLearning.Soccer
                 return;
             }
 
+            m_Environment?.NotifyBallTouch(this);
             PushBall(collision, true);
         }
 
@@ -286,6 +383,7 @@ namespace MachineLearning.Soccer
         {
             if (collision.gameObject.CompareTag("ball") && m_KickPlate != null && m_KickPlate.IsStrikeActive)
             {
+                m_Environment?.NotifyBallTouch(this);
                 PushBall(collision, false);
             }
         }
@@ -298,7 +396,6 @@ namespace MachineLearning.Soccer
                 return;
             }
 
-            AddReward(0.2f * m_BallTouch);
             var toBall = collision.transform.position - transform.position;
             toBall.y = 0f;
             var contactDirection = toBall.sqrMagnitude > 0.0001f ? toBall.normalized : transform.forward;
@@ -306,14 +403,20 @@ namespace MachineLearning.Soccer
             var ballRigidbody = collision.rigidbody ?? collision.gameObject.GetComponent<Rigidbody>();
             if (ballRigidbody != null)
             {
-                ballRigidbody.AddForce(direction * (strongKick ? KickPower : DribblePushPower));
+                ballRigidbody.AddForce(direction * (strongKick ? m_ActiveKickPower : DribblePushPower));
             }
+        }
+
+        public void AddTrainingReward(float reward)
+        {
+            AddReward(reward);
         }
 
         public void ResetKickPlate()
         {
             m_KickPlate ??= GetComponentInChildren<SoccerKickPlate>(true);
             m_KickPlate?.ResetPlate();
+            m_ActiveKickPower = StrongKickPower;
         }
 
         public override void OnEpisodeBegin()

@@ -1,0 +1,8 @@
+{
+  "name": "Soccer.Team.Defense",
+  "rootNamespace": "MachineLearning.Soccer.Teams.Defense",
+  "references": [
+    "Soccer.Runtime"
+  ],
+  "autoReferenced": true
+}

@@ -101,3 +101,5 @@ InitTestScene*.unity*
 # 이 프로젝트에서만 사용하는 비공개 기획 및 작업 문서
 /docs/
 *.md
+!Assets/Soccer/Core/README.md
+!Assets/Soccer/Teams/*/README.md

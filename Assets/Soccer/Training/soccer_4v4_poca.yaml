@@ -1,5 +1,5 @@
 behaviors:
-  Soccer4v4:
+  Soccer4v4_Base:
     trainer_type: poca
     hyperparameters:
       batch_size: 2048
