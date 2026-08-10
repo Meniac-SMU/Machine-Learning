@@ -1,0 +1,44 @@
+# 공통 Base 파이프라인 검증 설정이다. 개별 팀 담당자는 이 파일 대신 자신의 Teams/<담당 폴더>/Training YAML을 수정한다.
+# 담당자 접미사는 물리 폴더명에만 쓰며 behaviors 키 Soccer4v4_Base에는 붙이지 않는다.
+# extrinsic.strength는 모든 Unity 보상의 일괄 배율이며 사건별 수치는 BaseRewardProfile에서 조정한다.
+# 이 파일은 짧은 Trainer 연결·파이프라인 검증용이며 장기 성능 학습 설정이 아니다.
+behaviors:
+  Soccer4v4_Base:
+    trainer_type: poca
+    hyperparameters:
+      batch_size: 1024
+      buffer_size: 20480
+      learning_rate: 0.0003
+      beta: 0.005
+      epsilon: 0.2
+      lambd: 0.95
+      num_epoch: 3
+      learning_rate_schedule: constant
+    network_settings:
+      normalize: true
+      hidden_units: 256
+      num_layers: 2
+      memory:
+        sequence_length: 32
+        memory_size: 128
+    reward_signals:
+      extrinsic:
+        gamma: 0.995
+        strength: 1.0
+    keep_checkpoints: 3
+    max_steps: 30000
+    time_horizon: 128
+    summary_freq: 5000
+    self_play:
+      save_steps: 5000
+      team_change: 10000
+      swap_steps: 5000
+      window: 5
+      play_against_latest_model_ratio: 0.5
+      initial_elo: 1200.0
+
+engine_settings:
+  no_graphics: true
+  time_scale: 20
+  target_frame_rate: -1
+  capture_frame_rate: 60
