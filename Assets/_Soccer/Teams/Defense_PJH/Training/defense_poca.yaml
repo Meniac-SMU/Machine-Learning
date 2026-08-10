@@ -1,0 +1,36 @@
+# Defense_PJH 담당 영역: 이 YAML, Profiles/DefenseRewardProfile.asset, Models/*.onnx.
+# 담당자 접미사는 물리 폴더명에만 쓰며 behaviors 키 Soccer4v4_Defense는 TeamDefinition과 동일하게 유지한다.
+# extrinsic.strength는 모든 Unity 보상의 일괄 배율이며 사건별 수치는 DefenseRewardProfile에서 조정한다.
+behaviors:
+  Soccer4v4_Defense:
+    trainer_type: poca
+    hyperparameters:
+      batch_size: 1024
+      buffer_size: 20480
+      learning_rate: 0.0003
+      beta: 0.005
+      epsilon: 0.2
+      lambd: 0.95
+      num_epoch: 3
+      learning_rate_schedule: constant
+    network_settings:
+      normalize: true
+      hidden_units: 256
+      num_layers: 2
+      memory:
+        sequence_length: 32
+        memory_size: 128
+    reward_signals:
+      extrinsic:
+        gamma: 0.995
+        strength: 1.0
+    keep_checkpoints: 3
+    max_steps: 100000
+    time_horizon: 128
+    summary_freq: 10000
+
+engine_settings:
+  no_graphics: true
+  time_scale: 20
+  target_frame_rate: -1
+  capture_frame_rate: 60

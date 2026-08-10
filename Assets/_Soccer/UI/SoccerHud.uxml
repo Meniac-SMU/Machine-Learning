@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:Style src="SoccerHud.uss" />
+    <ui:VisualElement name="hud-root" class="hud-root">
+        <ui:Label name="score-label" text="BLUE  0  :  0  PURPLE" class="hud-box score-box" />
+        <ui:Label name="time-label" text="05:00" class="hud-box time-box" />
+        <ui:VisualElement class="hud-box mode-box">
+            <ui:VisualElement class="mode-row">
+                <ui:Label name="ai-label" text="AI  ON" class="mode-pill mode-on" />
+                <ui:Label name="human-label" text="HUMAN  OFF" class="mode-pill mode-off" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement class="hud-box tactic-reward-box">
+            <ui:Label text="현재 전술" class="panel-title" />
+            <ui:Label name="blue-tactic-label" text="BLUE  BASE · 모델 없음" class="blue-value" />
+            <ui:Label name="purple-tactic-label" text="PURPLE  BASE · 모델 없음" class="purple-value" />
+            <ui:VisualElement class="panel-divider" />
+            <ui:Label text="경기 누적 보상" class="panel-title" />
+            <ui:Label name="blue-reward-label" text="BLUE   0.000" class="reward-value blue-value" />
+            <ui:Label name="purple-reward-label" text="PURPLE 0.000" class="reward-value purple-value" />
+        </ui:VisualElement>
+        <ui:Label name="result-label" text="" class="result-label" />
+        <ui:VisualElement name="controls-table" class="controls-box">
+            <ui:VisualElement class="controls-row controls-header-row">
+                <ui:Label text="동작" class="controls-cell controls-action-cell" />
+                <ui:Label text="키보드" class="controls-cell controls-key-cell" />
+                <ui:Label text="컨트롤러" class="controls-cell controls-pad-cell" />
+            </ui:VisualElement>
+            <ui:VisualElement class="controls-row">
+                <ui:Label text="전진" class="controls-cell controls-action-cell" />
+                <ui:Label text="W" class="controls-cell controls-key-cell" />
+                <ui:Label text="R트리거" class="controls-cell controls-pad-cell" />
+            </ui:VisualElement>
+            <ui:VisualElement class="controls-row">
+                <ui:Label text="후진" class="controls-cell controls-action-cell" />
+                <ui:Label text="S" class="controls-cell controls-key-cell" />
+                <ui:Label text="L트리거" class="controls-cell controls-pad-cell" />
+            </ui:VisualElement>
+            <ui:VisualElement class="controls-row">
+                <ui:Label text="회전" class="controls-cell controls-action-cell" />
+                <ui:Label text="A/D" class="controls-cell controls-key-cell" />
+                <ui:Label text="L조이스틱" class="controls-cell controls-pad-cell" />
+            </ui:VisualElement>
+            <ui:VisualElement class="controls-row">
+                <ui:Label text="패스" class="controls-cell controls-action-cell" />
+                <ui:Label text="E" class="controls-cell controls-key-cell" />
+                <ui:Label text="A버튼" class="controls-cell controls-pad-cell" />
+            </ui:VisualElement>
+            <ui:VisualElement class="controls-row">
+                <ui:Label text="슈팅" class="controls-cell controls-action-cell" />
+                <ui:Label text="Space" class="controls-cell controls-key-cell" />
+                <ui:Label text="B버튼" class="controls-cell controls-pad-cell" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

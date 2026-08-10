@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd39d1b2dfc830a44b10415bae3a9b2a, type: 3}
+  m_Name: RuleRewardProfile
+  m_EditorClassIdentifier: Soccer.Runtime::MachineLearning.Soccer.SoccerRewardProfile
+  goalResult: 1
+  matchResult: 0.5
+  attackSuccess: 0.03
+  passSuccess: 0.005
+  defenseSuccess: 0.03
+  pressSuccess: 0.02
+  progressivePass: 0.01
+  threePlayerCombination: 0.02
+  coordinatedPress: 0.015
+  dribbleGroup: 0.005
+  dribbleIndividual: 0.01
+  formationChangeScale: 0.01
+  teammateCrowdingPenalty: 0.0025
+  teammateCrowdingPenaltyLimitPerMatch: 0.25
+  passRewardLimitPerPossession: 0.025
+  progressivePassLimitPerPossession: 0.03
+  combinationRewardLimitPerPossession: 0.04
+  formationRewardLimitPerPossession: 0.01
+  shapingRewardLimitPerPossession: 0.12
+  shapingRewardLimitPerMatch: 0.5

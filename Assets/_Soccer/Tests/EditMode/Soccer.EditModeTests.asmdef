@@ -1,0 +1,13 @@
+{
+  "name": "Soccer.EditModeTests",
+  "references": [
+    "Soccer.Runtime",
+    "Soccer.Editor",
+    "Soccer.Team.Rule",
+    "Unity.ML-Agents",
+    "Unity.InferenceEngine"
+  ],
+  "includePlatforms": ["Editor"],
+  "optionalUnityReferences": ["TestAssemblies"],
+  "autoReferenced": false
+}

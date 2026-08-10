@@ -1,0 +1,9 @@
+{
+  "name": "Soccer.Team.Rule",
+  "rootNamespace": "MachineLearning.Soccer.Teams.Rule",
+  "references": [
+    "Soccer.Runtime",
+    "Unity.ML-Agents"
+  ],
+  "autoReferenced": true
+}
