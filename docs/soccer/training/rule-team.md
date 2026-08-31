@@ -2,7 +2,7 @@
 
 - 대상: `Rule_PHC` FSM 담당자
 - 상태: Rule 수정 경계와 검증의 단일 기준
-- 마지막 검토: 2026-08-10
+- 마지막 검토: 2026-08-24
 
 Rule은 강화학습하지 않는다. 행동을 바꾸려면 `RuleBasedSoccerController.cs`의 상태·전이·목표·조향을 수정한다. `RuleRewardProfile.asset`은 HUD·통계·공통 비교 척도이며 행동을 강화하지 않는다.
 
@@ -14,12 +14,13 @@ HeuristicOnly
   → ISoccerRuleController.Decide
   → SoccerRuleCommand.WriteTo
   → AgentSoccer 공통 이동·Kick
-  → DefenderKeeper 공통 shield
+  → DefenderKeeper 공통 Engage/Recovery shield
+  → 현재 공 속도를 포함한 공통 자책골 Kick safety
 ```
 
-- Blue 네 선수만 Rule FSM Component를 가진다.
-- Purple은 공통 Base 비학습 상대다.
-- Human 모드에서는 선택한 Blue 한 명만 직접 조작한다.
+- Red 네 선수만 Rule FSM Component를 가진다.
+- Navy는 공통 Base 비학습 상대다.
+- Human 모드에서는 선택한 Red 한 명만 직접 조작한다.
 - 나머지 선수는 계속 FSM을 실행하고 AI 복귀 시 Human 선수도 다시 합류한다.
 - Trainer YAML, Models 폴더와 ONNX를 사용하지 않는다.
 
@@ -31,8 +32,8 @@ HeuristicOnly
 | 평가 Policy | `Assets/_Soccer/Teams/Rule_PHC/Runtime/RuleRewardPolicy.cs` |
 | 평가 Profile | `Assets/_Soccer/Teams/Rule_PHC/Profiles/RuleRewardProfile.asset` |
 | Team 정의 | `Assets/_Soccer/Teams/Rule_PHC/Profiles/RuleTeamDefinition.asset` |
-| Prefab | `Assets/_Soccer/Teams/Rule_PHC/Prefabs/SoccerEnvironment_Rule.prefab` |
-| Scene | `Assets/_Soccer/Teams/Rule_PHC/Scenes/Soccer4v4_Rule.unity` |
+| Prefab | `Assets/_Soccer/Teams/Rule_PHC/Prefabs/StadiumEnvironment_Rule.prefab` |
+| Scene | `Assets/_Soccer/Teams/Rule_PHC/Scenes/Stadium4v4_Rule.unity` |
 
 `SoccerRuleControllerContract.cs`는 읽기 기준이지 개인 수정 파일이 아니다. Action Branch를 바꾸면 모든 Neural ONNX에도 영향을 준다.
 
@@ -41,12 +42,12 @@ HeuristicOnly
 | 계층 | 수정 예 | 지켜야 할 것 |
 | --- | --- | --- |
 | 상태 | 상태 추가·통합 | 전이, 목표, Kick, Reset을 함께 구현 |
-| 전이 | 우선순위, 거리, hysteresis | 긴급 `RecoverGoal` 최우선 |
+| 전이 | 우선순위, 거리, hysteresis | 공통 `EngageBall/RecoverGoal`과 충돌 금지 |
 | 목표 | Carry·Support·Cover·Recover 위치 | 최종 Keeper target 제한 통과 |
 | Pass·Shoot | 후보 점수, 거리, 조준, 경로 | 공통 Kick Branch·힘 유지 |
 | 조향 | 목표 회전, 장애물 회피, separation | Rigidbody 직접 조작 금지 |
 | Rule 상수 | 상태 유지·압박·슛·패스 거리 | 한 번에 한 가설 |
-| Raycast 판단 | Mask와 경로 해석 | 네 Blue 선수 설정 일치 |
+| Raycast 판단 | Mask와 경로 해석 | 네 Red 선수 설정 일치 |
 | 순수 Helper·Test | 계산 분리와 회귀 | 매 Decision allocation 금지 |
 
 ## 수정 금지
@@ -57,7 +58,7 @@ HeuristicOnly
 - `AgentSoccer`, `SoccerEnvController`, `SoccerRewardEngine`에 Rule 분기 추가
 - `SoccerDefenderKeeperRules` 또는 공통 crowding 판정 우회
 - 경기 시간, Reset, UI, Camera, 경기장·Physics·Sensor를 Rule Prefab만 변경
-- Purple 배선과 Training flag 변경
+- Navy 배선과 Training flag 변경
 - 다른 팀 폴더 수정
 
 공통 값은 [경기 계약](../gameplay-contract.md)을 사용하고 이 문서에 복제하지 않는다.
@@ -70,7 +71,7 @@ HeuristicOnly
 | `CarryBall` | 공 운반 | 운반 target, Pass·Shoot 전이 |
 | `PassBall` | 동료에게 Controlled Kick | 후보 점수와 경로 |
 | `ShootBall` | 상대 Goal Strong Kick | 거리·조준·경로 |
-| `ClearBall` | 위험 지역 걷어내기 | 자기 수비 지역 판정 |
+| `ClearBall` | 위험 지역 중앙 Controlled 걷어내기 | 자기 수비 지역과 공통 Kick safety |
 | `SupportAttack` | 공격 지원 | 지원 위치와 간격 |
 | `PressBall` | 상대 소유자 압박 | 대상과 접근 거리 |
 | `CoverDefense` | 수비 공간 Cover | 공·Goal 기준 target |
@@ -82,7 +83,7 @@ HeuristicOnly
 
 Rule Keeper는 다음 다섯 층을 모두 유지한다.
 
-1. 위기 Recovery를 일반 상태보다 먼저 판정한다.
+1. 공통 Keeper mode의 `EngageBall`과 `RecoverGoal`을 일반 상태보다 우선한다.
 2. `RecoverGoal`은 최소 상태 유지 시간을 기다리지 않는다.
 3. 먼 공의 최근접 추격자 후보에서 Keeper를 제외한다.
 4. 최종 목표를 `ConstrainTarget`에 통과시킨다.
@@ -98,8 +99,9 @@ Rule Keeper는 다음 다섯 층을 모두 유지한다.
 | --- | --- | --- |
 | 전원이 공에 몰림 | crowding penalty만 증가 | 추격자 선택·Support target·separation |
 | Pass를 안 함 | Pass reward 증가 | `PassBall` 전이와 후보·경로 |
-| Keeper 복귀 지연 | Defense reward 변경 | `RecoverGoal` 우선순위·target |
+| Keeper가 위협 공에 소극적 | Defense reward 변경 | 공통 `EngageBall/RecoverGoal`과 Rule 상태 우선순위 |
 | 먼 거리 Shoot | Attack reward 변경 | `ShootDistance`·조준 |
+| 골문 앞 자책골 Kick | Rule penalty만 변경 | `ClearBall` 중앙 target과 공통 `SoccerDefensiveClearanceRules` |
 | 상태가 떨림 | Formation reward 변경 | 상태 유지 시간과 hysteresis |
 
 공정한 Neural 대 Rule 비교에는 Rule Profile을 Base 평가 척도와 같게 유지한다. 실제 값은 [보상 기준표](../rewards.md)를 따른다.

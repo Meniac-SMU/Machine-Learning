@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace MachineLearning.Soccer
 {
@@ -7,15 +8,21 @@ namespace MachineLearning.Soccer
     /// </summary>
     public sealed class SoccerSettings : MonoBehaviour
     {
-        public const float DefaultHumanAcceleration = 32f;
+        public const float DefaultAgentRunSpeed = 2.2f;
+        public const float DefaultMaximumPlanarSpeed = 9f;
+        public const float DefaultRotationSpeed = 125f;
+        // Human 대상은 Striker다. 2.2 * 1.25 / 0.02 = 137.5로 AI 전진 가속과 맞춘다.
+        public const float DefaultHumanAcceleration = 137.5f;
         public const float DefaultHumanDeceleration = 48f;
 
-        public Material purpleMaterial;
-        public Material blueMaterial;
+        [FormerlySerializedAs("blueMaterial")]
+        public Material redMaterial;
+        [FormerlySerializedAs("purpleMaterial")]
+        public Material navyMaterial;
         public bool randomizePlayersTeamForTraining;
-        [Min(0.1f)] public float agentRunSpeed = 2f;
-        [Min(0.1f)] public float maximumPlanarSpeed = 9f;
-        [Min(1f)] public float rotationSpeed = 120f;
+        [Min(0.1f)] public float agentRunSpeed = DefaultAgentRunSpeed;
+        [Min(0.1f)] public float maximumPlanarSpeed = DefaultMaximumPlanarSpeed;
+        [Min(1f)] public float rotationSpeed = DefaultRotationSpeed;
 
         [Header("Human movement")]
         [Min(0.1f)] public float humanAcceleration = DefaultHumanAcceleration;

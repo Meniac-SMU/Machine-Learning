@@ -20,7 +20,7 @@
 
 | Type | Profile | YAML | TeamDefinition·Models |
 | --- | --- | --- | --- |
-| Base | `Core/Profiles/BaseRewardProfile.asset` | `Core/Training/base_4v4_v2_temp.yaml`, `Training/soccer_4v4_poca.yaml` | `Core/Profiles/BaseTeamDefinition.asset`, `Core/Models` |
+| Base | `Core/Profiles/BaseRewardProfile.asset` | `Core/Training/base_4v4_v2_temp.yaml`, `Training/soccer_4v4_poca.yaml`, `Training/soccer_4v4_poca_base_fallback.yaml` | `Core/Profiles/BaseTeamDefinition.asset`, `Core/Models` |
 | Attack | `Teams/Attack_KMW/Profiles/AttackRewardProfile.asset` | `Teams/Attack_KMW/Training/attack_poca.yaml` | `Teams/Attack_KMW/Profiles/AttackTeamDefinition.asset`, `Teams/Attack_KMW/Models` |
 | Defense | `Teams/Defense_PJH/Profiles/DefenseRewardProfile.asset` | `Teams/Defense_PJH/Training/defense_poca.yaml` | `Teams/Defense_PJH/Profiles/DefenseTeamDefinition.asset`, `Teams/Defense_PJH/Models` |
 | Press | `Teams/Press_KMG/Profiles/PressRewardProfile.asset` | `Teams/Press_KMG/Training/press_poca.yaml` | `Teams/Press_KMG/Profiles/PressTeamDefinition.asset`, `Teams/Press_KMG/Models` |
@@ -35,7 +35,7 @@ Base 담당자도 `Core/Scripts`를 개인 영역으로 보지 않는다. Base�
 | 자기 Trainer YAML | learning rate, batch/buffer, network, memory, 학습 길이, engine 설정 | Behavior Key와 정책 계약 유지 |
 | 자기 `Models` | 새 ONNX 추가 | Version 증가, 덮어쓰기 금지 |
 | 자기 TeamDefinition | 승인 Model 등록 | ID·Behavior·Controller·Contract Version 유지 |
-| 자기 Prefab의 Blue Override | 한 환경 추론 시험 | 시험 후 비우고 Purple은 유지 |
+| 자기 Prefab의 Red Override | 한 환경 추론 시험 | 시험 후 비우고 Navy는 유지 |
 | 자기 `*RewardPolicy.cs` | 이미 확정된 사건의 문맥별 multiplier | 새 사건 판정·직접 지급·매 Frame Reward 금지 |
 | 자기 README·Test·실험 기록 | 가설과 결과 | 실제 Asset과 동기화 |
 
@@ -59,7 +59,7 @@ Base 담당자도 `Core/Scripts`를 개인 영역으로 보지 않는다. Base�
 | 다른 팀 폴더 수정 | 실험과 Model 참조가 섞임 |
 | Core Runtime에 Team 이름 분기 추가 | 공통 계약이 갈라짐 |
 | 선수별 `BehaviorParameters.Model` 수정 | 시작 시 덮어써지고 선수 간 불일치 발생 |
-| `trainBlue`, `trainPurple`, 상대 TeamDefinition 변경 | Trainer 대상과 기준 상대가 바뀜 |
+| `trainRed`, `trainNavy`, 상대 TeamDefinition 변경 | Trainer 대상과 기준 상대가 바뀜 |
 | 자기 Prefab만 경기장·물리·Sensor 변경 | parity와 ONNX 호환이 깨짐 |
 | BehaviorName 또는 YAML Key 변경 | Trainer 연결 실패 |
 | 기존 Run·ONNX 덮어쓰기 | 재현과 회귀 비교 불가 |
@@ -100,11 +100,11 @@ Base 담당자도 `Core/Scripts`를 개인 영역으로 보지 않는다. Base�
 
 - [ ] 자기 Scene과 Environment Prefab을 사용한다.
 - [ ] TeamDefinition, Profile, BehaviorName과 YAML Key가 일치한다.
-- [ ] Blue만 Trainer 대상이고 Purple은 의도한 Base 상대다.
+- [ ] Red만 Trainer 대상이고 Navy는 의도한 Base 상대다.
 - [ ] 승인 Base v2 Model이 실제로 등록되어 있다.
 - [ ] `SourceModels/SoccerTwos.onnx`를 사용하지 않는다.
 - [ ] Model Override와 선수별 Model Slot에 이전 시험값이 남지 않았다.
-- [ ] `Validate 4v4 Prototype`과 관련 Test가 통과한다.
+- [ ] `Validate active 4v4 Stadiums`와 관련 Test가 통과한다.
 - [ ] 기준 Run, Seed, 상대 Model과 성공 기준을 기록했다.
 
 승인 Base Model이 없으면 먼저 Base smoke와 Self-Play를 수행한다. fallback 상대를 Base Neural이라고 기록하지 않는다.
@@ -118,7 +118,7 @@ Base 담당자도 `Core/Scripts`를 개인 영역으로 보지 않는다. Base�
 | 사건이 거의 없음 | 값을 키우기 전 판정 발생 여부 |
 | 행동이 고착 | Entropy, Mask, Action 분포와 Reset |
 | 학습 속도가 느림 | Step/s, Raycast, CPU·GC, time scale |
-| Purple이 이상하게 움직임 | Base Model 등록과 BehaviorType |
+| Navy가 이상하게 움직임 | Base Model 등록과 BehaviorType |
 
 같은 설정을 이어갈 때만 `--resume`하고 변경된 설정은 새 Run으로 시작한다.
 

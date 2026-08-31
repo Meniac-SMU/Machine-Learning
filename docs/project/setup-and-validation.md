@@ -2,7 +2,7 @@
 
 - 대상: 모든 개발·자동화 담당자
 - 상태: 실행·검증 절차의 단일 기준
-- 마지막 검토: 2026-08-10
+- 마지막 검토: 2026-08-31
 
 ## 확인된 환경
 
@@ -78,8 +78,11 @@ Markdown 링크는 상대 경로를 기준으로 모두 해석해야 한다. Arc
 
 Unity Menu에서는 다음을 사용한다.
 
-- 비파괴 검사: `Tools/Soccer/Validate 4v4 Prototype`
-- 공통 생성·동기화: `Tools/Soccer/Build 4v4 Prototype`
+- 비파괴 검사: `Tools/Soccer/Validate active 4v4 Stadiums`
+- 공통 생성·동기화: `Tools/Soccer/Build all 4v4 Stadium workspaces`
+- Demo부터 전체 재생성: `Tools/Soccer/Stadium/Build all team Stadiums`
+- 훈련 Profile 검사: `Tools/Soccer/Training/Validate training build profiles`
+- 공유 Windows 훈련 Build: `Tools/Soccer/Training/Build Windows training player`
 
 Model·Profile·YAML만 바꿨다면 Validate를 우선한다. 공통 Geometry·Physics·UI 변경에서만 Build 후 다섯 독립 Prefab의 허용 차이가 보존됐는지 확인한다.
 
@@ -94,6 +97,24 @@ Batch Validate 예시:
 ```
 
 생성까지 필요할 때만 `ValidateBatch` 대신 `BuildAllBatch`를 사용한다.
+
+공유 훈련 Build는 기존 팀 Scene을 재생성하는 `BuildAllBatch`를 호출하지 않는다. 활성 Stadium 계약, Base fallback Scene, 5개 Trainer Profile과 Rule 평가 Profile을 검사한 뒤 `Builds/SoccerTraining/SoccerTraining.exe`를 만든다.
+
+```powershell
+.\Tools\Build-SoccerTraining.ps1
+```
+
+직접 Batch Method를 호출할 때는 다음을 사용한다.
+
+```powershell
+& 'C:\Program Files\Unity\Hub\Editor\6000.3.16f1\Editor\Unity.exe' `
+  -batchmode -nographics -quit `
+  -projectPath 'C:\GitHub\Machine-Learning' `
+  -executeMethod MachineLearning.Soccer.Editor.SoccerTrainingBuildBuilder.BuildWindowsBatch `
+  -logFile 'C:\GitHub\Machine-Learning\Logs\Soccer-Training-Build.log'
+```
+
+Build 후 `training-profiles.json`, `build-info.json`, 실행 파일 SHA-256을 확인한다. Trainer communicator와 Step 증가는 Build 성공과 별개의 smoke 검증이다.
 
 ## Test Runner
 
@@ -118,6 +139,8 @@ PlayMode는 `-testPlatform PlayMode`와 별도 결과 파일을 사용한다. XM
 | Core Runtime | Compile, Builder Validate, 전체 Soccer EditMode·PlayMode |
 | Scene·Prefab·Physics·UI | Build/Validate, parity, 전체 Test, 실제 화면 |
 | ONNX | Tensor, 네 선수 Model 일치, Inference Scene, 기준 경기 |
+
+공통 Soccer Geometry·센서·이동·Reward 변경은 Template과 다섯 Regular Prefab의 Goal/공 parity, 선수 8명 각각 전방 `1`·후방 `1` 센서, 여섯 Scene의 이동 설정, 다섯 RewardProfile의 공통 필드·cap, 전체 EditMode·PlayMode를 함께 검증한다. 자동 테스트 통과와 실제 화면·기준 경기·재학습 결과는 서로 다른 증거로 기록한다.
 
 ## Unity 실행 후 정리
 

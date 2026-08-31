@@ -2,16 +2,16 @@
 
 - 대상: Core, 학습, Rule, UI 담당자
 - 상태: 공통 런타임 계약의 단일 기준
-- 마지막 검토: 2026-08-10
+- 마지막 검토: 2026-08-26
 
-이 문서의 값은 모든 활성 Soccer 환경에 공통이다. 한 팀의 실험을 위해 바꾸지 않는다. 구현 기준은 `AgentSoccer`, `SoccerEnvController`, `SoccerSettings`, `SoccerDefenderKeeperRules`와 `SoccerProjectBuilder`다.
+이 문서의 값은 모든 활성 Soccer 환경에 공통이다. 한 팀의 실험을 위해 바꾸지 않는다. 구현 기준은 `AgentSoccer`, `SoccerEnvController`, `SoccerSettings`, `SoccerDefenderKeeperRules`, `SoccerDefensiveClearanceRules`와 `SoccerProjectBuilder`다.
 
 ## 경기 흐름
 
 | 항목 | 계약 |
 | --- | --- |
 | 경기 시간 | `300초` |
-| 팀 구성 | Blue 4명, Purple 4명 |
+| 팀 구성 | Red 4명, Navy 4명 |
 | 상태 | `Playing → GoalPause → Playing` 또는 `Finished` |
 | Goal Pause | 득점 후 `3초`, 공과 선수 정지 뒤 Kickoff 위치로 Reset |
 | 득점 | 득점 팀 `+1`, 실점 팀 `-1` |
@@ -24,7 +24,7 @@
 
 | 역할 | 인원 | 책임 |
 | --- | ---: | --- |
-| `DefenderKeeper` | 1 | 후방 보호와 Goal 복귀 |
+| `DefenderKeeper` | 1 | 후방 보호, 위협 공 적극 차단과 Goal 복귀 |
 | `Midfielder` | 2 | 자유로운 지원·연계·공수 전환 |
 | `Striker` | 1 | 전방 침투와 득점 시도 |
 
@@ -43,12 +43,12 @@
 | 5 | 동료 3명의 상대 위치·속도, 각 4개 |
 | 6 | 상대 4명의 상대 위치·속도, 각 4개 |
 
-Blue와 Purple은 공격 방향을 기준으로 X축을 대칭 정규화한다. Agent 등록 순서, 역할 순서, 정규화 분모를 바꾸면 정책 계약을 올리고 모든 ONNX를 다시 검증해야 한다.
+Red와 Navy는 공격 방향을 기준으로 X축을 대칭 정규화한다. Agent 등록 순서, 역할 순서, 정규화 분모를 바꾸면 정책 계약을 올리고 모든 ONNX를 다시 검증해야 한다.
 
-전·후방 `RayPerceptionSensorComponent3D`를 함께 사용한다.
+전·후방 `RayPerceptionSensorComponent3D`를 함께 사용한다. 각 선수는 전방 센서 `1개`와 로컬 Yaw `180°`인 후방 센서 `1개`를 정확히 가져야 한다. 2026-08-24 변경 전에도 후방 센서가 이미 존재했으므로 중복 센서를 추가하지 않았고, Builder와 EditMode 검증으로 정확한 개수를 강제한다.
 
-- 전방 Ray: `264`
-- 후방 Ray: `72`
+- 전방 Ray: 방향당 `5`, 최대 각도 `60°`, Stack `3`, Observation `264`
+- 후방 Ray: 방향당 `1`, 최대 각도 `45°`, Sphere radius `0.5`, Stack `3`, Observation `72`
 - 전체 정책 입력: `43 + 264 + 72 = 379`
 - Ray 거리: `80`
 - 공, 양쪽 Goal, 벽, 양 팀 선수를 구분한다.
@@ -79,33 +79,74 @@ Neural, model 없는 fallback, Rule FSM은 같은 Branch를 `AgentSoccer`에 전
 | 슈팅 | `Space` | `B` |
 | Human/AI 전환 | `H` | `Y` |
 
-Human 모드는 Blue의 human-controllable 선수 한 명에만 적용된다. 나머지는 현재 Neural 또는 Rule Controller를 계속 실행한다.
+Human 모드는 Red의 human-controllable 선수 한 명에만 적용된다. 나머지는 현재 Neural 또는 Rule Controller를 계속 실행한다.
 
 사람 이동은 흔히 쓰이는 target planar velocity 방식이다.
 
 - Gamepad Trigger와 Stick은 dead zone `0.15` 뒤 analog 값을 유지한다.
 - 최대 평면 속도는 `9m/s`다.
-- 가속은 `32m/s²`, 정지·역방향 감속은 `48m/s²`다.
+- 가속은 `137.5m/s²`, 정지·역방향 감속은 `48m/s²`다.
 - `Vector3.MoveTowards`로 FixedUpdate마다 목표 속도에 접근한다.
 - Human일 때만 Rigidbody `Interpolate`, Training·AI 복귀 시 `None`을 사용한다.
 - Human은 Decision Period `1`, Neural·Rule은 `5`이며 결정 사이 행동을 반복한다.
 
-AI·Rule의 추론 비용과 기존 학습 의미를 유지하기 위해 analog target-velocity 경로는 Human에만 적용한다.
+AI·Rule의 추론 비용과 기존 학습 의미를 유지하기 위해 analog target-velocity 경로는 Human에만 적용한다. Human 대상 Striker의 한 FixedUpdate 전진 속도 변화량은 `137.5×0.02 = 2.75m/s`, AI Striker는 `2.2×1.25 = 2.75m/s`로 같다. 변경 전 Human은 `32×0.02 = 0.64m/s`여서 최고속도는 같아도 가속 체감이 약 `4.3배` 느렸다.
 
 ## 이동과 Kick 물리
 
 | 항목 | 값 |
 | --- | ---: |
-| AI 이동 기본 배율 | `agentRunSpeed = 2` |
+| AI 이동 기본 배율 | `agentRunSpeed = 2.2` |
+| 역할별 전진 계수 | DefenderKeeper `1.05`, Midfielder `1.1`, Striker `1.25` |
 | 최대 평면 속도 | `9m/s` |
-| 회전 속도 | `120°/s` |
-| Controlled Kick | `1500` |
-| Strong Kick | `4000` |
+| 회전 속도 | `125°/s` |
+| Controlled Kick | `2000` |
+| Strong Kick | `5000` |
 | 일반 접촉 Dribble Push | `120` |
 | KickPlate 전진 시간 | `0.08초` |
 | KickPlate 복귀 시간 | `0.5초` |
 
 KickPlate가 복귀하기 전에는 새 Kick Branch를 mask한다. Rigidbody, Collider, Physics Material, 속도 clamp와 Kick 힘은 전술별 튜닝 대상이 아니다.
+
+## 활성 Stadium 공통 Scene
+
+Base·Attack·Defense·Press·Rule의 기본 Scene과 Prefab은 모두 Stadium이다. 다섯 Prefab은 고유 GUID를 가진 독립 Regular Prefab이지만 물리·시각 계약은 `Core/Prefabs/StadiumEnvironment_Base.prefab`에서 동일하게 복제한다. 예전 `SoccerEnvironment_*`와 `Soccer4v4_*`는 이력 보존용이며 Build Settings와 학습 Scene으로 사용하지 않는다.
+
+| 항목 | 현재 공통값 |
+| --- | ---: |
+| 필드 길이 × 폭 | 약 `124 × 84.655m` |
+| 골문 개구 폭 / 높이 / 깊이 | 데모 Goal, 약 `20.393 / 6.291 / 5.635m` |
+| 공 uniform local scale | `0.012705` |
+| 공 월드 지름 | 약 `1.057m` |
+| 공 Reset 중심 Y | 반지름과 동일, 약 `0.529m` |
+| 선수 Reset Y | `0.52m` |
+| AI Overview Camera / FOV | `(0,100,-100)` / `55°` |
+| Controlled Kick / Strong Kick | `2000 / 5000` |
+| 선수 표시 색 | Red 고채도 빨강 `#A00218`, Navy 선명한 남색 `#002770` |
+| 킥 플레이트 색 | Red `#4F0D18`, Navy `#081A38` |
+| 골대 표시 색 | Red `#D33F4E`, Navy `#2F5C9C` |
+
+Demo의 `SM_Football_Field` Mesh 경계를 기준으로 길이를 맞춘다. 모든 데모 Root에 추가 균일 배율 약 `1.010856`과 같은 원점 이동을 적용하며 GrantStadium의 최종 local scale은 세 축 모두 약 `2.021713`이다. Terrain은 Transform 확대를 지원하지 않으므로 독립 데이터 크기에 같은 배율을 적용한다. 물리 필드 중심은 `(0,0,0)`이고 공격축은 기존과 같은 X다. 선수·공·센서는 데모 확대 Hierarchy 밖에서 독립 크기를 사용한다. 후속 승인에 따라 데모 골대 두 개의 좌우 축만 직전 Stadium의 `2배`로 늘렸으며, 높이·앞뒤 local scale과 나머지 데모 Root·Terrain은 유지한다.
+
+필드 테두리에는 높이 `2.835m` (직전 `3.15m` 대비 `-10%`, 기존 `4.5m` 대비 `-37%`), 전 구간 두께 `0.12m`, Alpha `0.224`인 하늘색 벽을 놓는다. Alpha는 이전 `0.28`에서 불투명도를 상대적으로 `20%` 낮춘 값이고, 직선 벽은 이전 `0.5m`에서 모서리 판과 같은 두께로 얇아졌다. 양 끝은 넓어진 골문을 비우고 분할한다. 네 모서리에는 각각 3개씩 총 12개의 얇은 Cube 판을 둔다. 후속 승인으로 기준 현 길이를 `1 → 1.5m`로 늘렸으며, 접합 여유를 포함한 실제 판 크기는 약 `1.54 × 2.835 × 0.12m`다. 반경 약 `2.898m`의 90도 구간을 세 직선으로 나누고 접합부에 총 `0.04m` 여유를 더해 틈을 막는다. 직선 벽은 이 모서리의 접점까지 줄인다. 네 모서리가 제외하는 평면 면적은 합계 약 `8.397m²`, 전체 필드의 약 `0.080%`다. `3개 × 4모서리`와 네 직선 구간을 유지하므로 골문 입구를 제외한 외곽은 `16개 변`이다.
+
+직선 벽 6개와 모서리 판 12개 모두 같은 Material과 `wall` Tag, 충돌·센서 인식을 사용한다. 공·양 팀 골문은 `ball`, `redGoal`, `navyGoal` Tag와 기존 Sensor LayerMask 계약을 사용한다. 선수와 킥 플레이트는 `redAgent`, `navyAgent` Tag를 사용한다. 평평한 바닥 충돌면과 Terrain은 Ignore Raycast Layer로 두며 데모의 중복 바닥·장식 충돌면은 복사본에서 비활성화한다.
+
+Red가 수비하는 음수 X 골대는 붉은색, Navy가 수비하는 양수 X 골대는 푸른색 계열이다. `Core/Materials/StadiumRedGoal.mat`와 `StadiumNavyGoal.mat`를 별도로 사용하고 원본 노란색 텍스처 아틀라스는 적용하지 않는다. 선수 몸 중심이 해당 골문 폭·높이·깊이 안에 있고 카메라에서 선수로 향하는 선분이 실제 골대 Collider를 먼저 통과할 때만 같은 RGB를 유지한 채 Alpha가 `0.25`로 바뀐다. 골문 밖 선수, 골문 안 선수를 열린 입구에서 보는 경우, 화면 밖 선수는 골대를 반투명하게 만들지 않는다. 가림이 끝나면 원래 불투명 재질로 돌아간다. 공급 에셋의 공유 재질·골대 Mesh·Collider는 수정하지 않고 Core 복사본의 팀 Tag와 머티리얼만 공용 Builder가 관리한다.
+
+골문 안쪽에 이미 있던 Floor Collider를 중복 생성하지 않고 같은 Cube의 Renderer를 활성화해 연한 회색 `#D2D6DB` 바닥으로 표시한다. 전용 `Core/Materials/StadiumGoalFloor.mat`를 사용하고, 크기는 실제 골문 깊이·개구 폭과 같으며 윗면은 필드 높이 `Y=0`에 맞춘다. Back·Side·Roof Collider는 계속 보이지 않는다.
+
+Stadium 복사본의 `SM_Tree_*`·`SM_Fir_*` 나무 배치와 Terrain 나무 인스턴스를 모두 제거한다. 추가 최적화 대상으로 승인된 도로·주차장 27개, 관목·꽃 104개, 외부 도시 소품 42개도 Core 기준본에서 제거하고 Base·Attack·Defense·Press·Rule에 동일하게 전파한다. 제거 대상에는 `SM_Road_*`, `SM_R_P8`, `Parking`, `SM_R_Gr*`, `SM_Bush_*`, `SM_Flower_A`, `SM_Flowers_01`, `SM_City_Light`, 도시 벤치·펜스·배리어·교통 신호·자전거가 포함된다. 공급자 원본 Prefab·Mesh·Texture와 Demo Scene은 보존하며 Terrain 표면·크기·레이어도 변경하지 않는다.
+
+공의 `FreezePositionY`를 보존하되 중심과 바닥 사이의 `0.02m` 틈을 없애 중심 Y를 월드 반지름에 맞춘다. Stadium 공 컨트롤러는 매 물리 프레임의 평면 속도와 반지름으로 `ω = up × v / r` 굴림 각속도를 계산하므로 좌우 Yaw만 보이는 대신 진행 방향에 맞춰 구른다. Y 위치·속도는 고정하며, `SoccerArenaGeometry`의 반지름 포함 경계 제한이 Side·End·세 판 모서리·골문 깊이 밖의 최종 위치를 복구한다. 물리 벽과 Continuous Collision Detection이 주 경계이고 이 제한은 고속 충돌 누락이나 직접 위치 변경을 막는 최종 안전장치다.
+
+바닥 충돌에 의존하지 않는 골문 안쪽 Trigger를 별도로 두고, 공 중심이 골라인을 넘어 실제 골문 폭·높이·깊이 안에 있을 때 한 번 득점한다. 골대 프레임 충돌은 득점하지 않으며 Trigger도 센서 LayerMask에서 제외한다. 득점 후에는 기존 Goal Pause와 전체 Reset 경로를 사용한다.
+
+경기 시간·Goal Pause·4v4 역할·팀 설정·이동·공 질량/damping·보상 수치·입력 `379`·Action은 모든 Stadium에서 같다. 공통 코드 기본값과 다섯 Prefab은 Controlled Kick `2000`, Strong Kick `5000`을 사용한다. Human·Neural·fallback·Rule이 같은 힘을 읽으며, 위험 Strong Kick을 중앙으로 돌리는 안전 보정에는 Controlled 값 `2000`이 적용된다.
+
+폭·골문 치수·모서리 경계를 `SoccerArenaGeometry`에서 읽어 자기 위치 관측 정규화, 목표 위치, 자기/상대 골문 궤적, Keeper 접근과 득점 판정을 맞춘다. Geometry 참조가 임시로 없을 때의 fallback도 Stadium 치수를 쓴다. AI 목표는 선수 반경 여유 `0.55m`를 두고 모서리 판 안쪽으로 제한한다. 보상·전술 거리 상수는 비례 확대하지 않는다. 데모 골대의 시야 가림은 Alpha `0.25` 표시 로직을 사용하며 Collider와 센서 인식은 유지한다.
+
+입력 shape가 같아도 경기 폭·골문·공 크기에 따른 기존 ONNX 정책 품질은 재평가가 필요하다. Build Settings와 팀별 학습 Scene은 모두 Stadium 경로를 사용한다.
 
 ## DefenderKeeper 보호
 
@@ -114,11 +155,26 @@ KickPlate가 복귀하기 전에는 새 Kick Branch를 mask한다. Rigidbody, Co
 - `-4m`까지는 일반 이동을 허용한다.
 - `-4m → 0m`에서 공격 방향 이동·속도를 선형으로 줄인다.
 - 하프라인 `0m`에서는 공격 방향 힘과 기존 속도를 제거한다.
-- 이미 하프라인을 넘었으면 즉시 Recovery 대상이다.
-- 상대 소유 또는 마지막 상대 터치, 자기 진영으로 향하는 위협 공, 공보다 지나치게 앞선 상황에서도 Recovery한다.
-- Recovery 목표는 시작 Goal 깊이이며 공의 Z 위치를 `±10m` 안에서 일부 추적한다.
+- 이미 하프라인을 넘었으면 즉시 `RecoverGoal` 대상이다.
+- 상대가 먼 지역에서 소유하거나 공보다 지나치게 앞선 경우 `RecoverGoal`로 시작 Goal 깊이에 복귀한다.
+- 상대 또는 중립 공이 자기 공격 기준 깊이 `-8m` 이하에 있거나 골문으로 빠르게 향하면 `EngageBall`로 전환해 공과 골문 사이를 적극 차단한다.
+- `RecoverGoal`의 Z 추적 폭은 `±14m`, `EngageBall`의 Z 추적 폭은 `±18m`다. Engage 목표는 시작 위치와 공 위치를 `72%` 비율로 보간하되 공격 깊이 `-6m`를 넘지 않는다.
+- 공이 골문 위험 깊이 `-48m` 이하에 있으면 공 위치까지 직접 들어간다. 목표 위치는 Stadium의 실제 반폭·Goal 깊이·둥근 모서리를 반영해 Clamp하므로 골라인 안의 공에도 접근할 수 있다.
 
 Neural, fallback, Rule 모두 최종 `ConstrainMovement`와 `ConstrainVelocity`를 통과한다. Rule은 별도로 긴급 `RecoverGoal` 상태를 사용하지만 공통 shield를 우회할 수 없다.
+
+## 공통 자책골 방지와 기본 선택
+
+모든 Controller의 명시적 Controlled/Strong Kick은 실제 공 접촉 직전에 `SoccerDefensiveClearanceRules`를 통과한다.
+
+- 자기 Goal plane `±62m`, 실제 반폭 약 `10.196m`와 공 여유 폭 `0.75m`를 향해 최대 `36m` 안에서 교차할 것으로 예상되는 Kick은 자책골 위험으로 본다.
+- 요청 방향만 보지 않고 현재 공 속도와 `Kick 힘 / 질량 × fixedDeltaTime`을 합친 예상 속도를 사용한다. 중앙 Controlled 보정 후에도 기존 골문 방향 속도가 더 크면 그 X 성분을 제거한 뒤 걷어낸다.
+- 골문 위험 지역은 공격 기준 깊이 `-48m` 이하, 좌우 약 `±14.196m`다. 이 지역에서 공격 성분이 `0.15` 이하인 옆·후방 Kick도 위험 행동으로 본다.
+- 위험 Kick은 공에서 필드 중앙 `(0, 0)`을 향하는 Controlled Kick으로 바꾼다. 골라인 안쪽 공도 같은 방향으로 중앙 패스·걷어내기가 가능하다.
+- 골라인 뒤라도 좁아진 골대 바깥쪽에 있는 공은 자책골 궤적으로 오판하지 않는다.
+- Strong Kick은 수비 진영의 전진 걷어내기, 동료가 있는 긴 패스 lane, 또는 Goal까지 `24m` 이내의 실제 슛 궤적일 때만 의미 있는 선택으로 분류한다.
+
+v2 ONNX가 없는 model fallback은 공에 닿자마자 Strong Kick을 반복하지 않는다. 기본은 공을 공격 방향 `10m`와 자기 lane `3m` 앞으로 운반하고, `7m` 안에서 압박받을 때 `5~28m` 동료에게 Controlled Pass를 선택한다. 골문 위험 지역에서는 중앙 Controlled Clearance, Goal까지 `24m` 안의 유효 궤적에서만 Strong Shot을 사용한다. Rule FSM도 골문 위험 지역에서는 중앙 Controlled Clearance를 사용하고, 슛 거리를 `22m`로 제한하며, 최대 `1.5초` 운반 뒤 열린 동료가 있으면 Pass를 선택한다.
 
 ## 공간과 포메이션
 
@@ -133,6 +189,7 @@ Neural, fallback, Rule 모두 최종 `ConstrainMovement`와 `ConstrainVelocity`�
 
 - 경기 시작은 AI 모드다.
 - 점수, 남은 시간, AI/Human 상태, 양 팀 전술과 경기 누적 보상을 표시한다.
+- Core Stadium만 전술·누적 보상 패널을 우측 중앙에서 우측 하단 `20px` 여백으로 옮긴다. 공유 UXML/USS와 기존 Scene의 우측 중앙 배치는 유지한다.
 - 좌측 하단에는 테두리 없는 중앙 정렬 조작 표를 표시한다.
 - 우측 상단의 중복 조작 안내는 사용하지 않는다.
 - AI Overview Camera는 `(0,82,-78)`, FOV `50`이다.
@@ -140,14 +197,22 @@ Neural, fallback, Rule 모두 최종 `ConstrainMovement`와 `ConstrainVelocity`�
 
 ## 계약 변경 조건
 
-다음 변경은 기존 v2 ONNX 호환성을 깨뜨릴 수 있다.
+다음 변경은 Tensor 계약을 깨므로 정책 계약 버전을 올리고 모든 Model을 교체해야 한다.
 
 - Observation 개수·순서·정규화
 - Ray 구성
 - Action Branch·값 의미
 - 역할·Agent 등록 순서
+
+다음 변경은 Tensor shape가 같아도 기존 정책의 행동 분포와 학습 목표를 바꾼다.
+
 - Decision Period·행동 반복
 - 이동·회전·Kick 물리
+- Goal·공 Geometry
+- Keeper shield, fallback과 Kick 안전 보정
+- Reward 값·판정·cap
 - 소유권 판정처럼 관측과 행동 문맥을 바꾸는 공통 규칙
 
-이 경우 한 팀에서만 수정하지 말고 계약 버전, Builder, 다섯 환경 Prefab, Trainer, 테스트, 모든 문서를 함께 갱신한다.
+두 범주 모두 한 팀에서만 수정하지 말고 Builder, 다섯 환경 Prefab, 테스트와 모든 문서를 함께 갱신한다. 두 번째 범주는 shape가 같으면 v2를 유지할 수 있지만 기존 Model을 재검증하고 보통 다시 학습해야 한다.
+
+2026-08-24 변경은 Ray 개수·순서와 Vector/Action shape를 바꾸지 않아 정책 계약 버전은 v2, 전체 입력은 `379`로 유지한다. 그러나 Goal·공 물리 크기, Human 가속, Keeper shield, Kick 안전 보정과 Reward 판정이 달라졌으므로 이전 v2 ONNX가 생기더라도 새 동작 품질을 보장하지 않는다. Base와 전술별 정책은 현재 공통 환경에서 다시 학습·평가해야 한다.

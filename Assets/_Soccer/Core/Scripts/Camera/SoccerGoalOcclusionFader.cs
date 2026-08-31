@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Serialization;
 
 namespace MachineLearning.Soccer
 {
@@ -12,10 +13,14 @@ namespace MachineLearning.Soccer
     [RequireComponent(typeof(Camera))]
     public sealed class SoccerGoalOcclusionFader : MonoBehaviour
     {
-        static readonly string[] BlueGoalNames = { "GoalBlue", "GoalNetBlue", "GoalNetBlueOuter" };
-        static readonly string[] PurpleGoalNames = { "GoalPurple", "GoalNetPurple", "GoalNetPurpleOuter" };
+        static readonly string[] RedGoalNames = { "GoalRed", "GoalNetRed", "GoalNetRedOuter" };
+        static readonly string[] NavyGoalNames = { "GoalNavy", "GoalNetNavy", "GoalNetNavyOuter" };
 
         [SerializeField] SoccerEnvController environment;
+        [FormerlySerializedAs("blueGoalRendererOverrides")]
+        [SerializeField] Renderer[] redGoalRendererOverrides = Array.Empty<Renderer>();
+        [FormerlySerializedAs("purpleGoalRendererOverrides")]
+        [SerializeField] Renderer[] navyGoalRendererOverrides = Array.Empty<Renderer>();
         [Range(0.05f, 0.95f)] [SerializeField] float occludedAlpha = 0.25f;
         [Min(0.1f)] [SerializeField] float fadeSpeed = 8f;
         [Min(0f)] [SerializeField] float boundsPadding = 0.4f;
@@ -23,18 +28,18 @@ namespace MachineLearning.Soccer
 
         readonly List<PlayerTarget> m_PlayerTargets = new();
         Camera m_Camera;
-        GoalFadeGroup m_BlueGoal;
-        GoalFadeGroup m_PurpleGoal;
+        GoalFadeGroup m_RedGoal;
+        GoalFadeGroup m_NavyGoal;
         bool m_Initialized;
 
         public SoccerEnvController Environment => environment;
         public float OccludedAlpha => occludedAlpha;
         public float FadeSpeed => fadeSpeed;
         public float BoundsPadding => boundsPadding;
-        public bool IsBlueGoalOccluding => m_BlueGoal?.IsOccluding ?? false;
-        public bool IsPurpleGoalOccluding => m_PurpleGoal?.IsOccluding ?? false;
-        public int BlueGoalRendererCount => m_BlueGoal?.RendererCount ?? 0;
-        public int PurpleGoalRendererCount => m_PurpleGoal?.RendererCount ?? 0;
+        public bool IsRedGoalOccluding => m_RedGoal?.IsOccluding ?? false;
+        public bool IsNavyGoalOccluding => m_NavyGoal?.IsOccluding ?? false;
+        public int RedGoalRendererCount => m_RedGoal?.RendererCount ?? 0;
+        public int NavyGoalRendererCount => m_NavyGoal?.RendererCount ?? 0;
 
         void Awake()
         {
@@ -44,8 +49,8 @@ namespace MachineLearning.Soccer
 
         void OnDisable()
         {
-            m_BlueGoal?.RestoreOriginals();
-            m_PurpleGoal?.RestoreOriginals();
+            m_RedGoal?.RestoreOriginals();
+            m_NavyGoal?.RestoreOriginals();
         }
 
         void OnDestroy()
@@ -75,8 +80,8 @@ namespace MachineLearning.Soccer
                 return;
             }
 
-            var blueOccluding = false;
-            var purpleOccluding = false;
+            var redOccluding = false;
+            var navyOccluding = false;
             var cameraPosition = m_Camera.transform.position;
             foreach (var playerTarget in m_PlayerTargets)
             {
@@ -93,24 +98,60 @@ namespace MachineLearning.Soccer
                 }
 
                 var ray = new Ray(cameraPosition, toTarget / targetDistance);
-                blueOccluding |= m_BlueGoal.IntersectsBeforeTarget(ray, targetDistance, boundsPadding);
-                purpleOccluding |= m_PurpleGoal.IntersectsBeforeTarget(ray, targetDistance, boundsPadding);
-                if (blueOccluding && purpleOccluding)
+                if (!redOccluding && IsInsideGoal(Team.Red, targetPosition))
+                {
+                    redOccluding = m_RedGoal.IntersectsBeforeTarget(ray, targetDistance, boundsPadding);
+                }
+
+                if (!navyOccluding && IsInsideGoal(Team.Navy, targetPosition))
+                {
+                    navyOccluding = m_NavyGoal.IntersectsBeforeTarget(ray, targetDistance, boundsPadding);
+                }
+
+                if (redOccluding && navyOccluding)
                 {
                     break;
                 }
             }
 
             var deltaTime = immediate ? float.PositiveInfinity : Time.unscaledDeltaTime;
-            m_BlueGoal.UpdateFade(blueOccluding, occludedAlpha, fadeSpeed, deltaTime);
-            m_PurpleGoal.UpdateFade(purpleOccluding, occludedAlpha, fadeSpeed, deltaTime);
+            m_RedGoal.UpdateFade(redOccluding, occludedAlpha, fadeSpeed, deltaTime);
+            m_NavyGoal.UpdateFade(navyOccluding, occludedAlpha, fadeSpeed, deltaTime);
+        }
+
+        bool IsInsideGoal(Team defendingTeam, Vector3 targetPosition)
+        {
+            var arena = environment != null ? environment.ArenaGeometry : null;
+            if (arena != null)
+            {
+                return arena.ContainsGoalInterior(defendingTeam, targetPosition);
+            }
+
+            var direction = defendingTeam == Team.Red ? -1f : 1f;
+            var depth = targetPosition.x * direction;
+            return depth >= SoccerArenaGeometry.StadiumHalfLength
+                && depth <= SoccerArenaGeometry.StadiumHalfLength + SoccerArenaGeometry.StadiumGoalDepth
+                && Mathf.Abs(targetPosition.z) <= SoccerArenaGeometry.StadiumGoalHalfWidth
+                && targetPosition.y >= 0f
+                && targetPosition.y <= SoccerArenaGeometry.StadiumGoalHeight;
+        }
+
+        public void ConfigureGoalRenderers(Renderer[] red, Renderer[] navy)
+        {
+            DisposeGroups();
+            redGoalRendererOverrides = red ?? Array.Empty<Renderer>();
+            navyGoalRendererOverrides = navy ?? Array.Empty<Renderer>();
+            if (Application.isPlaying)
+            {
+                InitializeIfNeeded();
+            }
         }
 
         bool InitializeIfNeeded()
         {
             if (m_Initialized)
             {
-                return m_BlueGoal != null && m_PurpleGoal != null;
+                return m_RedGoal != null && m_NavyGoal != null;
             }
 
             m_Camera ??= GetComponent<Camera>();
@@ -121,8 +162,12 @@ namespace MachineLearning.Soccer
             }
 
             var renderers = environment.GetComponentsInChildren<Renderer>(true);
-            m_BlueGoal = new GoalFadeGroup(FindGoalRenderers(renderers, "blueGoal", BlueGoalNames));
-            m_PurpleGoal = new GoalFadeGroup(FindGoalRenderers(renderers, "purpleGoal", PurpleGoalNames));
+            m_RedGoal = new GoalFadeGroup(redGoalRendererOverrides.Length > 0
+                ? redGoalRendererOverrides.Where(renderer => renderer != null).ToArray()
+                : FindGoalRenderers(renderers, "redGoal", RedGoalNames));
+            m_NavyGoal = new GoalFadeGroup(navyGoalRendererOverrides.Length > 0
+                ? navyGoalRendererOverrides.Where(renderer => renderer != null).ToArray()
+                : FindGoalRenderers(renderers, "navyGoal", NavyGoalNames));
             m_PlayerTargets.Clear();
             foreach (var item in environment.AgentsList)
             {
@@ -133,7 +178,7 @@ namespace MachineLearning.Soccer
             }
 
             m_Initialized = true;
-            return m_BlueGoal.RendererCount > 0 && m_PurpleGoal.RendererCount > 0;
+            return m_RedGoal.RendererCount > 0 && m_NavyGoal.RendererCount > 0;
         }
 
         bool IsVisibleOnScreen(Vector3 worldPosition)
@@ -158,10 +203,10 @@ namespace MachineLearning.Soccer
 
         void DisposeGroups()
         {
-            m_BlueGoal?.Dispose();
-            m_PurpleGoal?.Dispose();
-            m_BlueGoal = null;
-            m_PurpleGoal = null;
+            m_RedGoal?.Dispose();
+            m_NavyGoal?.Dispose();
+            m_RedGoal = null;
+            m_NavyGoal = null;
             m_PlayerTargets.Clear();
             m_Initialized = false;
         }
@@ -211,15 +256,7 @@ namespace MachineLearning.Soccer
                 var maximumHitDistance = Mathf.Max(0f, targetDistance - 0.15f);
                 foreach (var state in m_Renderers)
                 {
-                    var renderer = state.Renderer;
-                    if (renderer == null || !renderer.enabled || !renderer.gameObject.activeInHierarchy)
-                    {
-                        continue;
-                    }
-
-                    var bounds = renderer.bounds;
-                    bounds.Expand(padding * 2f);
-                    if (bounds.IntersectRay(ray, out var hitDistance) && hitDistance < maximumHitDistance)
+                    if (state.IntersectsBeforeTarget(ray, maximumHitDistance, padding))
                     {
                         return true;
                     }
@@ -271,6 +308,7 @@ namespace MachineLearning.Soccer
         {
             readonly Material[] m_OriginalMaterials;
             readonly ShadowCastingMode m_OriginalShadowMode;
+            readonly Collider[] m_Colliders;
             Material[] m_TransparentMaterials;
             Color[] m_OriginalColors;
             bool m_UsingTransparentMaterials;
@@ -280,9 +318,45 @@ namespace MachineLearning.Soccer
                 Renderer = renderer;
                 m_OriginalMaterials = renderer.sharedMaterials;
                 m_OriginalShadowMode = renderer.shadowCastingMode;
+                m_Colliders = renderer.GetComponentsInChildren<Collider>(true);
             }
 
             public Renderer Renderer { get; }
+
+            public bool IntersectsBeforeTarget(Ray ray, float maximumHitDistance, float fallbackPadding)
+            {
+                if (Renderer == null || !Renderer.enabled || !Renderer.gameObject.activeInHierarchy)
+                {
+                    return false;
+                }
+
+                var hasActiveCollider = false;
+                foreach (var collider in m_Colliders)
+                {
+                    if (collider == null || !collider.enabled || !collider.gameObject.activeInHierarchy)
+                    {
+                        continue;
+                    }
+
+                    hasActiveCollider = true;
+                    if (collider.Raycast(ray, out var hit, maximumHitDistance)
+                        && hit.distance < maximumHitDistance)
+                    {
+                        return true;
+                    }
+                }
+
+                if (hasActiveCollider)
+                {
+                    return false;
+                }
+
+                // Compatibility fallback for an authored goal without colliders.
+                var bounds = Renderer.bounds;
+                bounds.Expand(fallbackPadding * 2f);
+                return bounds.IntersectRay(ray, out var boundsHitDistance)
+                    && boundsHitDistance < maximumHitDistance;
+            }
 
             public void ApplyTransparentAlpha(float alpha)
             {

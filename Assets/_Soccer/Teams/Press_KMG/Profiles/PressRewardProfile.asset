@@ -16,6 +16,7 @@ MonoBehaviour:
   matchResult: 0.5
   attackSuccess: 0.026
   passSuccess: 0.005
+  passIndividual: 0.005
   defenseSuccess: 0.03
   pressSuccess: 0.05
   progressivePass: 0.012
@@ -23,10 +24,18 @@ MonoBehaviour:
   coordinatedPress: 0.03
   dribbleGroup: 0.005
   dribbleIndividual: 0.01
+  controlledCarryGroup: 0.0025
+  controlledCarryIndividual: 0.005
   formationChangeScale: 0.006
   teammateCrowdingPenalty: 0.0025
   teammateCrowdingPenaltyLimitPerMatch: 0.25
+  wastefulStrongKickPenalty: 0.003
+  unsafeOwnGoalKickPenalty: 0.02
+  wastefulStrongKickPenaltyLimitPerPossession: 0.015
+  behaviorPenaltyLimitPerMatch: 0.1
   passRewardLimitPerPossession: 0.025
+  passIndividualRewardLimitPerPossession: 0.02
+  controlledCarryRewardLimitPerPossession: 0.03
   progressivePassLimitPerPossession: 0.03
   combinationRewardLimitPerPossession: 0.04
   formationRewardLimitPerPossession: 0.008

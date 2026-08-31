@@ -2,7 +2,7 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements">
     <ui:Style src="SoccerHud.uss" />
     <ui:VisualElement name="hud-root" class="hud-root">
-        <ui:Label name="score-label" text="BLUE  0  :  0  PURPLE" class="hud-box score-box" />
+        <ui:Label name="score-label" text="RED  0  :  0  NAVY" class="hud-box score-box" />
         <ui:Label name="time-label" text="05:00" class="hud-box time-box" />
         <ui:VisualElement class="hud-box mode-box">
             <ui:VisualElement class="mode-row">
@@ -12,12 +12,12 @@
         </ui:VisualElement>
         <ui:VisualElement class="hud-box tactic-reward-box">
             <ui:Label text="현재 전술" class="panel-title" />
-            <ui:Label name="blue-tactic-label" text="BLUE  BASE · 모델 없음" class="blue-value" />
-            <ui:Label name="purple-tactic-label" text="PURPLE  BASE · 모델 없음" class="purple-value" />
+            <ui:Label name="red-tactic-label" text="RED  BASE · 모델 없음" class="red-value" />
+            <ui:Label name="navy-tactic-label" text="NAVY  BASE · 모델 없음" class="navy-value" />
             <ui:VisualElement class="panel-divider" />
             <ui:Label text="경기 누적 보상" class="panel-title" />
-            <ui:Label name="blue-reward-label" text="BLUE   0.000" class="reward-value blue-value" />
-            <ui:Label name="purple-reward-label" text="PURPLE 0.000" class="reward-value purple-value" />
+            <ui:Label name="red-reward-label" text="RED   0.000" class="reward-value red-value" />
+            <ui:Label name="navy-reward-label" text="NAVY 0.000" class="reward-value navy-value" />
         </ui:VisualElement>
         <ui:Label name="result-label" text="" class="result-label" />
         <ui:VisualElement name="controls-table" class="controls-box">

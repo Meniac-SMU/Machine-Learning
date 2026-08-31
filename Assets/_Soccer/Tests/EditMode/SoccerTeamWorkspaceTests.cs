@@ -1,10 +1,12 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using MachineLearning.Soccer.Editor;
 using MachineLearning.Soccer.Teams.Rule;
 using NUnit.Framework;
 using Unity.MLAgents.Policies;
+using Unity.MLAgents.Sensors;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -23,30 +25,42 @@ namespace MachineLearning.Soccer.Tests
 
         static readonly string[] WorkspacePrefabPaths =
         {
-            Root + "/Core/Prefabs/SoccerEnvironment_Base.prefab",
-            AttackRoot + "/Prefabs/SoccerEnvironment_Attack.prefab",
-            DefenseRoot + "/Prefabs/SoccerEnvironment_Defense.prefab",
-            PressRoot + "/Prefabs/SoccerEnvironment_Press.prefab",
-            RuleRoot + "/Prefabs/SoccerEnvironment_Rule.prefab"
+            Root + "/Core/Prefabs/StadiumEnvironment_Base.prefab",
+            AttackRoot + "/Prefabs/StadiumEnvironment_Attack.prefab",
+            DefenseRoot + "/Prefabs/StadiumEnvironment_Defense.prefab",
+            PressRoot + "/Prefabs/StadiumEnvironment_Press.prefab",
+            RuleRoot + "/Prefabs/StadiumEnvironment_Rule.prefab"
         };
 
-        static readonly string[] CommonArenaPrefabPaths = new[]
-            { Root + "/Prefabs/SoccerField4v4.prefab" }.Concat(WorkspacePrefabPaths).ToArray();
+        static readonly string[] CommonArenaPrefabPaths = WorkspacePrefabPaths;
+
+        static readonly string[] WorkspaceScenePaths =
+        {
+            Root + "/Core/Scenes/Stadium4v4_Base.unity",
+            AttackRoot + "/Scenes/Stadium4v4_Attack.unity",
+            DefenseRoot + "/Scenes/Stadium4v4_Defense.unity",
+            PressRoot + "/Scenes/Stadium4v4_Press.unity",
+            RuleRoot + "/Scenes/Stadium4v4_Rule.unity"
+        };
 
         [Test]
         public void GeneratedPrefabUsesFourPlayerRolesAndV2PolicyContract()
         {
-            Assert.AreEqual(1500f, AgentSoccer.ControlledKickPower);
-            Assert.AreEqual(4000f, AgentSoccer.StrongKickPower);
+            Assert.AreEqual(2000f, AgentSoccer.ControlledKickPower);
+            Assert.AreEqual(5000f, AgentSoccer.StrongKickPower);
             foreach (var prefabPath in WorkspacePrefabPaths)
             {
                 var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
                 Assert.IsNotNull(prefab, prefabPath);
                 var setup = prefab.GetComponent<SoccerMatchSetup>();
                 Assert.IsNotNull(setup, prefabPath);
+                var environment = prefab.GetComponent<SoccerEnvController>();
+                Assert.AreEqual(2000f, environment.ControlledKickPower, 0.000001f, prefabPath);
+                Assert.AreEqual(5000f, environment.StrongKickPower, 0.000001f, prefabPath);
+                Assert.IsNotNull(environment.ArenaGeometry, prefabPath);
                 var agents = prefab.GetComponentsInChildren<AgentSoccer>(true);
                 Assert.AreEqual(8, agents.Length, prefabPath);
-                foreach (var team in new[] { Team.Blue, Team.Purple })
+                foreach (var team in new[] { Team.Red, Team.Navy })
                 {
                     var teamAgents = agents.Where(agent => agent.Team == team).ToArray();
                     Assert.AreEqual(1, teamAgents.Count(agent => agent.PositionRole == AgentSoccer.Position.DefenderKeeper));
@@ -68,16 +82,108 @@ namespace MachineLearning.Soccer.Tests
                         $"비학습 팀의 Trainer 사전 등록 차단 필요: {prefabPath}/{agent.name}");
                 }
 
-                var goalRenderers = prefab.GetComponentsInChildren<Renderer>(true)
-                    .Where(renderer => renderer.gameObject.name is "GoalBlue" or "GoalNetBlue" or "GoalNetBlueOuter"
-                        or "GoalPurple" or "GoalNetPurple" or "GoalNetPurpleOuter")
+                var goalRenderers = prefab.GetComponentsInChildren<MeshRenderer>(true)
+                    .Where(renderer => renderer.name.StartsWith("SM_S_Gate", StringComparison.Ordinal))
+                    .OrderBy(renderer => renderer.bounds.center.x)
                     .ToArray();
-                Assert.AreEqual(6, goalRenderers.Length, prefabPath);
-                Assert.IsTrue(goalRenderers.SelectMany(renderer => renderer.sharedMaterials)
-                    .All(material => material != null && material.name.StartsWith("Goal", StringComparison.Ordinal)));
+                Assert.AreEqual(2, goalRenderers.Length, prefabPath);
+                Assert.IsTrue(goalRenderers[0].CompareTag("redGoal"));
+                Assert.IsTrue(goalRenderers[1].CompareTag("navyGoal"));
+                Assert.IsTrue(goalRenderers.All(renderer => renderer.sharedMaterial != null
+                    && renderer.sharedMaterial.name.StartsWith("Stadium", StringComparison.Ordinal)));
                 Assert.IsTrue(goalRenderers.All(renderer =>
                     (GameObjectUtility.GetStaticEditorFlags(renderer.gameObject) & StaticEditorFlags.BatchingStatic) == 0));
             }
+        }
+
+        [Test]
+        public void RedAndNavyVisualIdentityIsConsistentAcrossEveryActiveStadiumAndHud()
+        {
+            Assert.AreEqual(0, (int)Team.Red, "기존 TeamId 0 계약은 Red가 유지해야 함");
+            Assert.AreEqual(1, (int)Team.Navy, "기존 TeamId 1 계약은 Navy가 유지해야 함");
+
+            const string redPlayerPath = Root + "/Materials/AgentRed.mat";
+            const string navyPlayerPath = Root + "/Materials/AgentNavy.mat";
+            const string redKickPlatePath = Root + "/Materials/KickPlateRed.mat";
+            const string navyKickPlatePath = Root + "/Materials/KickPlateNavy.mat";
+            const string redGoalPath = Root + "/Core/Materials/StadiumRedGoal.mat";
+            const string navyGoalPath = Root + "/Core/Materials/StadiumNavyGoal.mat";
+            AssertMaterial(redPlayerPath, "AgentRed", SoccerTeamVisuals.RedPlayerColor);
+            AssertMaterial(navyPlayerPath, "AgentNavy", SoccerTeamVisuals.NavyPlayerColor);
+            AssertMaterial(redKickPlatePath, "KickPlateRed", SoccerTeamVisuals.RedKickPlateColor);
+            AssertMaterial(navyKickPlatePath, "KickPlateNavy", SoccerTeamVisuals.NavyKickPlateColor);
+            AssertMaterial(redGoalPath, "StadiumRedGoal", SoccerTeamVisuals.RedGoalColor);
+            AssertMaterial(navyGoalPath, "StadiumNavyGoal", SoccerTeamVisuals.NavyGoalColor);
+
+            foreach (var prefabPath in WorkspacePrefabPaths)
+            {
+                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+                Assert.IsNotNull(prefab, prefabPath);
+                Assert.IsFalse(prefab.GetComponentsInChildren<Transform>(true).Any(item =>
+                    item.name.Contains("Blue", StringComparison.Ordinal)
+                    || item.name.Contains("Purple", StringComparison.Ordinal)), prefabPath);
+
+                var ball = prefab.GetComponentsInChildren<SoccerBallController>(true).Single();
+                Assert.AreEqual(SoccerTeamVisuals.RedGoalTag, ball.redGoalTag, prefabPath);
+                Assert.AreEqual(SoccerTeamVisuals.NavyGoalTag, ball.navyGoalTag, prefabPath);
+
+                foreach (var agent in prefab.GetComponentsInChildren<AgentSoccer>(true))
+                {
+                    var isRed = agent.Team == Team.Red;
+                    var teamName = isRed ? "Red" : "Navy";
+                    var playerPath = isRed ? redPlayerPath : navyPlayerPath;
+                    var kickPlatePath = isRed ? redKickPlatePath : navyKickPlatePath;
+                    Assert.IsTrue(agent.name.StartsWith(teamName + "Player", StringComparison.Ordinal),
+                        $"{prefabPath}/{agent.name}");
+                    Assert.IsTrue(agent.CompareTag(SoccerTeamVisuals.AgentTag(agent.Team)),
+                        $"{prefabPath}/{agent.name}");
+
+                    var body = agent.GetComponentsInChildren<Renderer>(true).Single(renderer =>
+                        renderer.name == "AgentCube_" + teamName);
+                    Assert.AreEqual(playerPath, AssetDatabase.GetAssetPath(body.sharedMaterial),
+                        $"{prefabPath}/{agent.name}");
+                    var plate = agent.GetComponentInChildren<SoccerKickPlate>(true);
+                    Assert.IsNotNull(plate, $"{prefabPath}/{agent.name}");
+                    Assert.IsTrue(plate.GetComponentsInChildren<Renderer>(true).All(renderer =>
+                        AssetDatabase.GetAssetPath(renderer.sharedMaterial) == kickPlatePath),
+                        $"{prefabPath}/{agent.name}");
+                    Assert.IsTrue(plate.GetComponentsInChildren<Transform>(true).All(item =>
+                        item.CompareTag(SoccerTeamVisuals.AgentTag(agent.Team))),
+                        $"{prefabPath}/{agent.name}");
+
+                    var expectedTags = isRed
+                        ? new[] { "ball", "redGoal", "navyGoal", "wall", "redAgent", "navyAgent" }
+                        : new[] { "ball", "navyGoal", "redGoal", "wall", "navyAgent", "redAgent" };
+                    foreach (var sensor in agent.GetComponentsInChildren<RayPerceptionSensorComponent3D>(true))
+                    {
+                        StringAssert.StartsWith(teamName + "RayPerceptionSensor", sensor.SensorName,
+                            $"{prefabPath}/{agent.name}");
+                        CollectionAssert.AreEqual(expectedTags, sensor.DetectableTags,
+                            $"{prefabPath}/{agent.name}/{sensor.SensorName}");
+                    }
+                }
+
+                var goals = prefab.GetComponentsInChildren<MeshRenderer>(true)
+                    .Where(renderer => renderer.name.StartsWith("SM_S_Gate", StringComparison.Ordinal))
+                    .OrderBy(renderer => renderer.bounds.center.x)
+                    .ToArray();
+                Assert.AreEqual(redGoalPath, AssetDatabase.GetAssetPath(goals[0].sharedMaterial), prefabPath);
+                Assert.AreEqual(navyGoalPath, AssetDatabase.GetAssetPath(goals[1].sharedMaterial), prefabPath);
+            }
+
+            var uxmlPath = Root + "/UI/SoccerHud.uxml";
+            var uxmlText = File.ReadAllText(uxmlPath);
+            StringAssert.DoesNotContain("BLUE", uxmlText);
+            StringAssert.DoesNotContain("PURPLE", uxmlText);
+            StringAssert.Contains("red-tactic-label", uxmlText);
+            StringAssert.Contains("navy-tactic-label", uxmlText);
+            StringAssert.Contains("red-reward-label", uxmlText);
+            StringAssert.Contains("navy-reward-label", uxmlText);
+            var styleText = File.ReadAllText(Root + "/UI/SoccerHud.uss");
+            StringAssert.Contains(".red-value", styleText);
+            StringAssert.Contains(".navy-value", styleText);
+            StringAssert.DoesNotContain(".blue-value", styleText);
+            StringAssert.DoesNotContain(".purple-value", styleText);
         }
 
         [Test]
@@ -106,10 +212,82 @@ namespace MachineLearning.Soccer.Tests
                     RuleRoot + "/Prefabs"
                 })
                 .Select(AssetDatabase.GUIDToAssetPath)
-                .Where(path => path.Contains("SoccerEnvironment_", StringComparison.Ordinal))
+                .Where(path => Path.GetFileName(path).StartsWith("StadiumEnvironment_", StringComparison.Ordinal))
                 .OrderBy(path => path, StringComparer.Ordinal)
                 .ToArray();
             CollectionAssert.AreEquivalent(WorkspacePrefabPaths, discoveredWorkspacePrefabs);
+        }
+
+        [Test]
+        public void AllWorkspacesUseTheCanonicalStadiumGeometryBallWallsAndSensorContract()
+        {
+            foreach (var prefabPath in CommonArenaPrefabPaths)
+            {
+                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+                Assert.IsNotNull(prefab, prefabPath);
+
+                var environment = prefab.GetComponent<SoccerEnvController>();
+                var arena = environment.ArenaGeometry;
+                Assert.IsNotNull(arena, prefabPath);
+                Assert.AreEqual(SoccerArenaGeometry.StadiumHalfLength, arena.HalfLength, 0.001f, prefabPath);
+                Assert.AreEqual(SoccerArenaGeometry.StadiumHalfWidth, arena.HalfWidth, 0.01f, prefabPath);
+                Assert.AreEqual(SoccerArenaGeometry.StadiumGoalHalfWidth, arena.GoalHalfWidth, 0.01f, prefabPath);
+                Assert.AreEqual(2f, arena.GoalModelWidthMultiplier, 0.001f, prefabPath);
+
+                var goals = prefab.GetComponentsInChildren<MeshRenderer>(true)
+                    .Where(renderer => renderer.name.StartsWith("SM_S_Gate", StringComparison.Ordinal))
+                    .ToArray();
+                Assert.AreEqual(2, goals.Length, prefabPath);
+
+                var ball = prefab.GetComponentsInChildren<SoccerBallController>(true).Single();
+                Assert.AreEqual(0.012705f, ball.transform.localScale.x, 0.000001f, prefabPath);
+                Assert.AreEqual(0.012705f, ball.transform.localScale.y, 0.000001f, prefabPath);
+                Assert.AreEqual(0.012705f, ball.transform.localScale.z, 0.000001f, prefabPath);
+                Assert.IsTrue(ball.EnforcesStadiumPlanarMotion, prefabPath);
+                var ballCollider = ball.GetComponent<SphereCollider>();
+                Assert.IsNotNull(ballCollider, prefabPath);
+                var ballRadius = ballCollider.radius * ball.transform.lossyScale.x;
+                Assert.AreEqual(ballRadius, ball.LockedCenterHeight, 0.001f, prefabPath);
+                Assert.AreEqual(ballRadius, ball.transform.localPosition.y, 0.001f, prefabPath);
+                var ballBody = ball.GetComponent<Rigidbody>();
+                Assert.AreEqual(3f, ballBody.mass, 0.000001f, prefabPath);
+                Assert.AreEqual(1f, ballBody.linearDamping, 0.000001f, prefabPath);
+                Assert.AreEqual(1f, ballBody.angularDamping, 0.000001f, prefabPath);
+                Assert.IsTrue((ballBody.constraints & RigidbodyConstraints.FreezePositionY) != 0, prefabPath);
+                var walls = prefab.GetComponentsInChildren<BoxCollider>(true)
+                    .Where(collider => collider.CompareTag("wall"))
+                    .ToArray();
+                Assert.AreEqual(18, walls.Length, prefabPath);
+                Assert.IsTrue(walls.All(wall => !wall.isTrigger), prefabPath);
+
+                foreach (var agent in prefab.GetComponentsInChildren<AgentSoccer>(true))
+                {
+                    var sensors = agent.GetComponentsInChildren<RayPerceptionSensorComponent3D>(true);
+                    Assert.AreEqual(2, sensors.Length,
+                        $"전방 1개와 후방 1개만 허용: {prefabPath}/{agent.name}");
+                    var expectedPrefix = agent.Team == Team.Red ? "Red" : "Navy";
+                    var rear = sensors.Single(sensor =>
+                        sensor.SensorName == $"{expectedPrefix}RayPerceptionSensorReverse");
+                    Assert.AreEqual(1, rear.RaysPerDirection);
+                    Assert.AreEqual(45f, rear.MaxRayDegrees, 0.000001f);
+                    Assert.AreEqual(0.5f, rear.SphereCastRadius, 0.000001f);
+                    Assert.AreEqual(80f, rear.RayLength, 0.000001f);
+                    Assert.AreEqual(3, rear.ObservationStacks);
+                    Assert.Less(Mathf.Abs(Mathf.DeltaAngle(rear.transform.localEulerAngles.y, 180f)), 0.1f);
+                }
+            }
+        }
+
+        [Test]
+        public void HumanForwardAccelerationMatchesTheAiStrikerAndKeepsTheSameTopSpeed()
+        {
+            const float fixedStepSeconds = 0.02f;
+            var humanVelocityChangePerStep = SoccerSettings.DefaultHumanAcceleration * fixedStepSeconds;
+            var aiStrikerVelocityChangePerStep = SoccerSettings.DefaultAgentRunSpeed
+                * AgentSoccer.StrikerForwardSpeedMultiplier;
+
+            Assert.AreEqual(aiStrikerVelocityChangePerStep, humanVelocityChangePerStep, 0.000001f);
+            Assert.AreEqual(9f, SoccerSettings.DefaultMaximumPlanarSpeed, 0.000001f);
         }
 
         [Test]
@@ -155,12 +333,25 @@ namespace MachineLearning.Soccer.Tests
             Assert.AreEqual(WorkspacePrefabPaths.Length, guids.Distinct().Count());
         }
 
-        [TestCase(Root + "/Scenes/Soccer4v4.unity", Root + "/Core/Prefabs/SoccerEnvironment_Base.prefab")]
-        [TestCase(Root + "/Core/Scenes/Soccer4v4_Base.unity", Root + "/Core/Prefabs/SoccerEnvironment_Base.prefab")]
-        [TestCase(AttackRoot + "/Scenes/Soccer4v4_Attack.unity", AttackRoot + "/Prefabs/SoccerEnvironment_Attack.prefab")]
-        [TestCase(DefenseRoot + "/Scenes/Soccer4v4_Defense.unity", DefenseRoot + "/Prefabs/SoccerEnvironment_Defense.prefab")]
-        [TestCase(PressRoot + "/Scenes/Soccer4v4_Press.unity", PressRoot + "/Prefabs/SoccerEnvironment_Press.prefab")]
-        [TestCase(RuleRoot + "/Scenes/Soccer4v4_Rule.unity", RuleRoot + "/Prefabs/SoccerEnvironment_Rule.prefab")]
+        [Test]
+        public void BuildSettingsAndNewSceneDefaultUseOnlyTheFiveStadiumWorkspaces()
+        {
+            var soccerScenes = EditorBuildSettings.scenes
+                .Where(scene => scene.enabled && scene.path.StartsWith(Root + "/", StringComparison.Ordinal))
+                .Select(scene => scene.path)
+                .ToArray();
+            CollectionAssert.AreEqual(WorkspaceScenePaths, soccerScenes);
+            var projectSettings = File.ReadAllText("ProjectSettings/ProjectSettings.asset");
+            StringAssert.Contains(
+                "templateDefaultScene: Assets/_Soccer/Core/Scenes/Stadium4v4_Base.unity",
+                projectSettings);
+        }
+
+        [TestCase(Root + "/Core/Scenes/Stadium4v4_Base.unity", Root + "/Core/Prefabs/StadiumEnvironment_Base.prefab")]
+        [TestCase(AttackRoot + "/Scenes/Stadium4v4_Attack.unity", AttackRoot + "/Prefabs/StadiumEnvironment_Attack.prefab")]
+        [TestCase(DefenseRoot + "/Scenes/Stadium4v4_Defense.unity", DefenseRoot + "/Prefabs/StadiumEnvironment_Defense.prefab")]
+        [TestCase(PressRoot + "/Scenes/Stadium4v4_Press.unity", PressRoot + "/Prefabs/StadiumEnvironment_Press.prefab")]
+        [TestCase(RuleRoot + "/Scenes/Stadium4v4_Rule.unity", RuleRoot + "/Prefabs/StadiumEnvironment_Rule.prefab")]
         public void SceneUsesItsOwnEnvironmentPrefabAndVisibleHud(string scenePath, string expectedPrefabPath)
         {
             var scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
@@ -181,6 +372,9 @@ namespace MachineLearning.Soccer.Tests
                 .Single();
             Assert.AreEqual(SoccerSettings.DefaultHumanAcceleration, settings.humanAcceleration);
             Assert.AreEqual(SoccerSettings.DefaultHumanDeceleration, settings.humanDeceleration);
+            Assert.AreEqual(SoccerSettings.DefaultAgentRunSpeed, settings.agentRunSpeed);
+            Assert.AreEqual(SoccerSettings.DefaultMaximumPlanarSpeed, settings.maximumPlanarSpeed);
+            Assert.AreEqual(SoccerSettings.DefaultRotationSpeed, settings.rotationSpeed);
 
             var mainCamera = scene.GetRootGameObjects()
                 .SelectMany(root => root.GetComponentsInChildren<Camera>(true))
@@ -246,11 +440,33 @@ namespace MachineLearning.Soccer.Tests
             Assert.LessOrEqual(baseProfile.shapingRewardLimitPerMatch, 0.5f);
             foreach (var profile in new[] { baseProfile, attack, defense, press, rule })
             {
+                Assert.AreEqual(0.005f, profile.passSuccess, 0.000001f);
+                Assert.AreEqual(0.005f, profile.passIndividual, 0.000001f);
+                Assert.AreEqual(0.0025f, profile.controlledCarryGroup, 0.000001f);
+                Assert.AreEqual(0.005f, profile.controlledCarryIndividual, 0.000001f);
+                Assert.AreEqual(0.003f, profile.wastefulStrongKickPenalty, 0.000001f);
+                Assert.AreEqual(0.02f, profile.unsafeOwnGoalKickPenalty, 0.000001f);
+                Assert.AreEqual(0.015f, profile.wastefulStrongKickPenaltyLimitPerPossession, 0.000001f);
+                Assert.AreEqual(0.1f, profile.behaviorPenaltyLimitPerMatch, 0.000001f);
+                Assert.AreEqual(0.02f, profile.passIndividualRewardLimitPerPossession, 0.000001f);
+                Assert.AreEqual(0.03f, profile.controlledCarryRewardLimitPerPossession, 0.000001f);
                 Assert.AreEqual(0.0025f, profile.teammateCrowdingPenalty, 0.000001f);
                 Assert.AreEqual(0.25f, profile.teammateCrowdingPenaltyLimitPerMatch, 0.000001f);
                 Assert.AreEqual(
                     profile.teammateCrowdingPenalty,
                     profile.GetGroupReward(SoccerRewardKind.TeammateCrowding),
+                    0.000001f);
+                Assert.AreEqual(
+                    profile.passIndividual,
+                    profile.GetIndividualReward(SoccerRewardKind.PassIndividual),
+                    0.000001f);
+                Assert.AreEqual(
+                    profile.controlledCarryGroup,
+                    profile.GetGroupReward(SoccerRewardKind.ControlledCarry),
+                    0.000001f);
+                Assert.AreEqual(
+                    profile.controlledCarryIndividual,
+                    profile.GetIndividualReward(SoccerRewardKind.ControlledCarry),
                     0.000001f);
             }
 
@@ -262,11 +478,11 @@ namespace MachineLearning.Soccer.Tests
         [Test]
         public void TeammateCrowdingUsesWorstPairWithLinearThreeToOneMeterSeverity()
         {
-            var root = PrefabUtility.LoadPrefabContents(Root + "/Core/Prefabs/SoccerEnvironment_Base.prefab");
+            var root = PrefabUtility.LoadPrefabContents(Root + "/Core/Prefabs/StadiumEnvironment_Base.prefab");
             try
             {
                 var agents = root.GetComponentsInChildren<AgentSoccer>(true)
-                    .Where(agent => agent.Team == Team.Blue)
+                    .Where(agent => agent.Team == Team.Red)
                     .ToArray();
                 Assert.AreEqual(4, agents.Length);
 
@@ -296,7 +512,7 @@ namespace MachineLearning.Soccer.Tests
         [Test]
         public void TeammateCrowdingUsesIndependentPerTeamMatchCapsAndResetMatchClearsThem()
         {
-            var root = PrefabUtility.LoadPrefabContents(Root + "/Core/Prefabs/SoccerEnvironment_Base.prefab");
+            var root = PrefabUtility.LoadPrefabContents(Root + "/Core/Prefabs/StadiumEnvironment_Base.prefab");
             var profile = AssetDatabase.LoadAssetAtPath<SoccerRewardProfile>(
                 Root + "/Core/Profiles/BaseRewardProfile.asset");
             var originalLimit = profile.teammateCrowdingPenaltyLimitPerMatch;
@@ -313,23 +529,23 @@ namespace MachineLearning.Soccer.Tests
                 rewardEngine.Configure(environment, matchSetup);
                 profile.teammateCrowdingPenaltyLimitPerMatch = 0.005f;
 
-                var blueAgents = root.GetComponentsInChildren<AgentSoccer>(true)
-                    .Where(agent => agent.Team == Team.Blue)
+                var redAgents = root.GetComponentsInChildren<AgentSoccer>(true)
+                    .Where(agent => agent.Team == Team.Red)
                     .ToArray();
-                var purpleAgents = root.GetComponentsInChildren<AgentSoccer>(true)
-                    .Where(agent => agent.Team == Team.Purple)
+                var navyAgents = root.GetComponentsInChildren<AgentSoccer>(true)
+                    .Where(agent => agent.Team == Team.Navy)
                     .ToArray();
-                Assert.AreEqual(4, blueAgents.Length);
-                Assert.AreEqual(4, purpleAgents.Length);
+                Assert.AreEqual(4, redAgents.Length);
+                Assert.AreEqual(4, navyAgents.Length);
 
-                blueAgents[0].transform.position = new Vector3(-20f, 0.5f, -20f);
-                blueAgents[1].transform.position = blueAgents[0].transform.position;
-                blueAgents[2].transform.position = new Vector3(0f, 0.5f, -20f);
-                blueAgents[3].transform.position = new Vector3(20f, 0.5f, -20f);
-                purpleAgents[0].transform.position = new Vector3(-20f, 0.5f, 20f);
-                purpleAgents[1].transform.position = purpleAgents[0].transform.position + Vector3.right * 2f;
-                purpleAgents[2].transform.position = new Vector3(0f, 0.5f, 20f);
-                purpleAgents[3].transform.position = new Vector3(20f, 0.5f, 20f);
+                redAgents[0].transform.position = new Vector3(-20f, 0.5f, -20f);
+                redAgents[1].transform.position = redAgents[0].transform.position;
+                redAgents[2].transform.position = new Vector3(0f, 0.5f, -20f);
+                redAgents[3].transform.position = new Vector3(20f, 0.5f, -20f);
+                navyAgents[0].transform.position = new Vector3(-20f, 0.5f, 20f);
+                navyAgents[1].transform.position = navyAgents[0].transform.position + Vector3.right * 2f;
+                navyAgents[2].transform.position = new Vector3(0f, 0.5f, 20f);
+                navyAgents[3].transform.position = new Vector3(20f, 0.5f, 20f);
 
                 var flags = BindingFlags.Instance | BindingFlags.NonPublic;
                 var refreshBuffers = typeof(SoccerRewardEngine).GetMethod("RefreshTeamAgentBuffers", flags);
@@ -343,13 +559,13 @@ namespace MachineLearning.Soccer.Tests
                     evaluateCrowding.Invoke(rewardEngine, null);
                 }
 
-                Assert.AreEqual(-0.005f, rewardEngine.GetCumulativeReward(Team.Blue), 0.000001f);
-                Assert.AreEqual(-0.005f, rewardEngine.GetCumulativeReward(Team.Purple), 0.000001f);
+                Assert.AreEqual(-0.005f, rewardEngine.GetCumulativeReward(Team.Red), 0.000001f);
+                Assert.AreEqual(-0.005f, rewardEngine.GetCumulativeReward(Team.Navy), 0.000001f);
 
                 rewardEngine.ResetMatch();
                 evaluateCrowding.Invoke(rewardEngine, null);
-                Assert.AreEqual(-0.0025f, rewardEngine.GetCumulativeReward(Team.Blue), 0.000001f);
-                Assert.AreEqual(-0.00125f, rewardEngine.GetCumulativeReward(Team.Purple), 0.000001f);
+                Assert.AreEqual(-0.0025f, rewardEngine.GetCumulativeReward(Team.Red), 0.000001f);
+                Assert.AreEqual(-0.00125f, rewardEngine.GetCumulativeReward(Team.Navy), 0.000001f);
             }
             finally
             {
@@ -359,9 +575,82 @@ namespace MachineLearning.Soccer.Tests
         }
 
         [Test]
+        public void ConfirmedPassRewardsTheTeamAndPasserWithIndependentPossessionCaps()
+        {
+            var root = PrefabUtility.LoadPrefabContents(Root + "/Core/Prefabs/StadiumEnvironment_Base.prefab");
+            try
+            {
+                var environment = root.GetComponent<SoccerEnvController>();
+                var matchSetup = root.GetComponent<SoccerMatchSetup>();
+                var rewardEngine = root.GetComponent<SoccerRewardEngine>();
+                matchSetup.ApplyDefinitions();
+                rewardEngine.Configure(environment, matchSetup);
+                rewardEngine.ResetPossession();
+                rewardEngine.ResetMatch();
+
+                var redAgents = root.GetComponentsInChildren<AgentSoccer>(true)
+                    .Where(agent => agent.Team == Team.Red)
+                    .ToArray();
+                var passer = redAgents[0];
+                var receiver = redAgents[1];
+                var flags = BindingFlags.Instance | BindingFlags.NonPublic;
+                var awardPass = typeof(SoccerRewardEngine).GetMethod("AwardPass", flags);
+                Assert.IsNotNull(awardPass);
+                for (var pass = 0; pass < 10; pass++)
+                {
+                    awardPass.Invoke(
+                        rewardEngine,
+                        new object[]
+                        {
+                            Team.Red,
+                            passer,
+                            receiver,
+                            new Vector3(0f, 0.5f, 0f),
+                            new Vector3(0f, 0.5f, 4f)
+                        });
+                }
+
+                Assert.AreEqual(0.045f, rewardEngine.GetCumulativeReward(Team.Red), 0.000001f,
+                    "팀 Pass 0.025와 Passer 개인 0.02의 독립 cap 합이 필요");
+                Assert.AreEqual(0f, rewardEngine.GetCumulativeReward(Team.Navy), 0.000001f);
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(root);
+            }
+        }
+
+        [Test]
+        public void RewardTelemetryUsesDistinctStableRedAndNavyTensorBoardKeys()
+        {
+            var keys = new[]
+            {
+                SoccerRewardEngine.GetTeamRewardEventStatKey(Team.Red, SoccerRewardKind.GoalResult),
+                SoccerRewardEngine.GetTeamRewardEventStatKey(Team.Navy, SoccerRewardKind.GoalResult),
+                SoccerRewardEngine.GetTeamRewardSummaryTotalStatKey(Team.Red),
+                SoccerRewardEngine.GetTeamRewardSummaryTotalStatKey(Team.Navy),
+                SoccerRewardEngine.GetTeamMatchRewardStatKey(Team.Red),
+                SoccerRewardEngine.GetTeamMatchRewardStatKey(Team.Navy)
+            };
+
+            CollectionAssert.AreEqual(
+                new[]
+                {
+                    "Soccer/Red/Reward/GoalResult",
+                    "Soccer/Navy/Reward/GoalResult",
+                    "Soccer/Red/Reward/Summary Total",
+                    "Soccer/Navy/Reward/Summary Total",
+                    "Soccer/Red/Match Reward",
+                    "Soccer/Navy/Match Reward"
+                },
+                keys);
+            CollectionAssert.AllItemsAreUnique(keys);
+        }
+
+        [Test]
         public void RuleControllerSteersAwayFromNearbyTeammateWithoutChangingItsStateTarget()
         {
-            var root = PrefabUtility.LoadPrefabContents(RuleRoot + "/Prefabs/SoccerEnvironment_Rule.prefab");
+            var root = PrefabUtility.LoadPrefabContents(RuleRoot + "/Prefabs/StadiumEnvironment_Rule.prefab");
             try
             {
                 var environment = root.GetComponent<SoccerEnvController>();
@@ -399,6 +688,124 @@ namespace MachineLearning.Soccer.Tests
         }
 
         [Test]
+        public void RuleControllersRespectTheSingleConfirmedBallCarrierWhenTeammatesCluster()
+        {
+            var root = PrefabUtility.LoadPrefabContents(RuleRoot + "/Prefabs/StadiumEnvironment_Rule.prefab");
+            try
+            {
+                var flags = BindingFlags.Instance | BindingFlags.NonPublic;
+                var environment = root.GetComponent<SoccerEnvController>();
+                var rewardEngine = root.GetComponent<SoccerRewardEngine>();
+                var controllers = root.GetComponentsInChildren<RuleBasedSoccerController>(true);
+                var carrierController = controllers[0];
+                var nearbyController = controllers[1];
+                var carrier = carrierController.GetComponent<AgentSoccer>();
+                var nearby = nearbyController.GetComponent<AgentSoccer>();
+                carrier.transform.position = Vector3.zero;
+                nearby.transform.position = Vector3.zero;
+                environment.ball.transform.position = Vector3.zero;
+                carrierController.Configure(carrier, environment);
+                nearbyController.Configure(nearby, environment);
+
+                var environmentRewardEngine = typeof(SoccerEnvController).GetField("m_RewardEngine", flags);
+                var confirmedCarrier = typeof(SoccerRewardEngine).GetField("m_BallCarrier", flags);
+                Assert.IsNotNull(environmentRewardEngine);
+                Assert.IsNotNull(confirmedCarrier);
+                environmentRewardEngine.SetValue(environment, rewardEngine);
+                confirmedCarrier.SetValue(rewardEngine, carrier);
+                var isBallCarrier = typeof(RuleBasedSoccerController).GetMethod("IsBallCarrier", flags);
+                Assert.IsNotNull(isBallCarrier);
+
+                Assert.IsTrue((bool)isBallCarrier.Invoke(carrierController, null));
+                Assert.IsFalse((bool)isBallCarrier.Invoke(nearbyController, null),
+                    "확정 carrier가 있으면 가까운 다른 선수는 중복 Kick 상태로 전환하면 안 됨");
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(root);
+            }
+        }
+
+        [Test]
+        public void CommonFallbackCarriesPassesShootsAndClearsOnlyInTheirIntendedContexts()
+        {
+            var root = PrefabUtility.LoadPrefabContents(Root + "/Core/Prefabs/StadiumEnvironment_Base.prefab");
+            try
+            {
+                var flags = BindingFlags.Instance | BindingFlags.NonPublic;
+                var environment = root.GetComponent<SoccerEnvController>();
+                var rewardEngine = root.GetComponent<SoccerRewardEngine>();
+                var carrier = root.GetComponentsInChildren<AgentSoccer>(true)
+                    .First(agent => agent.Team == Team.Red && agent.PositionRole == AgentSoccer.Position.Striker);
+                var teammates = root.GetComponentsInChildren<AgentSoccer>(true)
+                    .Where(agent => agent.Team == Team.Red && agent != carrier)
+                    .ToArray();
+                var opponents = root.GetComponentsInChildren<AgentSoccer>(true)
+                    .Where(agent => agent.Team == Team.Navy)
+                    .ToArray();
+                var environmentRewardEngine = typeof(SoccerEnvController).GetField("m_RewardEngine", flags);
+                var confirmedCarrier = typeof(SoccerRewardEngine).GetField("m_BallCarrier", flags);
+                Assert.IsNotNull(environmentRewardEngine);
+                Assert.IsNotNull(confirmedCarrier);
+                environmentRewardEngine.SetValue(environment, rewardEngine);
+                confirmedCarrier.SetValue(rewardEngine, carrier);
+
+                carrier.transform.position = Vector3.zero;
+                environment.ball.transform.position = Vector3.zero;
+                for (var index = 0; index < teammates.Length; index++)
+                {
+                    teammates[index].transform.position = new Vector3(15f + index * 5f, 0.5f, 25f);
+                }
+
+                for (var index = 0; index < opponents.Length; index++)
+                {
+                    opponents[index].transform.position = new Vector3(0f, 0.5f, 25f + index * 4f);
+                }
+
+                Assert.IsFalse(environment.TryGetAutonomousKickTarget(carrier, out _, out _),
+                    "압박 없는 중원에서는 Kick보다 carry를 유지해야 함");
+
+                teammates[0].transform.position = new Vector3(10f, 0.5f, 0f);
+                opponents[0].transform.position = new Vector3(2f, 0.5f, 0f);
+                Assert.IsTrue(environment.TryGetAutonomousKickTarget(
+                    carrier,
+                    out var passTarget,
+                    out var passAction));
+                Assert.AreEqual(1, passAction);
+                Assert.AreEqual(teammates[0].transform.position, passTarget);
+
+                opponents[0].transform.position = new Vector3(40f, 0.5f, 30f);
+                carrier.transform.position = new Vector3(30f, 0.5f, 0f);
+                environment.ball.transform.position = carrier.transform.position;
+                Assert.IsFalse(environment.TryGetAutonomousKickTarget(carrier, out _, out _),
+                    "Goal까지 24m보다 먼 위치에서는 Strong shot을 선택하면 안 됨");
+
+                carrier.transform.position = new Vector3(40f, 0.5f, 0f);
+                environment.ball.transform.position = carrier.transform.position;
+                Assert.IsTrue(environment.TryGetAutonomousKickTarget(
+                    carrier,
+                    out var shotTarget,
+                    out var shotAction));
+                Assert.AreEqual(2, shotAction);
+                Assert.AreEqual(62f, shotTarget.x, 0.000001f);
+
+                carrier.transform.position = new Vector3(-55f, 0.5f, 0f);
+                environment.ball.transform.position = carrier.transform.position;
+                Assert.IsTrue(environment.TryGetAutonomousKickTarget(
+                    carrier,
+                    out var clearanceTarget,
+                    out var clearanceAction));
+                Assert.AreEqual(1, clearanceAction);
+                Assert.AreEqual(Vector3.zero.x, clearanceTarget.x, 0.000001f);
+                Assert.AreEqual(Vector3.zero.z, clearanceTarget.z, 0.000001f);
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(root);
+            }
+        }
+
+        [Test]
         public void NeuralTacticsUseV2AndRuleWorkspaceIsFullyExcludedFromTraining()
         {
             var neuralDefinitions = new[]
@@ -424,6 +831,14 @@ namespace MachineLearning.Soccer.Tests
             var profile = AssetDatabase.LoadAssetAtPath<SoccerRewardProfile>(path);
             Assert.IsNotNull(profile, path);
             return profile;
+        }
+
+        static void AssertMaterial(string path, string expectedName, Color expectedColor)
+        {
+            var material = AssetDatabase.LoadAssetAtPath<Material>(path);
+            Assert.IsNotNull(material, path);
+            Assert.AreEqual(expectedName, material.name, path);
+            Assert.Less(Vector4.Distance(expectedColor, material.GetColor("_BaseColor")), 0.001f, path);
         }
 
         static SoccerTeamDefinition LoadDefinition(string path)

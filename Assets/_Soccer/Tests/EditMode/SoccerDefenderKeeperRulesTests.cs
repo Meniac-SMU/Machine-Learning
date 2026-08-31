@@ -11,23 +11,23 @@ namespace MachineLearning.Soccer.Tests
 
         static readonly string[] WorkspacePrefabPaths =
         {
-            "Assets/_Soccer/Core/Prefabs/SoccerEnvironment_Base.prefab",
-            "Assets/_Soccer/Teams/Attack_KMW/Prefabs/SoccerEnvironment_Attack.prefab",
-            "Assets/_Soccer/Teams/Defense_PJH/Prefabs/SoccerEnvironment_Defense.prefab",
-            "Assets/_Soccer/Teams/Press_KMG/Prefabs/SoccerEnvironment_Press.prefab",
-            "Assets/_Soccer/Teams/Rule_PHC/Prefabs/SoccerEnvironment_Rule.prefab"
+            "Assets/_Soccer/Core/Prefabs/StadiumEnvironment_Base.prefab",
+            "Assets/_Soccer/Teams/Attack_KMW/Prefabs/StadiumEnvironment_Attack.prefab",
+            "Assets/_Soccer/Teams/Defense_PJH/Prefabs/StadiumEnvironment_Defense.prefab",
+            "Assets/_Soccer/Teams/Press_KMG/Prefabs/StadiumEnvironment_Press.prefab",
+            "Assets/_Soccer/Teams/Rule_PHC/Prefabs/StadiumEnvironment_Rule.prefab"
         };
 
         [Test]
-        public void AttackingDepthUsesMirroredCoordinatesForBlueAndPurple()
+        public void AttackingDepthUsesMirroredCoordinatesForRedAndNavy()
         {
             foreach (var depth in new[] { -54f, -4f, 0f, 17f, 54f })
             {
                 Assert.That(
-                    SoccerDefenderKeeperRules.GetAttackingDepth(Team.Blue, depth),
+                    SoccerDefenderKeeperRules.GetAttackingDepth(Team.Red, depth),
                     Is.EqualTo(depth).Within(Tolerance));
                 Assert.That(
-                    SoccerDefenderKeeperRules.GetAttackingDepth(Team.Purple, -depth),
+                    SoccerDefenderKeeperRules.GetAttackingDepth(Team.Navy, -depth),
                     Is.EqualTo(depth).Within(Tolerance));
             }
         }
@@ -44,7 +44,7 @@ namespace MachineLearning.Soccer.Tests
                 Assert.IsNotNull(environment, prefabPath);
                 var agents = prefab.GetComponentsInChildren<AgentSoccer>(true);
 
-                foreach (var team in new[] { Team.Blue, Team.Purple })
+                foreach (var team in new[] { Team.Red, Team.Navy })
                 {
                     var keeper = agents.Single(agent =>
                         agent.Team == team
@@ -70,7 +70,7 @@ namespace MachineLearning.Soccer.Tests
         [Test]
         public void HardHalfLineForcesRecoveryAndRemovesAttackingMovementAndVelocity()
         {
-            foreach (var team in new[] { Team.Blue, Team.Purple })
+            foreach (var team in new[] { Team.Red, Team.Navy })
             {
                 var context = CreateContext(team, AgentSoccer.Position.DefenderKeeper);
                 try
@@ -86,8 +86,11 @@ namespace MachineLearning.Soccer.Tests
                         context.Agent,
                         context.Environment,
                         attackDirection + Vector3.forward * 0.4f,
-                        out var recovering);
-                    Assert.IsTrue(recovering, $"{team} defender-keeper did not enter recovery at the hard line.");
+                        out var mode);
+                    Assert.AreEqual(
+                        SoccerDefenderKeeperRules.DefenderKeeperMode.RecoverGoal,
+                        mode,
+                        $"{team} defender-keeper did not enter recovery at the hard line.");
                     Assert.That(
                         Vector3.Dot(constrainedMovement, attackDirection),
                         Is.LessThanOrEqualTo(Tolerance),
@@ -96,7 +99,7 @@ namespace MachineLearning.Soccer.Tests
                     var constrainedVelocity = SoccerDefenderKeeperRules.ConstrainVelocity(
                         context.Agent,
                         attackDirection * 7f + Vector3.forward * 2f + Vector3.up,
-                        recovering);
+                        mode);
                     Assert.That(
                         Vector3.Dot(constrainedVelocity, attackDirection),
                         Is.EqualTo(0f).Within(Tolerance),
@@ -123,7 +126,7 @@ namespace MachineLearning.Soccer.Tests
         [Test]
         public void NonKeeperTargetsMovementAndVelocityRemainUnchanged()
         {
-            foreach (var team in new[] { Team.Blue, Team.Purple })
+            foreach (var team in new[] { Team.Red, Team.Navy })
             {
                 var context = CreateContext(team, AgentSoccer.Position.Striker);
                 try
@@ -145,14 +148,14 @@ namespace MachineLearning.Soccer.Tests
                             context.Agent,
                             context.Environment,
                             requestedMovement,
-                            out var recovering));
-                    Assert.IsFalse(recovering);
+                            out var mode));
+                    Assert.AreEqual(SoccerDefenderKeeperRules.DefenderKeeperMode.Free, mode);
                     Assert.AreEqual(
                         requestedVelocity,
                         SoccerDefenderKeeperRules.ConstrainVelocity(
                             context.Agent,
                             requestedVelocity,
-                            true));
+                            SoccerDefenderKeeperRules.DefenderKeeperMode.RecoverGoal));
                 }
                 finally
                 {
@@ -161,7 +164,72 @@ namespace MachineLearning.Soccer.Tests
             }
         }
 
-        static TestContext CreateContext(Team team, AgentSoccer.Position role)
+        [Test]
+        public void LooseThreatInDefensiveZoneMakesBothKeepersEngageBallInsteadOfOnlyRecoveringHome()
+        {
+            foreach (var team in new[] { Team.Red, Team.Navy })
+            {
+                var context = CreateContext(team, AgentSoccer.Position.DefenderKeeper, true);
+                try
+                {
+                    var attackSign = SoccerDefenderKeeperRules.GetAttackSign(team);
+                    context.Ball.transform.position = new Vector3(-attackSign * 24f, 0.5f, 12f);
+                    context.Agent.transform.position = context.Agent.StartingPosition;
+
+                    var mode = SoccerDefenderKeeperRules.GetMode(context.Agent, context.Environment);
+                    var home = SoccerDefenderKeeperRules.GetHomeTarget(context.Agent, context.Environment);
+                    var engagement = SoccerDefenderKeeperRules.GetEngagementTarget(
+                        context.Agent,
+                        context.Environment);
+                    var homeDepth = SoccerDefenderKeeperRules.GetAttackingDepth(team, home.x);
+                    var engagementDepth = SoccerDefenderKeeperRules.GetAttackingDepth(team, engagement.x);
+
+                    Assert.AreEqual(SoccerDefenderKeeperRules.DefenderKeeperMode.EngageBall, mode);
+                    Assert.Greater(engagementDepth, homeDepth,
+                        $"{team} keeper should step forward between the ball and its own goal.");
+                    Assert.LessOrEqual(
+                        engagementDepth,
+                        SoccerDefenderKeeperRules.MaximumEngagementTargetDepth + Tolerance);
+                    Assert.Greater(Mathf.Abs(engagement.z), Mathf.Abs(home.z),
+                        $"{team} keeper should track farther laterally than its passive home target.");
+                    Assert.LessOrEqual(Mathf.Abs(engagement.z), 12f + Tolerance);
+                }
+                finally
+                {
+                    UnityEngine.Object.DestroyImmediate(context.Root);
+                }
+            }
+        }
+
+        [Test]
+        public void BallInsideGoalLetsBothKeepersEnterAndReachTheBallForCentralClearance()
+        {
+            foreach (var team in new[] { Team.Red, Team.Navy })
+            {
+                var context = CreateContext(team, AgentSoccer.Position.DefenderKeeper, true);
+                try
+                {
+                    var attackSign = SoccerDefenderKeeperRules.GetAttackSign(team);
+                    context.Ball.transform.position = new Vector3(-attackSign * 64f, 0.5f, 4f);
+                    var target = SoccerDefenderKeeperRules.ConstrainTarget(
+                        context.Agent,
+                        context.Environment,
+                        Vector3.zero);
+
+                    Assert.AreEqual(
+                        SoccerDefenderKeeperRules.DefenderKeeperMode.EngageBall,
+                        SoccerDefenderKeeperRules.GetMode(context.Agent, context.Environment));
+                    Assert.AreEqual(context.Ball.transform.position.x, target.x, Tolerance);
+                    Assert.AreEqual(context.Ball.transform.position.z, target.z, Tolerance);
+                }
+                finally
+                {
+                    UnityEngine.Object.DestroyImmediate(context.Root);
+                }
+            }
+        }
+
+        static TestContext CreateContext(Team team, AgentSoccer.Position role, bool includeBall = false)
         {
             var root = new GameObject($"DefenderKeeperRulesTest_{team}_{role}");
             var environment = root.AddComponent<SoccerEnvController>();
@@ -170,21 +238,37 @@ namespace MachineLearning.Soccer.Tests
             var agent = agentObject.AddComponent<AgentSoccer>();
             var attackSign = SoccerDefenderKeeperRules.GetAttackSign(team);
             agent.Configure(team, role, false, new Vector3(-attackSign * 54f, 0.5f, 0f));
-            return new TestContext(root, environment, agent);
+            agent.transform.position = agent.StartingPosition;
+            GameObject ball = null;
+            if (includeBall)
+            {
+                ball = new GameObject("Ball");
+                ball.transform.SetParent(root.transform);
+                environment.ball = ball;
+                environment.ballRb = ball.AddComponent<Rigidbody>();
+            }
+
+            return new TestContext(root, environment, agent, ball);
         }
 
         readonly struct TestContext
         {
-            public TestContext(GameObject root, SoccerEnvController environment, AgentSoccer agent)
+            public TestContext(
+                GameObject root,
+                SoccerEnvController environment,
+                AgentSoccer agent,
+                GameObject ball)
             {
                 Root = root;
                 Environment = environment;
                 Agent = agent;
+                Ball = ball;
             }
 
             public GameObject Root { get; }
             public SoccerEnvController Environment { get; }
             public AgentSoccer Agent { get; }
+            public GameObject Ball { get; }
         }
     }
 }

@@ -36,7 +36,8 @@ namespace MachineLearning.Soccer.Teams.Rule
         const float PassMinimumDistance = 5f;
         const float PassMaximumDistance = 30f;
         const float PressureDistance = 6f;
-        const float ShootDistance = 30f;
+        const float ShootDistance = 22f;
+        const float MaximumCarryBeforePassSeconds = 1.5f;
         const float ObstacleRayDistance = 3.5f;
         const float AimThreshold = 0.62f;
         const float OwnDefensiveThird = 20f;
@@ -48,6 +49,8 @@ namespace MachineLearning.Soccer.Teams.Rule
         SoccerEnvController m_Environment;
         RuleSoccerState m_State = RuleSoccerState.ChaseLooseBall;
         float m_StateEnteredTime;
+        float m_CarryStartedTime;
+        bool m_WasBallCarrier;
         AgentSoccer m_PassTarget;
 
         public RuleSoccerState State => m_State;
@@ -78,6 +81,8 @@ namespace MachineLearning.Soccer.Teams.Rule
         {
             m_State = RuleSoccerState.ChaseLooseBall;
             m_StateEnteredTime = Time.time;
+            m_CarryStartedTime = Time.time;
+            m_WasBallCarrier = false;
             m_PassTarget = null;
         }
 
@@ -105,6 +110,12 @@ namespace MachineLearning.Soccer.Teams.Rule
             var opponentOwnsBall = m_Environment.PossessionTeam.HasValue
                 && m_Environment.PossessionTeam != m_Agent.Team;
             var controlsBall = IsBallCarrier();
+            if (controlsBall && !m_WasBallCarrier)
+            {
+                m_CarryStartedTime = Time.time;
+            }
+
+            m_WasBallCarrier = controlsBall;
             var closestToBall = FindClosestTeamAgentToBall() == m_Agent;
             var nextState = m_State;
 
@@ -119,7 +130,8 @@ namespace MachineLearning.Soccer.Teams.Rule
                 {
                     nextState = RuleSoccerState.ShootBall;
                 }
-                else if (m_PassTarget != null && IsUnderPressure())
+                else if (m_PassTarget != null
+                    && (IsUnderPressure() || Time.time - m_CarryStartedTime >= MaximumCarryBeforePassSeconds))
                 {
                     nextState = RuleSoccerState.PassBall;
                 }
@@ -223,6 +235,14 @@ namespace MachineLearning.Soccer.Teams.Rule
 
         Vector3 GetClearanceTarget()
         {
+            if (SoccerDefensiveClearanceRules.IsBallInOwnGoalDanger(
+                    m_Agent.Team,
+                    m_Environment.Ball.transform.position))
+            {
+                return SoccerDefensiveClearanceRules.GetCentralClearanceTarget(
+                    m_Agent.transform.position.y);
+            }
+
             var attackSign = GetAttackSign();
             var laneSign = Mathf.Abs(m_Agent.transform.position.z) < 8f ? GetLaneSign() : -Mathf.Sign(m_Agent.transform.position.z);
             return new Vector3(attackSign * 26f, m_Agent.transform.position.y, laneSign * 24f);
@@ -248,7 +268,17 @@ namespace MachineLearning.Soccer.Teams.Rule
                 return 0;
             }
 
-            return m_State == RuleSoccerState.PassBall ? 1 : 2;
+            if (m_State == RuleSoccerState.PassBall)
+            {
+                return 1;
+            }
+
+            return m_State == RuleSoccerState.ClearBall
+                && SoccerDefensiveClearanceRules.IsBallInOwnGoalDanger(
+                    m_Agent.Team,
+                    m_Environment.Ball.transform.position)
+                ? 1
+                : 2;
         }
 
         SoccerRuleCommand BuildMovementCommand(Vector3 target, int kick)
@@ -387,9 +417,15 @@ namespace MachineLearning.Soccer.Teams.Rule
 
         bool NeedsEmergencyClearance()
         {
-            var defensiveDepth = m_Agent.Team == Team.Blue
-                ? m_Agent.transform.position.x < -OwnDefensiveThird
-                : m_Agent.transform.position.x > OwnDefensiveThird;
+            var ballPosition = m_Environment.Ball.transform.position;
+            if (SoccerDefensiveClearanceRules.IsBallInOwnGoalDanger(m_Agent.Team, ballPosition))
+            {
+                return true;
+            }
+
+            var defensiveDepth = SoccerDefensiveClearanceRules.GetAttackingDepth(
+                m_Agent.Team,
+                ballPosition.x) < -OwnDefensiveThird;
             return defensiveDepth && IsUnderPressure();
         }
 
@@ -400,11 +436,12 @@ namespace MachineLearning.Soccer.Teams.Rule
 
         bool IsBallCarrier()
         {
-            if (m_Environment.BallCarrier == m_Agent)
+            if (m_Environment.BallCarrier != null)
             {
-                return true;
+                return m_Environment.BallCarrier == m_Agent;
             }
 
+            // 패스 비행 등 carrier가 잠시 비어 있는 경우에만 거리 기반 보조 판정을 사용한다.
             return m_Environment.PossessionTeam == m_Agent.Team
                 && Vector3.Distance(m_Agent.transform.position, m_Environment.Ball.transform.position) <= BallControlDistance;
         }
@@ -496,7 +533,7 @@ namespace MachineLearning.Soccer.Teams.Rule
 
         float GetAttackSign()
         {
-            return m_Agent.Team == Team.Blue ? 1f : -1f;
+            return m_Agent.Team == Team.Red ? 1f : -1f;
         }
 
         float GetLaneSign()
@@ -511,18 +548,34 @@ namespace MachineLearning.Soccer.Teams.Rule
 
         Vector3 GetOwnGoal()
         {
-            return new Vector3(-GetAttackSign() * 58f, m_Agent.transform.position.y, 0f);
+            return SoccerDefensiveClearanceRules.GetOwnGoalCenter(
+                m_Agent.Team,
+                m_Agent.transform.position.y,
+                m_Environment != null ? m_Environment.ArenaGeometry : null);
         }
 
         Vector3 GetOpponentGoal()
         {
-            return new Vector3(GetAttackSign() * 58f, m_Agent.transform.position.y, 0f);
+            return SoccerDefensiveClearanceRules.GetOpponentGoalCenter(
+                m_Agent.Team,
+                m_Agent.transform.position.y,
+                m_Environment != null ? m_Environment.ArenaGeometry : null);
         }
 
-        static Vector3 ClampToField(Vector3 target)
+        Vector3 ClampToField(Vector3 target)
         {
-            target.x = Mathf.Clamp(target.x, -54f, 54f);
-            target.z = Mathf.Clamp(target.z, -34f, 34f);
+            if (m_Environment != null && m_Environment.ArenaGeometry != null)
+            {
+                return m_Environment.ArenaGeometry.ClampTarget(target);
+            }
+
+            const float playerMargin = 0.55f;
+            target.z = Mathf.Clamp(target.z,
+                -SoccerArenaGeometry.StadiumHalfWidth + playerMargin,
+                SoccerArenaGeometry.StadiumHalfWidth - playerMargin);
+            target.x = Mathf.Clamp(target.x,
+                -SoccerArenaGeometry.StadiumHalfLength - SoccerArenaGeometry.StadiumGoalDepth + playerMargin,
+                SoccerArenaGeometry.StadiumHalfLength + SoccerArenaGeometry.StadiumGoalDepth - playerMargin);
             return target;
         }
     }

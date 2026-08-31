@@ -43,38 +43,53 @@ namespace MachineLearning.Soccer.Editor
         const string DefenseEnvironmentPrefabPath = Root + "/Teams/" + DefenseFolder + "/Prefabs/SoccerEnvironment_Defense.prefab";
         const string PressEnvironmentPrefabPath = Root + "/Teams/" + PressFolder + "/Prefabs/SoccerEnvironment_Press.prefab";
         const string RuleEnvironmentPrefabPath = Root + "/Teams/" + RuleFolder + "/Prefabs/SoccerEnvironment_Rule.prefab";
+        public const string StadiumBaseEnvironmentPrefabPath = Root + "/Core/Prefabs/StadiumEnvironment_Base.prefab";
+        public const string StadiumAttackEnvironmentPrefabPath = Root + "/Teams/" + AttackFolder + "/Prefabs/StadiumEnvironment_Attack.prefab";
+        public const string StadiumDefenseEnvironmentPrefabPath = Root + "/Teams/" + DefenseFolder + "/Prefabs/StadiumEnvironment_Defense.prefab";
+        public const string StadiumPressEnvironmentPrefabPath = Root + "/Teams/" + PressFolder + "/Prefabs/StadiumEnvironment_Press.prefab";
+        public const string StadiumRuleEnvironmentPrefabPath = Root + "/Teams/" + RuleFolder + "/Prefabs/StadiumEnvironment_Rule.prefab";
         const string ScenePath = Root + "/Scenes/Soccer4v4.unity";
         const string BaseScenePath = Root + "/Core/Scenes/Soccer4v4_Base.unity";
         const string AttackScenePath = Root + "/Teams/" + AttackFolder + "/Scenes/Soccer4v4_Attack.unity";
         const string DefenseScenePath = Root + "/Teams/" + DefenseFolder + "/Scenes/Soccer4v4_Defense.unity";
         const string PressScenePath = Root + "/Teams/" + PressFolder + "/Scenes/Soccer4v4_Press.unity";
         const string RuleScenePath = Root + "/Teams/" + RuleFolder + "/Scenes/Soccer4v4_Rule.unity";
+        public const string StadiumBaseScenePath = Root + "/Core/Scenes/Stadium4v4_Base.unity";
+        public const string StadiumAttackScenePath = Root + "/Teams/" + AttackFolder + "/Scenes/Stadium4v4_Attack.unity";
+        public const string StadiumDefenseScenePath = Root + "/Teams/" + DefenseFolder + "/Scenes/Stadium4v4_Defense.unity";
+        public const string StadiumPressScenePath = Root + "/Teams/" + PressFolder + "/Scenes/Stadium4v4_Press.unity";
+        public const string StadiumRuleScenePath = Root + "/Teams/" + RuleFolder + "/Scenes/Stadium4v4_Rule.unity";
         const string BaseProfilePath = Root + "/Core/Profiles/BaseRewardProfile.asset";
         const string BaseDefinitionPath = Root + "/Core/Profiles/BaseTeamDefinition.asset";
         const string PanelSettingsPath = Root + "/UI/SoccerPanelSettings.asset";
         const string UxmlPath = Root + "/UI/SoccerHud.uxml";
         const string ThemePath = Root + "/UI/SoccerRuntimeTheme.tss";
         const string HumanMarkerMaterialPath = Root + "/Materials/HumanMarker.mat";
+        const string StadiumRedGoalMaterialPath = Root + "/Core/Materials/StadiumRedGoal.mat";
+        const string StadiumNavyGoalMaterialPath = Root + "/Core/Materials/StadiumNavyGoal.mat";
         const string WindowsBuildPath = "Builds/Soccer/Soccer4v4.exe";
         const string KickPlateLayerPrefix = "SoccerPlate";
         const int KickPlateLayerCount = 8;
         const float FieldScaleMultiplier = 4f;
         const float SourceFieldScale = 0.01f;
         const float SensorRange = 80f;
+        const float GoalLateralScale = 0.7f;
+        const float BallUniformScale = 0.0105f;
+        const float BallResetHeight = 0.35f;
         const float MatchDurationSeconds = 300f;
         const float GoalResetDelaySeconds = 3f;
 
         static readonly HashSet<string> GoalRendererNames = new(StringComparer.Ordinal)
         {
-            "GoalBlue",
-            "GoalNetBlue",
-            "GoalNetBlueOuter",
-            "GoalPurple",
-            "GoalNetPurple",
-            "GoalNetPurpleOuter"
+            "GoalRed",
+            "GoalNetRed",
+            "GoalNetRedOuter",
+            "GoalNavy",
+            "GoalNetNavy",
+            "GoalNetNavyOuter"
         };
 
-        static readonly Vector3[] BlueSpawns =
+        static readonly Vector3[] RedSpawns =
         {
             new(-22f, 0.5f, 0f),
             new(-34f, 0.5f, -10f),
@@ -82,7 +97,7 @@ namespace MachineLearning.Soccer.Editor
             new(-54f, 0.5f, 0f)
         };
 
-        static readonly Vector3[] PurpleSpawns =
+        static readonly Vector3[] NavySpawns =
         {
             new(22f, 0.5f, 0f),
             new(34f, 0.5f, 10f),
@@ -90,18 +105,17 @@ namespace MachineLearning.Soccer.Editor
             new(54f, 0.5f, 0f)
         };
 
-        [MenuItem("Tools/Soccer/Build 4v4 Prototype")]
+        [MenuItem("Tools/Soccer/Build all 4v4 Stadium workspaces")]
         public static void BuildAll()
         {
-            // 생성 작업은 공통 자산을 갱신한다. 팀별 Profile/YAML/모델 실험은 Validate를 우선한다.
+            // 기존 사각 경기장은 보존만 하며 생성·Build Settings·학습 경로에서 더 이상 사용하지 않는다.
+            // 모든 활성 작업공간은 검증된 Core Stadium 기준본에서 다시 생성한다.
             EnsureDirectories();
-            EnsureTags("ball", "blueGoal", "purpleGoal", "wall", "blueAgent", "purpleAgent");
-            var kickPlateLayers = EnsureKickPlateLayers();
+            EnsureTags("ball", "redGoal", "navyGoal", "wall", "redAgent", "navyAgent");
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
-            UpgradeCopiedMaterialsForUrp();
-            var visualMaterials = CreateVisualMaterialSet();
-            var fieldTemplate = Create4v4Prefab(visualMaterials, kickPlateLayers);
-            var panelSettings = CreatePanelSettings();
+            CreateVisualMaterialSet();
+            PrepareStadiumGoalMaterials();
+            CreatePanelSettings();
             var baseProfile = CreateRewardProfile(BaseProfilePath, null);
             var baseModel = FindLatestNamedModel(Root + "/Core/Models", SoccerTacticType.Base);
             var baseDefinition = CreateTeamDefinition(BaseDefinitionPath, "base", "Base", "Soccer4v4_Base", baseProfile, baseModel);
@@ -110,34 +124,17 @@ namespace MachineLearning.Soccer.Editor
             var pressDefinition = CreateTeamWorkspace(PressFolder, "Press", "press", "Soccer4v4_Press", baseProfile, baseModel);
             var ruleDefinition = CreateRuleTeamWorkspace(baseProfile);
 
-            var baseEnvironment = CreateWorkspaceEnvironmentPrefab(
-                fieldTemplate, visualMaterials, BaseEnvironmentPrefabPath, "SoccerEnvironment_Base",
-                baseDefinition, baseDefinition, typeof(BaseRewardPolicy), true, true);
-            var attackEnvironment = CreateWorkspaceEnvironmentPrefab(
-                fieldTemplate, visualMaterials, AttackEnvironmentPrefabPath, "SoccerEnvironment_Attack",
-                attackDefinition, baseDefinition, typeof(AttackRewardPolicy), true, false);
-            var defenseEnvironment = CreateWorkspaceEnvironmentPrefab(
-                fieldTemplate, visualMaterials, DefenseEnvironmentPrefabPath, "SoccerEnvironment_Defense",
-                defenseDefinition, baseDefinition, typeof(DefenseRewardPolicy), true, false);
-            var pressEnvironment = CreateWorkspaceEnvironmentPrefab(
-                fieldTemplate, visualMaterials, PressEnvironmentPrefabPath, "SoccerEnvironment_Press",
-                pressDefinition, baseDefinition, typeof(PressRewardPolicy), true, false);
-            var ruleEnvironment = CreateWorkspaceEnvironmentPrefab(
-                fieldTemplate, visualMaterials, RuleEnvironmentPrefabPath, "SoccerEnvironment_Rule",
-                ruleDefinition, baseDefinition, typeof(RuleRewardPolicy), false, false,
-                typeof(RuleBasedSoccerController));
-
-            CreateScene(baseEnvironment, panelSettings, ScenePath);
-            CreateScene(baseEnvironment, panelSettings, BaseScenePath);
-            CreateScene(attackEnvironment, panelSettings, AttackScenePath);
-            CreateScene(defenseEnvironment, panelSettings, DefenseScenePath);
-            CreateScene(pressEnvironment, panelSettings, PressScenePath);
-            CreateScene(ruleEnvironment, panelSettings, RuleScenePath);
+            BuildStadiumWorkspaces(
+                baseDefinition,
+                attackDefinition,
+                defenseDefinition,
+                pressDefinition,
+                ruleDefinition);
             AddSceneToBuildSettings();
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
             ValidateGeneratedAssets();
-            Debug.Log("Soccer 4v4 prototype assets generated successfully.");
+            Debug.Log("All five Soccer 4v4 Stadium workspaces generated successfully.");
         }
 
         public static void BuildAllBatch()
@@ -145,8 +142,36 @@ namespace MachineLearning.Soccer.Editor
             BuildAll();
         }
 
-        [MenuItem("Tools/Soccer/Validate 4v4 Prototype")]
+        /// <summary>
+        /// Rebuilds every active team workspace from the canonical Core Stadium
+        /// without regenerating profiles, models, or the archived rectangular arenas.
+        /// </summary>
+        public static void BuildStadiumWorkspacesBatch()
+        {
+            EnsureDirectories();
+            EnsureTags("ball", "redGoal", "navyGoal", "wall", "redAgent", "navyAgent");
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            CreateVisualMaterialSet();
+            PrepareStadiumGoalMaterials();
+            BuildStadiumWorkspaces(
+                AssetDatabase.LoadAssetAtPath<SoccerTeamDefinition>(BaseDefinitionPath),
+                AssetDatabase.LoadAssetAtPath<SoccerTeamDefinition>(Root + "/Teams/" + AttackFolder + "/Profiles/AttackTeamDefinition.asset"),
+                AssetDatabase.LoadAssetAtPath<SoccerTeamDefinition>(Root + "/Teams/" + DefenseFolder + "/Profiles/DefenseTeamDefinition.asset"),
+                AssetDatabase.LoadAssetAtPath<SoccerTeamDefinition>(Root + "/Teams/" + PressFolder + "/Profiles/PressTeamDefinition.asset"),
+                AssetDatabase.LoadAssetAtPath<SoccerTeamDefinition>(Root + "/Teams/" + RuleFolder + "/Profiles/RuleTeamDefinition.asset"));
+            AddSceneToBuildSettings();
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            ValidateActiveStadiumAssets();
+        }
+
+        [MenuItem("Tools/Soccer/Validate active 4v4 Stadiums")]
         public static void ValidateGeneratedAssets()
+        {
+            ValidateActiveStadiumAssets();
+        }
+
+        static void ValidateLegacyGeneratedAssets()
         {
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(OutputPrefabPath);
             Require(prefab != null, "SoccerField4v4.prefab is missing.");
@@ -161,9 +186,10 @@ namespace MachineLearning.Soccer.Editor
                 Require(Mathf.Approximately(controller.goalResetDelaySeconds, GoalResetDelaySeconds),
                     "Goal reset delay must be 3 seconds.");
                 Require(controller.ball != null, "Ball reference is missing.");
-                Require(Mathf.Approximately(AgentSoccer.ControlledKickPower, 1500f)
-                    && Mathf.Approximately(AgentSoccer.StrongKickPower, 4000f),
-                    "Kick power must be 1500 for controlled kicks and 4000 for strong kicks.");
+                ValidateCommonGeometry(root, OutputPrefabPath);
+                Require(Mathf.Approximately(AgentSoccer.ControlledKickPower, 2000f)
+                    && Mathf.Approximately(AgentSoccer.StrongKickPower, 5000f),
+                    "Kick power must be 2000 for controlled kicks and 5000 for strong kicks.");
 
                 var field = root.transform.Find("Field");
                 Require(field != null, "Copied ML-Agents Field hierarchy is missing.");
@@ -173,10 +199,10 @@ namespace MachineLearning.Soccer.Editor
 
                 var agents = root.GetComponentsInChildren<AgentSoccer>(true);
                 Require(agents.Length == 8, $"Expected 8 players, found {agents.Length}.");
-                Require(agents.Count(agent => agent.Team == Team.Blue) == 4, "Blue team must have four players.");
-                Require(agents.Count(agent => agent.Team == Team.Purple) == 4, "Purple team must have four players.");
+                Require(agents.Count(agent => agent.Team == Team.Red) == 4, "Red team must have four players.");
+                Require(agents.Count(agent => agent.Team == Team.Navy) == 4, "Navy team must have four players.");
                 Require(agents.Count(agent => agent.HumanControllable) == 1, "Exactly one player must be human-controllable.");
-                Require(agents.Single(agent => agent.HumanControllable).Team == Team.Blue, "Human player must belong to Blue.");
+                Require(agents.Single(agent => agent.HumanControllable).Team == Team.Red, "Human player must belong to Red.");
                 Require(controller.AgentsList.Count == 8, "Environment player registry must contain eight players.");
                 Require(!root.GetComponentsInChildren<Transform>(true).Any(child => child.name == "Headband"),
                     "All player headbands must be removed.");
@@ -206,7 +232,7 @@ namespace MachineLearning.Soccer.Editor
                     Require(plateParts.Length == 3, $"{agent.name} kick plate must contain a center and two retaining wings.");
                     Require(plateParts.All(part => part.gameObject.layer == kickPlate.gameObject.layer),
                         $"{agent.name} kick plate parts must share their owner-filter layer.");
-                    Require(plateParts.All(part => part.CompareTag(agent.Team == Team.Blue ? "blueAgent" : "purpleAgent")),
+                    Require(plateParts.All(part => part.CompareTag(agent.Team == Team.Red ? "redAgent" : "navyAgent")),
                         $"{agent.name} kick plate parts must identify as their owning player team.");
                     Require(plateParts.All(part => Mathf.Approximately(part.transform.localScale.y, SoccerKickPlate.PlayerHeightRatio)),
                         $"{agent.name} kick plate height must be 30% of the original player height.");
@@ -218,6 +244,7 @@ namespace MachineLearning.Soccer.Editor
                     Require(rightWing != null && rightWing.localPosition.x > 0.6f
                         && Mathf.Abs(Mathf.DeltaAngle(rightWing.localEulerAngles.y, -45f)) < 0.1f,
                         $"{agent.name} right kick-plate wing must open outward.");
+                    ValidateRaySensorContract(agent, OutputPrefabPath);
                     foreach (var sensor in agent.GetComponentsInChildren<RayPerceptionSensorComponent3D>(true))
                     {
                         Require(Mathf.Approximately(sensor.RayLength, SensorRange), $"{agent.name} ray range must be {SensorRange}.");
@@ -232,7 +259,7 @@ namespace MachineLearning.Soccer.Editor
                     }
                 }
 
-                foreach (var team in new[] { Team.Blue, Team.Purple })
+                foreach (var team in new[] { Team.Red, Team.Navy })
                 {
                     var teamAgents = agents.Where(agent => agent.Team == team).ToArray();
                     Require(teamAgents.Count(agent => agent.PositionRole == AgentSoccer.Position.DefenderKeeper) == 1,
@@ -274,6 +301,8 @@ namespace MachineLearning.Soccer.Editor
             Require(definitions.Take(4).All(definition => definition.InferenceModel == null
                 || SoccerModelNaming.TryParse(definition.InferenceModel.name, out _, out _, out _)),
                 $"Neural model names must use {SoccerModelNaming.FileNamePattern}.");
+            Require(definitions.All(definition => HasCommonBasicSkillRewards(definition.RewardProfile)),
+                "All five RewardProfiles must share the common pass, carry and safe-kick reward contract.");
             Require(!Directory.Exists(Path.GetFullPath(Root + "/Teams/" + RuleFolder + "/Training"))
                 && !Directory.Exists(Path.GetFullPath(Root + "/Teams/" + RuleFolder + "/Models")),
                 "Rule must not contain Trainer or model directories.");
@@ -329,21 +358,105 @@ namespace MachineLearning.Soccer.Editor
             var ruleControllers = ruleRoots
                 .SelectMany(rootObject => rootObject.GetComponentsInChildren<RuleBasedSoccerController>(true))
                 .ToArray();
-            Require(ruleSetup != null && !ruleSetup.TrainBlue && !ruleSetup.TrainPurple,
+            Require(ruleSetup != null && !ruleSetup.TrainRed && !ruleSetup.TrainNavy,
                 "Rule scene must disable training for both teams.");
             Require(ruleControllers.Length == 4
-                && ruleControllers.All(controller => controller.GetComponent<AgentSoccer>().Team == Team.Blue),
-                "Rule scene must attach one FSM controller to every Blue player.");
+                && ruleControllers.All(controller => controller.GetComponent<AgentSoccer>().Team == Team.Red),
+                "Rule scene must attach one FSM controller to every Red player.");
             Require(AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(UxmlPath) != null, "Soccer HUD UXML is missing.");
             Debug.Log("Soccer validation passed: v2 actions, 4v4 roles, three neural tactics and one rule workspace.");
         }
 
+        static void ValidateActiveStadiumAssets()
+        {
+            var definitions = new[]
+            {
+                AssetDatabase.LoadAssetAtPath<SoccerTeamDefinition>(BaseDefinitionPath),
+                AssetDatabase.LoadAssetAtPath<SoccerTeamDefinition>(Root + "/Teams/" + AttackFolder + "/Profiles/AttackTeamDefinition.asset"),
+                AssetDatabase.LoadAssetAtPath<SoccerTeamDefinition>(Root + "/Teams/" + DefenseFolder + "/Profiles/DefenseTeamDefinition.asset"),
+                AssetDatabase.LoadAssetAtPath<SoccerTeamDefinition>(Root + "/Teams/" + PressFolder + "/Profiles/PressTeamDefinition.asset"),
+                AssetDatabase.LoadAssetAtPath<SoccerTeamDefinition>(Root + "/Teams/" + RuleFolder + "/Profiles/RuleTeamDefinition.asset")
+            };
+            Require(definitions.All(definition => definition != null), "All five Soccer TeamDefinitions must exist.");
+            Require(definitions.All(definition => definition.PolicyContractVersion == SoccerTeamDefinition.CurrentPolicyContractVersion),
+                "All Soccer teams must use policy contract v2.");
+            Require(definitions.Take(4).All(definition => definition.UsesNeuralPolicy),
+                "Base, Attack, Defense and Press must use neural policies.");
+            Require(!definitions[4].UsesNeuralPolicy && definitions[4].InferenceModel == null,
+                "Rule must use only the rule controller without an ONNX model.");
+            Require(definitions.All(definition => HasCommonBasicSkillRewards(definition.RewardProfile)),
+                "All five RewardProfiles must keep the shared reward contract.");
+
+            var workspacePrefabs = new[]
+            {
+                StadiumBaseEnvironmentPrefabPath,
+                StadiumAttackEnvironmentPrefabPath,
+                StadiumDefenseEnvironmentPrefabPath,
+                StadiumPressEnvironmentPrefabPath,
+                StadiumRuleEnvironmentPrefabPath
+            };
+            Require(workspacePrefabs.All(path => AssetDatabase.LoadAssetAtPath<GameObject>(path) != null),
+                "All five active Stadium environment prefabs must exist.");
+            Require(workspacePrefabs.Select(AssetDatabase.AssetPathToGUID).Distinct().Count() == workspacePrefabs.Length,
+                "Every Stadium workspace prefab must have an independent GUID.");
+            Require(workspacePrefabs.All(path => PrefabUtility.GetPrefabAssetType(
+                    AssetDatabase.LoadAssetAtPath<GameObject>(path)) == PrefabAssetType.Regular),
+                "Stadium workspaces must be independent regular prefabs, not variants.");
+            Require(workspacePrefabs.Select(BuildPolicyContractSnapshot).Distinct().Count() == 1,
+                "All five active Stadium prefabs must keep identical geometry, visual, observation and physics contracts.");
+
+            var workspaceScenes = new[]
+            {
+                StadiumBaseScenePath,
+                StadiumAttackScenePath,
+                StadiumDefenseScenePath,
+                StadiumPressScenePath,
+                StadiumRuleScenePath
+            };
+            Require(workspaceScenes.All(path => File.Exists(Path.GetFullPath(path))),
+                "All five active Stadium scenes must exist.");
+            Require(workspaceScenes.Select(BuildSceneSettingsSnapshot).Distinct().Count() == 1,
+                "All five Stadium scenes must keep identical movement, camera and team-material settings.");
+
+            ValidateWorkspaceEnvironment(StadiumBaseEnvironmentPrefabPath, definitions[0], definitions[0], true, true, false);
+            ValidateWorkspaceEnvironment(StadiumAttackEnvironmentPrefabPath, definitions[1], definitions[0], true, false, false);
+            ValidateWorkspaceEnvironment(StadiumDefenseEnvironmentPrefabPath, definitions[2], definitions[0], true, false, false);
+            ValidateWorkspaceEnvironment(StadiumPressEnvironmentPrefabPath, definitions[3], definitions[0], true, false, false);
+            ValidateWorkspaceEnvironment(StadiumRuleEnvironmentPrefabPath, definitions[4], definitions[0], false, false, true);
+
+            ValidateSceneWiring(StadiumBaseScenePath, StadiumBaseEnvironmentPrefabPath);
+            ValidateSceneWiring(StadiumAttackScenePath, StadiumAttackEnvironmentPrefabPath);
+            ValidateSceneWiring(StadiumDefenseScenePath, StadiumDefenseEnvironmentPrefabPath);
+            ValidateSceneWiring(StadiumPressScenePath, StadiumPressEnvironmentPrefabPath);
+            ValidateSceneWiring(StadiumRuleScenePath, StadiumRuleEnvironmentPrefabPath);
+
+            var activeSoccerScenes = EditorBuildSettings.scenes
+                .Where(scene => scene.enabled && scene.path.StartsWith(Root + "/", StringComparison.Ordinal))
+                .Select(scene => scene.path)
+                .ToArray();
+            Require(activeSoccerScenes.SequenceEqual(workspaceScenes),
+                "Build Settings must enable only the five Stadium Soccer scenes in Base/Attack/Defense/Press/Rule order.");
+
+            var ruleScene = EditorSceneManager.OpenScene(StadiumRuleScenePath, OpenSceneMode.Single);
+            var ruleRoots = ruleScene.GetRootGameObjects();
+            var ruleSetup = ruleRoots.SelectMany(rootObject => rootObject.GetComponentsInChildren<SoccerMatchSetup>(true)).Single();
+            var ruleControllers = ruleRoots.SelectMany(rootObject => rootObject.GetComponentsInChildren<RuleBasedSoccerController>(true)).ToArray();
+            Require(!ruleSetup.TrainRed && !ruleSetup.TrainNavy,
+                "Rule Stadium must disable training for both teams.");
+            Require(ruleControllers.Length == 4
+                && ruleControllers.All(controller => controller.GetComponent<AgentSoccer>().Team == Team.Red),
+                "Rule Stadium must attach one FSM controller to every Red player.");
+            Require(AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(UxmlPath) != null,
+                "Soccer HUD UXML is missing.");
+            Debug.Log("ACTIVE STADIUM VALIDATION PASS: Base, Attack, Defense, Press and Rule share one Stadium contract.");
+        }
+
         static void ValidateWorkspaceEnvironment(
             string prefabPath,
-            SoccerTeamDefinition expectedBlueDefinition,
-            SoccerTeamDefinition expectedPurpleDefinition,
-            bool expectedTrainBlue,
-            bool expectedTrainPurple,
+            SoccerTeamDefinition expectedRedDefinition,
+            SoccerTeamDefinition expectedNavyDefinition,
+            bool expectedTrainRed,
+            bool expectedTrainNavy,
             bool expectsRuleControllers)
         {
             var root = PrefabUtility.LoadPrefabContents(prefabPath);
@@ -354,18 +467,19 @@ namespace MachineLearning.Soccer.Editor
                 var agents = root.GetComponentsInChildren<AgentSoccer>(true);
                 Require(environment != null && environment.StartsInAIMode,
                     $"Workspace must start in AI mode: {prefabPath}");
-                Require(setup != null && setup.BlueTeam == expectedBlueDefinition
-                    && setup.PurpleTeam == expectedPurpleDefinition,
+                Require(setup != null && setup.RedTeam == expectedRedDefinition
+                    && setup.NavyTeam == expectedNavyDefinition,
                     $"Workspace TeamDefinition mismatch: {prefabPath}");
-                Require(setup.TrainBlue == expectedTrainBlue && setup.TrainPurple == expectedTrainPurple,
+                Require(setup.TrainRed == expectedTrainRed && setup.TrainNavy == expectedTrainNavy,
                     $"Workspace training flags mismatch: {prefabPath}");
-                Require(new[] { setup.BlueModelOverride, setup.PurpleModelOverride }
+                Require(new[] { setup.RedModelOverride, setup.NavyModelOverride }
                         .Where(model => model != null)
                         .All(model => SoccerModelNaming.TryParse(model.name, out _, out _, out _)),
                     $"Workspace model override names must use {SoccerModelNaming.FileNamePattern}: {prefabPath}");
                 Require(root.GetComponent<SoccerRewardEngine>() != null,
                     $"Workspace reward engine is missing: {prefabPath}");
                 Require(agents.Length == 8, $"Workspace must contain eight players: {prefabPath}");
+                ValidateCommonGeometry(root, prefabPath);
                 ValidateGoalOcclusionContract(root, prefabPath);
 
                 foreach (var agent in agents)
@@ -389,12 +503,13 @@ namespace MachineLearning.Soccer.Editor
                             * sensor.ObservationStacks);
                     Require(AgentSoccer.VectorObservationSize + rayObservationSize == 379,
                         $"Policy v2 total observation size must be 379: {prefabPath}/{agent.name}");
+                    ValidateRaySensorContract(agent, prefabPath);
                 }
 
                 var ruleControllers = root.GetComponentsInChildren<RuleBasedSoccerController>(true);
                 Require(expectsRuleControllers
                         ? ruleControllers.Length == 4
-                            && ruleControllers.All(controller => controller.GetComponent<AgentSoccer>().Team == Team.Blue)
+                            && ruleControllers.All(controller => controller.GetComponent<AgentSoccer>().Team == Team.Red)
                         : ruleControllers.Length == 0,
                     $"Rule controller isolation mismatch: {prefabPath}");
             }
@@ -406,6 +521,25 @@ namespace MachineLearning.Soccer.Editor
 
         static void ValidateGoalOcclusionContract(GameObject root, string assetPath)
         {
+            if (root.GetComponent<SoccerEnvController>()?.ArenaGeometry != null)
+            {
+                var stadiumGoals = root.GetComponentsInChildren<MeshRenderer>(true)
+                    .Where(renderer => renderer.name.StartsWith("SM_S_Gate", StringComparison.Ordinal))
+                    .OrderBy(renderer => renderer.bounds.center.x)
+                    .ToArray();
+                Require(stadiumGoals.Length == 2,
+                    $"Both Demo Stadium goals are required: {assetPath}");
+                Require(stadiumGoals[0].CompareTag("redGoal") && stadiumGoals[1].CompareTag("navyGoal"),
+                    $"Demo Stadium goal tags must follow the defending teams: {assetPath}");
+                Require(stadiumGoals.All(renderer => renderer.GetComponents<Collider>().Any(collider => collider.enabled)
+                    && renderer.sharedMaterial != null
+                    && renderer.sharedMaterial.name.StartsWith("Stadium", StringComparison.Ordinal)),
+                    $"Demo Stadium goals need visible team materials and physical colliders: {assetPath}");
+                Require(stadiumGoals.Select(renderer => renderer.sharedMaterial).Distinct().Count() == 2,
+                    $"Red and Navy Stadium goals must use isolated materials: {assetPath}");
+                return;
+            }
+
             var goalRenderers = root.GetComponentsInChildren<Renderer>(true)
                 .Where(renderer => GoalRendererNames.Contains(renderer.gameObject.name))
                 .ToArray();
@@ -414,9 +548,9 @@ namespace MachineLearning.Soccer.Editor
             foreach (var renderer in goalRenderers)
             {
                 var objectName = renderer.gameObject.name;
-                var expectedTag = objectName.Contains("Blue", StringComparison.Ordinal)
-                    ? "blueGoal"
-                    : "purpleGoal";
+                var expectedTag = objectName.Contains("Red", StringComparison.Ordinal)
+                    ? "redGoal"
+                    : "navyGoal";
                 var expectedColliderCount = objectName.StartsWith("GoalNet", StringComparison.Ordinal)
                     ? objectName.EndsWith("Outer", StringComparison.Ordinal) ? 0 : 4
                     : 1;
@@ -452,13 +586,22 @@ namespace MachineLearning.Soccer.Editor
                 var ballBody = environment.ball.GetComponent<Rigidbody>();
                 builder.Append(environment.matchDurationSeconds).Append('|')
                     .Append(environment.goalResetDelaySeconds).Append('|')
-                    .Append(field.localPosition).Append('|')
-                    .Append(field.localRotation).Append('|')
-                    .Append(field.localScale).Append('|')
+                    .Append(environment.ControlledKickPower).Append('|')
+                    .Append(environment.StrongKickPower).Append('|')
+                    .Append(field != null ? field.localPosition.ToString() : "<stadium>").Append('|')
+                    .Append(field != null ? field.localRotation.ToString() : "<stadium>").Append('|')
+                    .Append(field != null ? field.localScale.ToString() : "<stadium>").Append('|')
                     .Append(environment.ball.transform.localPosition).Append('|')
                     .Append(ballBody.mass).Append('|')
                     .Append(ballBody.linearDamping).Append('|')
                     .Append(ballBody.angularDamping).Append('|');
+                var arena = environment.ArenaGeometry;
+                builder.Append(arena != null ? arena.HalfLength : -1f).Append('|')
+                    .Append(arena != null ? arena.HalfWidth : -1f).Append('|')
+                    .Append(arena != null ? arena.GoalHalfWidth : -1f).Append('|')
+                    .Append(arena != null ? arena.GoalHeight : -1f).Append('|')
+                    .Append(arena != null ? arena.GoalDepth : -1f).Append('|')
+                    .Append(arena != null ? arena.CornerRadius : -1f).Append('|');
 
                 foreach (var itemTransform in root.GetComponentsInChildren<Transform>(true)
                              .OrderBy(item => AnimationUtility.CalculateTransformPath(item, root.transform),
@@ -584,6 +727,97 @@ namespace MachineLearning.Soccer.Editor
             }
         }
 
+        static void ValidateCommonGeometry(GameObject root, string assetPath)
+        {
+            var environment = root.GetComponent<SoccerEnvController>();
+            var arena = environment != null ? environment.ArenaGeometry : null;
+            if (arena != null)
+            {
+                Require(Mathf.Abs(arena.HalfLength - SoccerArenaGeometry.StadiumHalfLength) < 0.001f
+                    && Mathf.Abs(arena.HalfWidth - SoccerArenaGeometry.StadiumHalfWidth) < 0.01f
+                    && Mathf.Abs(arena.GoalHalfWidth - SoccerArenaGeometry.StadiumGoalHalfWidth) < 0.01f,
+                    $"Active Stadium dimensions changed unexpectedly: {assetPath}");
+                Require(Mathf.Approximately(environment.ControlledKickPower, 2000f)
+                    && Mathf.Approximately(environment.StrongKickPower, 5000f),
+                    $"Active Stadium kick powers must remain pass=2000 and shot=5000: {assetPath}");
+                var stadiumBalls = root.GetComponentsInChildren<SoccerBallController>(true);
+                Require(stadiumBalls.Length == 1, $"Exactly one Stadium ball is required: {assetPath}");
+                var stadiumBall = stadiumBalls[0];
+                Require(Vector3.Distance(stadiumBall.transform.lossyScale, Vector3.one * 0.012705f) < 0.00001f
+                    && stadiumBall.EnforcesStadiumPlanarMotion,
+                    $"Stadium ball size or planar rolling contract changed: {assetPath}");
+                var walls = root.GetComponentsInChildren<BoxCollider>(true)
+                    .Where(collider => collider.CompareTag("wall"))
+                    .ToArray();
+                Require(walls.Length == 18 && walls.All(wall => !wall.isTrigger),
+                    $"Stadium must contain six straight and twelve rounded-corner walls: {assetPath}");
+                Require(root.GetComponentsInChildren<MeshRenderer>(true)
+                        .Count(renderer => renderer.name.StartsWith("SM_S_Gate", StringComparison.Ordinal)) == 2,
+                    $"Active Stadium must use both Demo goals: {assetPath}");
+                return;
+            }
+
+            var goalRenderers = root.GetComponentsInChildren<Renderer>(true)
+                .Where(renderer => GoalRendererNames.Contains(renderer.gameObject.name))
+                .ToArray();
+            Require(goalRenderers.Length == GoalRendererNames.Count,
+                $"All six goal renderers are required: {assetPath}");
+            Require(goalRenderers.All(renderer =>
+                    Mathf.Approximately(renderer.transform.localScale.x, 1f)
+                    && Mathf.Approximately(renderer.transform.localScale.y, 1f)
+                    && Mathf.Approximately(renderer.transform.localScale.z, GoalLateralScale)),
+                $"Goal width must use the common 70% lateral scale: {assetPath}");
+
+            var balls = root.GetComponentsInChildren<SoccerBallController>(true);
+            Require(balls.Length == 1, $"Exactly one active Soccer ball is required: {assetPath}");
+            var ball = balls[0];
+            Require(Mathf.Approximately(ball.transform.localScale.x, BallUniformScale)
+                && Mathf.Approximately(ball.transform.localScale.y, BallUniformScale)
+                && Mathf.Approximately(ball.transform.localScale.z, BallUniformScale),
+                $"Ball size must use the common 70% scale: {assetPath}");
+            Require(Mathf.Approximately(ball.transform.localPosition.y, BallResetHeight),
+                $"Ball reset height must follow its 70% size: {assetPath}");
+            var ballBody = ball.GetComponent<Rigidbody>();
+            Require(ball.GetComponent<SphereCollider>() != null
+                && ballBody != null
+                && Mathf.Approximately(ballBody.mass, 3f)
+                && Mathf.Approximately(ballBody.linearDamping, 1f)
+                && Mathf.Approximately(ballBody.angularDamping, 1f),
+                $"Ball collider and Rigidbody contract changed unexpectedly: {assetPath}");
+        }
+
+        static void ValidateRaySensorContract(AgentSoccer agent, string assetPath)
+        {
+            var sensors = agent.GetComponentsInChildren<RayPerceptionSensorComponent3D>(true);
+            Require(sensors.Length == 2,
+                $"Each player must have exactly one front and one rear Ray sensor: {assetPath}/{agent.name}");
+            var expectedPrefix = agent.Team == Team.Red ? "Red" : "Navy";
+            var frontName = $"{expectedPrefix}RayPerceptionSensor";
+            var rearName = $"{expectedPrefix}RayPerceptionSensorReverse";
+            var front = sensors.FirstOrDefault(sensor => sensor.SensorName == frontName);
+            var rear = sensors.FirstOrDefault(sensor => sensor.SensorName == rearName);
+            Require(sensors.Count(sensor => sensor.SensorName == frontName) == 1
+                && sensors.Count(sensor => sensor.SensorName == rearName) == 1,
+                $"Front/rear Ray sensor names are part of the policy contract: {assetPath}/{agent.name}");
+            var expectedTags = agent.Team == Team.Red
+                ? new[] { "ball", "redGoal", "navyGoal", "wall", "redAgent", "navyAgent" }
+                : new[] { "ball", "navyGoal", "redGoal", "wall", "navyAgent", "redAgent" };
+            Require(front.DetectableTags.SequenceEqual(expectedTags)
+                && rear.DetectableTags.SequenceEqual(expectedTags),
+                $"Ray detectable tag order mismatch: {assetPath}/{agent.name}");
+            Require(front.RaysPerDirection == 5
+                && Mathf.Approximately(front.MaxRayDegrees, 60f)
+                && front.ObservationStacks == 3,
+                $"Front Ray contract mismatch: {assetPath}/{agent.name}");
+            Require(rear.RaysPerDirection == 1
+                && Mathf.Approximately(rear.MaxRayDegrees, 45f)
+                && Mathf.Approximately(rear.SphereCastRadius, 0.5f)
+                && Mathf.Approximately(rear.RayLength, SensorRange)
+                && rear.ObservationStacks == 3
+                && Mathf.Abs(Mathf.DeltaAngle(rear.transform.localEulerAngles.y, 180f)) < 0.1f,
+                $"Rear Ray must remain one 180-degree sensor with three rays: {assetPath}/{agent.name}");
+        }
+
         static bool IsTacticalPrefabComponent(Component component)
         {
             return component is SoccerMatchSetup
@@ -625,8 +859,8 @@ namespace MachineLearning.Soccer.Editor
                 settings.humanAcceleration,
                 settings.humanDeceleration,
                 settings.randomizePlayersTeamForTraining,
-                AssetDatabase.GetAssetPath(settings.blueMaterial),
-                AssetDatabase.GetAssetPath(settings.purpleMaterial),
+                AssetDatabase.GetAssetPath(settings.redMaterial),
+                AssetDatabase.GetAssetPath(settings.navyMaterial),
                 camera.transform.position,
                 camera.transform.rotation,
                 camera.fieldOfView,
@@ -674,6 +908,9 @@ namespace MachineLearning.Soccer.Editor
                 .SelectMany(root => root.GetComponentsInChildren<SoccerSettings>(true))
                 .SingleOrDefault();
             Require(settings != null
+                && Mathf.Approximately(settings.agentRunSpeed, SoccerSettings.DefaultAgentRunSpeed)
+                && Mathf.Approximately(settings.maximumPlanarSpeed, SoccerSettings.DefaultMaximumPlanarSpeed)
+                && Mathf.Approximately(settings.rotationSpeed, SoccerSettings.DefaultRotationSpeed)
                 && Mathf.Approximately(settings.humanAcceleration, SoccerSettings.DefaultHumanAcceleration)
                 && Mathf.Approximately(settings.humanDeceleration, SoccerSettings.DefaultHumanDeceleration),
                 $"Human movement settings mismatch: {scenePath}");
@@ -717,7 +954,7 @@ namespace MachineLearning.Soccer.Editor
             Directory.CreateDirectory(Path.GetDirectoryName(WindowsBuildPath));
             var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
             {
-                scenes = new[] { BaseScenePath },
+                scenes = new[] { StadiumBaseScenePath },
                 locationPathName = WindowsBuildPath,
                 target = BuildTarget.StandaloneWindows64,
                 options = BuildOptions.Development
@@ -743,8 +980,8 @@ namespace MachineLearning.Soccer.Editor
                 throw new InvalidOperationException("Base editor training must run in a normal Unity Editor process.");
             }
 
-            var scene = EditorSceneManager.OpenScene(BaseScenePath, OpenSceneMode.Single);
-            Require(scene.IsValid(), $"Could not open the Base training scene: {BaseScenePath}");
+            var scene = EditorSceneManager.OpenScene(StadiumBaseScenePath, OpenSceneMode.Single);
+            Require(scene.IsValid(), $"Could not open the Base Stadium training scene: {StadiumBaseScenePath}");
             EditorApplication.delayCall += () =>
             {
                 Debug.Log("Starting Base 4v4 v2 training scene in Play Mode.");
@@ -769,23 +1006,23 @@ namespace MachineLearning.Soccer.Editor
 
                 var existingAgents = root.GetComponentsInChildren<AgentSoccer>(true).ToList();
                 Require(existingAgents.Count == 4, $"Source prefab should contain four agents, found {existingAgents.Count}.");
-                var blueAgents = existingAgents.Where(IsBlue).ToList();
-                var purpleAgents = existingAgents.Where(agent => !IsBlue(agent)).ToList();
-                Require(blueAgents.Count == 2 && purpleAgents.Count == 2, "Source prefab must contain two agents per team.");
-                ExpandTeam(blueAgents, 4);
-                ExpandTeam(purpleAgents, 4);
+                var redAgents = existingAgents.Where(IsRed).ToList();
+                var navyAgents = existingAgents.Where(agent => !IsRed(agent)).ToList();
+                Require(redAgents.Count == 2 && navyAgents.Count == 2, "Source prefab must contain two agents per team.");
+                ExpandTeam(redAgents, 4);
+                ExpandTeam(navyAgents, 4);
 
                 var humanMarkerMaterial = CreateHumanMarkerMaterial();
-                ConfigureTeam(blueAgents, Team.Blue, BlueSpawns, 90f, humanMarkerMaterial,
-                    visualMaterials.BlueKickPlate, kickPlateLayers.Take(4).ToArray());
-                ConfigureTeam(purpleAgents, Team.Purple, PurpleSpawns, -90f, null,
-                    visualMaterials.PurpleKickPlate, kickPlateLayers.Skip(4).Take(4).ToArray());
+                ConfigureTeam(redAgents, Team.Red, RedSpawns, 90f, humanMarkerMaterial,
+                    visualMaterials.RedKickPlate, kickPlateLayers.Take(4).ToArray());
+                ConfigureTeam(navyAgents, Team.Navy, NavySpawns, -90f, null,
+                    visualMaterials.NavyKickPlate, kickPlateLayers.Skip(4).Take(4).ToArray());
                 RemoveHeadbands(root);
 
                 var controller = root.GetComponent<SoccerEnvController>();
                 Require(controller != null, "Source environment controller is missing.");
                 ApplyCommonMatchConfiguration(controller);
-                controller.AgentsList = blueAgents.Concat(purpleAgents)
+                controller.AgentsList = redAgents.Concat(navyAgents)
                     .Select(agent => new SoccerEnvController.PlayerInfo { Agent = agent })
                     .ToList();
 
@@ -815,12 +1052,12 @@ namespace MachineLearning.Soccer.Editor
             VisualMaterialSet visualMaterials,
             string assetPath,
             string rootName,
-            SoccerTeamDefinition blueDefinition,
-            SoccerTeamDefinition purpleDefinition,
-            Type bluePolicyType,
-            bool trainBlue,
-            bool trainPurple,
-            Type blueRuleControllerType = null)
+            SoccerTeamDefinition redDefinition,
+            SoccerTeamDefinition navyDefinition,
+            Type redPolicyType,
+            bool trainRed,
+            bool trainNavy,
+            Type redRuleControllerType = null)
         {
             var existing = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
             var created = existing == null;
@@ -845,9 +1082,9 @@ namespace MachineLearning.Soccer.Editor
                 ApplyCommonMatchConfiguration(environment);
                 ApplyCommonArenaConfiguration(root, visualMaterials);
                 var policies = root.GetComponents<SoccerTeamRewardPolicyBase>().ToList();
-                SoccerTeamRewardPolicyBase bluePolicy;
-                BaseRewardPolicy purplePolicy;
-                if (bluePolicyType == typeof(BaseRewardPolicy))
+                SoccerTeamRewardPolicyBase redPolicy;
+                BaseRewardPolicy navyPolicy;
+                if (redPolicyType == typeof(BaseRewardPolicy))
                 {
                     var basePolicies = policies.OfType<BaseRewardPolicy>().ToList();
                     while (basePolicies.Count < 2)
@@ -855,29 +1092,29 @@ namespace MachineLearning.Soccer.Editor
                         basePolicies.Add(root.AddComponent<BaseRewardPolicy>());
                     }
 
-                    bluePolicy = basePolicies[0];
-                    purplePolicy = basePolicies[1];
+                    redPolicy = basePolicies[0];
+                    navyPolicy = basePolicies[1];
                 }
                 else
                 {
-                    bluePolicy = policies.FirstOrDefault(policy => policy.GetType() == bluePolicyType)
-                        ?? (SoccerTeamRewardPolicyBase)root.AddComponent(bluePolicyType);
-                    purplePolicy = policies.OfType<BaseRewardPolicy>().FirstOrDefault()
+                    redPolicy = policies.FirstOrDefault(policy => policy.GetType() == redPolicyType)
+                        ?? (SoccerTeamRewardPolicyBase)root.AddComponent(redPolicyType);
+                    navyPolicy = policies.OfType<BaseRewardPolicy>().FirstOrDefault()
                         ?? root.AddComponent<BaseRewardPolicy>();
                 }
 
                 var matchSetup = root.GetComponent<SoccerMatchSetup>() ?? root.AddComponent<SoccerMatchSetup>();
-                var preservedBlueModel = created ? null : matchSetup.BlueModelOverride;
-                var preservedPurpleModel = created ? null : matchSetup.PurpleModelOverride;
+                var preservedRedModel = created ? null : matchSetup.RedModelOverride;
+                var preservedNavyModel = created ? null : matchSetup.NavyModelOverride;
                 matchSetup.Configure(
-                    blueDefinition,
-                    purpleDefinition,
-                    bluePolicy,
-                    purplePolicy,
-                    trainBlue,
-                    trainPurple,
-                    preservedBlueModel,
-                    preservedPurpleModel);
+                    redDefinition,
+                    navyDefinition,
+                    redPolicy,
+                    navyPolicy,
+                    trainRed,
+                    trainNavy,
+                    preservedRedModel,
+                    preservedNavyModel);
                 foreach (var agent in root.GetComponentsInChildren<AgentSoccer>(true))
                 {
                     var behavior = agent.GetComponent<BehaviorParameters>();
@@ -888,16 +1125,16 @@ namespace MachineLearning.Soccer.Editor
                 var rewardEngine = root.GetComponent<SoccerRewardEngine>() ?? root.AddComponent<SoccerRewardEngine>();
                 rewardEngine.Configure(environment, matchSetup);
 
-                if (blueRuleControllerType != null)
+                if (redRuleControllerType != null)
                 {
-                    Require(typeof(MonoBehaviour).IsAssignableFrom(blueRuleControllerType),
+                    Require(typeof(MonoBehaviour).IsAssignableFrom(redRuleControllerType),
                         "Rule controller must be a MonoBehaviour.");
                     foreach (var agent in root.GetComponentsInChildren<AgentSoccer>(true)
-                                 .Where(agent => agent.Team == Team.Blue))
+                                 .Where(agent => agent.Team == Team.Red))
                     {
-                        if (agent.GetComponent(blueRuleControllerType) == null)
+                        if (agent.GetComponent(redRuleControllerType) == null)
                         {
-                            agent.gameObject.AddComponent(blueRuleControllerType);
+                            agent.gameObject.AddComponent(redRuleControllerType);
                         }
                     }
                 }
@@ -913,9 +1150,312 @@ namespace MachineLearning.Soccer.Editor
             return AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
         }
 
-        static bool IsBlue(AgentSoccer agent)
+        static void BuildStadiumWorkspaces(
+            SoccerTeamDefinition baseDefinition,
+            SoccerTeamDefinition attackDefinition,
+            SoccerTeamDefinition defenseDefinition,
+            SoccerTeamDefinition pressDefinition,
+            SoccerTeamDefinition ruleDefinition)
         {
-            return agent.GetComponent<BehaviorParameters>().TeamId == (int)Team.Blue;
+            var definitions = new[]
+            {
+                baseDefinition, attackDefinition, defenseDefinition, pressDefinition, ruleDefinition
+            };
+            Require(definitions.All(definition => definition != null),
+                "All five TeamDefinitions must exist before Stadium workspaces are built.");
+            Require(AssetDatabase.LoadAssetAtPath<GameObject>(StadiumBaseEnvironmentPrefabPath) != null,
+                $"Canonical Core Stadium prefab is missing: {StadiumBaseEnvironmentPrefabPath}");
+            Require(File.Exists(Path.GetFullPath(StadiumBaseScenePath)),
+                $"Canonical Core Stadium scene is missing: {StadiumBaseScenePath}");
+
+            var baseEnvironment = CreateStadiumWorkspaceEnvironmentPrefab(
+                StadiumBaseEnvironmentPrefabPath,
+                StadiumBaseEnvironmentPrefabPath,
+                "StadiumEnvironment_Base",
+                baseDefinition,
+                baseDefinition,
+                typeof(BaseRewardPolicy),
+                true,
+                true);
+            var attackEnvironment = CreateStadiumWorkspaceEnvironmentPrefab(
+                StadiumBaseEnvironmentPrefabPath,
+                StadiumAttackEnvironmentPrefabPath,
+                "StadiumEnvironment_Attack",
+                attackDefinition,
+                baseDefinition,
+                typeof(AttackRewardPolicy),
+                true,
+                false);
+            var defenseEnvironment = CreateStadiumWorkspaceEnvironmentPrefab(
+                StadiumBaseEnvironmentPrefabPath,
+                StadiumDefenseEnvironmentPrefabPath,
+                "StadiumEnvironment_Defense",
+                defenseDefinition,
+                baseDefinition,
+                typeof(DefenseRewardPolicy),
+                true,
+                false);
+            var pressEnvironment = CreateStadiumWorkspaceEnvironmentPrefab(
+                StadiumBaseEnvironmentPrefabPath,
+                StadiumPressEnvironmentPrefabPath,
+                "StadiumEnvironment_Press",
+                pressDefinition,
+                baseDefinition,
+                typeof(PressRewardPolicy),
+                true,
+                false);
+            var ruleEnvironment = CreateStadiumWorkspaceEnvironmentPrefab(
+                StadiumBaseEnvironmentPrefabPath,
+                StadiumRuleEnvironmentPrefabPath,
+                "StadiumEnvironment_Rule",
+                ruleDefinition,
+                baseDefinition,
+                typeof(RuleRewardPolicy),
+                false,
+                false,
+                typeof(RuleBasedSoccerController));
+
+            CreateStadiumScene(StadiumBaseScenePath, baseEnvironment, false);
+            CreateStadiumScene(StadiumAttackScenePath, attackEnvironment, true);
+            CreateStadiumScene(StadiumDefenseScenePath, defenseEnvironment, true);
+            CreateStadiumScene(StadiumPressScenePath, pressEnvironment, true);
+            CreateStadiumScene(StadiumRuleScenePath, ruleEnvironment, true);
+        }
+
+        static GameObject CreateStadiumWorkspaceEnvironmentPrefab(
+            string sourcePath,
+            string assetPath,
+            string rootName,
+            SoccerTeamDefinition redDefinition,
+            SoccerTeamDefinition navyDefinition,
+            Type redPolicyType,
+            bool trainRed,
+            bool trainNavy,
+            Type redRuleControllerType = null)
+        {
+            ModelAsset preservedRedModel = null;
+            ModelAsset preservedNavyModel = null;
+            if (AssetDatabase.LoadAssetAtPath<GameObject>(assetPath) != null)
+            {
+                var existingRoot = PrefabUtility.LoadPrefabContents(assetPath);
+                try
+                {
+                    var existingSetup = existingRoot.GetComponent<SoccerMatchSetup>();
+                    if (existingSetup != null)
+                    {
+                        preservedRedModel = existingSetup.RedModelOverride;
+                        preservedNavyModel = existingSetup.NavyModelOverride;
+                    }
+                }
+                finally
+                {
+                    PrefabUtility.UnloadPrefabContents(existingRoot);
+                }
+            }
+
+            var root = PrefabUtility.LoadPrefabContents(sourcePath);
+            try
+            {
+                root.name = rootName;
+                var environment = root.GetComponent<SoccerEnvController>();
+                Require(environment != null && environment.ArenaGeometry != null,
+                    $"Stadium workspace is missing its geometry: {sourcePath}");
+                ApplyStadiumTeamVisualIdentity(root);
+
+                foreach (var policy in root.GetComponents<SoccerTeamRewardPolicyBase>())
+                {
+                    UnityEngine.Object.DestroyImmediate(policy);
+                }
+                foreach (var ruleController in root.GetComponentsInChildren<MonoBehaviour>(true)
+                             .Where(component => component is ISoccerRuleController))
+                {
+                    UnityEngine.Object.DestroyImmediate(ruleController);
+                }
+
+                SoccerTeamRewardPolicyBase redPolicy;
+                BaseRewardPolicy navyPolicy;
+                if (redPolicyType == typeof(BaseRewardPolicy))
+                {
+                    redPolicy = root.AddComponent<BaseRewardPolicy>();
+                    navyPolicy = root.AddComponent<BaseRewardPolicy>();
+                }
+                else
+                {
+                    redPolicy = (SoccerTeamRewardPolicyBase)root.AddComponent(redPolicyType);
+                    navyPolicy = root.AddComponent<BaseRewardPolicy>();
+                }
+
+                var matchSetup = root.GetComponent<SoccerMatchSetup>() ?? root.AddComponent<SoccerMatchSetup>();
+                matchSetup.Configure(
+                    redDefinition,
+                    navyDefinition,
+                    redPolicy,
+                    navyPolicy,
+                    trainRed,
+                    trainNavy,
+                    preservedRedModel,
+                    preservedNavyModel);
+                foreach (var agent in root.GetComponentsInChildren<AgentSoccer>(true))
+                {
+                    var behavior = agent.GetComponent<BehaviorParameters>();
+                    var definition = agent.Team == Team.Red ? redDefinition : navyDefinition;
+                    behavior.BehaviorName = definition.BehaviorName;
+                    behavior.TeamId = (int)agent.Team;
+                    behavior.Model = null;
+                    behavior.BehaviorType = matchSetup.IsTrainable(agent.Team)
+                        ? BehaviorType.Default
+                        : BehaviorType.HeuristicOnly;
+
+                    if (redRuleControllerType != null && agent.Team == Team.Red)
+                    {
+                        var controller = (RuleBasedSoccerController)agent.gameObject.AddComponent(redRuleControllerType);
+                        controller.Configure(agent, environment);
+                    }
+                }
+
+                var rewardEngine = root.GetComponent<SoccerRewardEngine>() ?? root.AddComponent<SoccerRewardEngine>();
+                rewardEngine.Configure(environment, matchSetup);
+                var saved = PrefabUtility.SaveAsPrefabAsset(root, assetPath);
+                Require(saved != null, $"Could not save Stadium workspace prefab: {assetPath}");
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(root);
+            }
+
+            return AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+        }
+
+        static void CreateStadiumScene(string scenePath, GameObject environmentPrefab, bool copyCanonicalScene)
+        {
+            if (copyCanonicalScene)
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(scenePath)));
+                File.Copy(Path.GetFullPath(StadiumBaseScenePath), Path.GetFullPath(scenePath), true);
+                AssetDatabase.ImportAsset(scenePath, ImportAssetOptions.ForceSynchronousImport);
+            }
+
+            var scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+            var environments = scene.GetRootGameObjects()
+                .SelectMany(rootObject => rootObject.GetComponentsInChildren<SoccerEnvController>(true))
+                .ToArray();
+            Require(environments.Length == 1, $"Stadium scene must contain one environment: {scenePath}");
+            SoccerEnvController environment;
+            if (copyCanonicalScene)
+            {
+                var oldEnvironmentRoot = PrefabUtility.GetOutermostPrefabInstanceRoot(environments[0].gameObject)
+                    ?? environments[0].gameObject;
+                UnityEngine.Object.DestroyImmediate(oldEnvironmentRoot);
+                var instance = (GameObject)PrefabUtility.InstantiatePrefab(environmentPrefab, scene);
+                environment = instance.GetComponent<SoccerEnvController>();
+            }
+            else
+            {
+                environment = environments[0];
+            }
+
+            var goals = environment.GetComponentsInChildren<MeshRenderer>(true)
+                .Where(renderer => renderer.name.StartsWith("SM_S_Gate", StringComparison.Ordinal))
+                .OrderBy(renderer => renderer.bounds.center.x)
+                .ToArray();
+            Require(goals.Length == 2, $"Stadium scene must contain two Demo goals: {scenePath}");
+            var roots = scene.GetRootGameObjects();
+            var hud = roots.SelectMany(rootObject => rootObject.GetComponentsInChildren<SoccerHudController>(true)).Single();
+            hud.Configure(environment);
+            hud.ConfigureRewardPanelBottomRight(true);
+            var playerCamera = roots.SelectMany(rootObject => rootObject.GetComponentsInChildren<SoccerPlayerCamera>(true)).Single();
+            playerCamera.Configure(environment);
+            var fader = playerCamera.GetComponent<SoccerGoalOcclusionFader>();
+            Require(fader != null, $"Stadium camera fader is missing: {scenePath}");
+            fader.Configure(environment);
+            fader.ConfigureGoalRenderers(new[] { goals[0] }, new[] { goals[1] });
+            EditorUtility.SetDirty(hud);
+            EditorUtility.SetDirty(playerCamera);
+            EditorUtility.SetDirty(fader);
+            Require(EditorSceneManager.SaveScene(scene), $"Could not save Stadium scene: {scenePath}");
+        }
+
+        static bool IsRed(AgentSoccer agent)
+        {
+            return agent.GetComponent<BehaviorParameters>().TeamId == (int)Team.Red;
+        }
+
+        static void ApplyStadiumTeamVisualIdentity(GameObject root)
+        {
+            var redPlayerMaterial = AssetDatabase.LoadAssetAtPath<Material>(Root + "/Materials/AgentRed.mat");
+            var navyPlayerMaterial = AssetDatabase.LoadAssetAtPath<Material>(Root + "/Materials/AgentNavy.mat");
+            var redKickPlateMaterial = AssetDatabase.LoadAssetAtPath<Material>(Root + "/Materials/KickPlateRed.mat");
+            var navyKickPlateMaterial = AssetDatabase.LoadAssetAtPath<Material>(Root + "/Materials/KickPlateNavy.mat");
+            var redGoalMaterial = AssetDatabase.LoadAssetAtPath<Material>(StadiumRedGoalMaterialPath);
+            var navyGoalMaterial = AssetDatabase.LoadAssetAtPath<Material>(StadiumNavyGoalMaterialPath);
+            Require(redPlayerMaterial != null && navyPlayerMaterial != null
+                && redKickPlateMaterial != null && navyKickPlateMaterial != null
+                && redGoalMaterial != null && navyGoalMaterial != null,
+                "Red/Navy shared visual materials must exist before Stadium migration.");
+
+            foreach (var item in root.GetComponentsInChildren<Transform>(true))
+            {
+                var currentTag = item.gameObject.tag;
+                if (currentTag == "blueAgent") item.gameObject.tag = SoccerTeamVisuals.RedAgentTag;
+                else if (currentTag == "purpleAgent") item.gameObject.tag = SoccerTeamVisuals.NavyAgentTag;
+                else if (currentTag == "blueGoal") item.gameObject.tag = SoccerTeamVisuals.RedGoalTag;
+                else if (currentTag == "purpleGoal") item.gameObject.tag = SoccerTeamVisuals.NavyGoalTag;
+
+                item.name = item.name.Replace("Blue", "Red").Replace("Purple", "Navy");
+            }
+
+            foreach (var agent in root.GetComponentsInChildren<AgentSoccer>(true))
+            {
+                var isRed = agent.Team == Team.Red;
+                var teamName = isRed ? "Red" : "Navy";
+                var agentTag = SoccerTeamVisuals.AgentTag(agent.Team);
+                agent.gameObject.tag = agentTag;
+                agent.name = agent.name.Replace(isRed ? "Blue" : "Purple", teamName);
+
+                var bodyRenderer = agent.GetComponentsInChildren<Renderer>(true)
+                    .FirstOrDefault(renderer => renderer.gameObject.name.StartsWith("AgentCube_", StringComparison.Ordinal));
+                Require(bodyRenderer != null, $"Player body renderer is missing: {agent.name}");
+                bodyRenderer.gameObject.name = "AgentCube_" + teamName;
+                bodyRenderer.sharedMaterial = isRed ? redPlayerMaterial : navyPlayerMaterial;
+
+                var kickPlate = agent.GetComponentInChildren<SoccerKickPlate>(true);
+                Require(kickPlate != null, $"Kick plate is missing: {agent.name}");
+                foreach (var part in kickPlate.GetComponentsInChildren<Transform>(true))
+                {
+                    part.gameObject.tag = agentTag;
+                }
+                foreach (var renderer in kickPlate.GetComponentsInChildren<Renderer>(true))
+                {
+                    renderer.sharedMaterial = isRed ? redKickPlateMaterial : navyKickPlateMaterial;
+                }
+
+                var detectableTags = isRed
+                    ? new[] { "ball", "redGoal", "navyGoal", "wall", "redAgent", "navyAgent" }
+                    : new[] { "ball", "navyGoal", "redGoal", "wall", "navyAgent", "redAgent" };
+                foreach (var sensor in agent.GetComponentsInChildren<RayPerceptionSensorComponent3D>(true))
+                {
+                    sensor.SensorName = sensor.SensorName.Replace(isRed ? "Blue" : "Purple", teamName);
+                    sensor.DetectableTags.Clear();
+                    foreach (var detectableTag in detectableTags)
+                    {
+                        sensor.DetectableTags.Add(detectableTag);
+                    }
+                }
+            }
+
+            var ballController = root.GetComponentsInChildren<SoccerBallController>(true).Single();
+            ballController.redGoalTag = SoccerTeamVisuals.RedGoalTag;
+            ballController.navyGoalTag = SoccerTeamVisuals.NavyGoalTag;
+
+            var demoGoals = root.GetComponentsInChildren<MeshRenderer>(true)
+                .Where(renderer => renderer.name.StartsWith("SM_S_Gate", StringComparison.Ordinal))
+                .OrderBy(renderer => renderer.bounds.center.x)
+                .ToArray();
+            Require(demoGoals.Length == 2, "Stadium migration requires two Demo goal renderers.");
+            demoGoals[0].gameObject.tag = SoccerTeamVisuals.RedGoalTag;
+            demoGoals[0].sharedMaterials = Enumerable.Repeat(redGoalMaterial, demoGoals[0].sharedMaterials.Length).ToArray();
+            demoGoals[1].gameObject.tag = SoccerTeamVisuals.NavyGoalTag;
+            demoGoals[1].sharedMaterials = Enumerable.Repeat(navyGoalMaterial, demoGoals[1].sharedMaterials.Length).ToArray();
         }
 
         static void ExpandTeam(List<AgentSoccer> agents, int targetCount)
@@ -945,10 +1485,10 @@ namespace MachineLearning.Soccer.Editor
                     ? AgentSoccer.Position.Striker
                     : index == 3 ? AgentSoccer.Position.DefenderKeeper : AgentSoccer.Position.Midfielder;
                 agent.name = $"{team}Player{index + 1}_{role}";
-                agent.gameObject.tag = team == Team.Blue ? "blueAgent" : "purpleAgent";
+                agent.gameObject.tag = team == Team.Red ? "redAgent" : "navyAgent";
                 agent.transform.localPosition = spawns[index];
                 agent.transform.localRotation = Quaternion.Euler(0f, facingYaw, 0f);
-                agent.Configure(team, role, team == Team.Blue && index == 0, spawns[index]);
+                agent.Configure(team, role, team == Team.Red && index == 0, spawns[index]);
 
                 var behavior = agent.GetComponent<BehaviorParameters>();
                 behavior.BehaviorName = "Soccer4v4_Base";
@@ -988,7 +1528,7 @@ namespace MachineLearning.Soccer.Editor
                 UnityEngine.Object.DestroyImmediate(previous.gameObject);
             }
 
-            var teamTag = agent.Team == Team.Blue ? "blueAgent" : "purpleAgent";
+            var teamTag = agent.Team == Team.Red ? "redAgent" : "navyAgent";
             var root = new GameObject("KickPlate") { layer = layer, tag = teamTag };
             root.transform.SetParent(agent.transform, false);
             var plate = root.AddComponent<SoccerKickPlate>();
@@ -1113,13 +1653,13 @@ namespace MachineLearning.Soccer.Editor
 
             var settingsObject = new GameObject("SoccerSettings");
             var settings = settingsObject.AddComponent<SoccerSettings>();
-            settings.agentRunSpeed = 2.2f;
-            settings.maximumPlanarSpeed = 9f;
-            settings.rotationSpeed = 125f;
+            settings.agentRunSpeed = SoccerSettings.DefaultAgentRunSpeed;
+            settings.maximumPlanarSpeed = SoccerSettings.DefaultMaximumPlanarSpeed;
+            settings.rotationSpeed = SoccerSettings.DefaultRotationSpeed;
             settings.humanAcceleration = SoccerSettings.DefaultHumanAcceleration;
             settings.humanDeceleration = SoccerSettings.DefaultHumanDeceleration;
-            settings.blueMaterial = AssetDatabase.LoadAssetAtPath<Material>(Root + "/Materials/Blue.mat");
-            settings.purpleMaterial = AssetDatabase.LoadAssetAtPath<Material>(Root + "/Materials/Purple.mat");
+            settings.redMaterial = AssetDatabase.LoadAssetAtPath<Material>(Root + "/Materials/Red.mat");
+            settings.navyMaterial = AssetDatabase.LoadAssetAtPath<Material>(Root + "/Materials/Navy.mat");
 
             var lightObject = new GameObject("Directional Light");
             var light = lightObject.AddComponent<Light>();
@@ -1162,15 +1702,19 @@ namespace MachineLearning.Soccer.Editor
         {
             var requiredScenes = new[]
             {
-                BaseScenePath,
-                AttackScenePath,
-                DefenseScenePath,
-                PressScenePath,
-                RuleScenePath,
-                ScenePath
+                StadiumBaseScenePath,
+                StadiumAttackScenePath,
+                StadiumDefenseScenePath,
+                StadiumPressScenePath,
+                StadiumRuleScenePath
+            };
+            var retiredSoccerScenes = new[]
+            {
+                ScenePath, BaseScenePath, AttackScenePath, DefenseScenePath, PressScenePath, RuleScenePath
             };
             var scenes = EditorBuildSettings.scenes
                 .Where(scene => !requiredScenes.Contains(scene.path)
+                    && !retiredSoccerScenes.Contains(scene.path)
                     && !scene.path.StartsWith(LegacyRoot + "/", StringComparison.Ordinal))
                 .ToList();
             for (var index = requiredScenes.Length - 1; index >= 0; index--)
@@ -1299,23 +1843,47 @@ namespace MachineLearning.Soccer.Editor
         {
             return new VisualMaterialSet
             {
-                Blue = CreateOrUpdateUrpMaterial("AgentBlue", new Color(0.13f, 0.59f, 0.95f)),
-                Purple = CreateOrUpdateUrpMaterial("AgentPurple", new Color(0.55f, 0.43f, 0.78f)),
-                BlueKickPlate = CreateOrUpdateUrpMaterial("KickPlateBlue", new Color(0.03f, 0.30f, 0.46f)),
-                PurpleKickPlate = CreateOrUpdateUrpMaterial("KickPlatePurple", new Color(0.29f, 0.17f, 0.48f)),
+                Red = CreateOrUpdateUrpMaterial("AgentRed", SoccerTeamVisuals.RedPlayerColor),
+                Navy = CreateOrUpdateUrpMaterial("AgentNavy", SoccerTeamVisuals.NavyPlayerColor),
+                RedKickPlate = CreateOrUpdateUrpMaterial("KickPlateRed", SoccerTeamVisuals.RedKickPlateColor),
+                NavyKickPlate = CreateOrUpdateUrpMaterial("KickPlateNavy", SoccerTeamVisuals.NavyKickPlateColor),
                 Eye = CreateOrUpdateUrpMaterial("Eye", new Color(0.06f, 0.06f, 0.06f)),
                 Wall = CreateOrUpdateUrpMaterial("GrayMiddle", new Color(0.39f, 0.39f, 0.39f)),
-                GoalBlue = CreateOrUpdateUrpMaterial("GoalBlue", new Color(0.13f, 0.59f, 0.95f)),
-                GoalPurple = CreateOrUpdateUrpMaterial("GoalPurple", new Color(0.55f, 0.43f, 0.78f)),
+                GoalRed = CreateOrUpdateUrpMaterial("GoalRed", SoccerTeamVisuals.RedGoalColor),
+                GoalNavy = CreateOrUpdateUrpMaterial("GoalNavy", SoccerTeamVisuals.NavyGoalColor),
                 GoalNetBlack = CreateOrUpdateUrpMaterial("GoalNetBlack", new Color(0.05f, 0.05f, 0.05f)),
                 GoalNetWhite = CreateOrUpdateUrpMaterial("GoalNetWhite", Color.white),
                 Glass = CreateOrUpdateUrpMaterial("ClearPlastic", new Color(0.62f, 0.84f, 0.96f, 0.18f), true)
             };
         }
 
+        static void PrepareStadiumGoalMaterials()
+        {
+            foreach (var item in new[]
+                     {
+                         (Path: StadiumRedGoalMaterialPath, Name: "StadiumRedGoal", Color: SoccerTeamVisuals.RedGoalColor),
+                         (Path: StadiumNavyGoalMaterialPath, Name: "StadiumNavyGoal", Color: SoccerTeamVisuals.NavyGoalColor)
+                     })
+            {
+                var material = CreateOrUpdateUrpMaterialAtPath(item.Path, item.Name, item.Color);
+                if (material.HasProperty("_BaseMap")) material.SetTexture("_BaseMap", null);
+                if (material.HasProperty("_MainTex")) material.SetTexture("_MainTex", null);
+                if (material.HasProperty("_Cull")) material.SetFloat("_Cull", (float)CullMode.Off);
+                EditorUtility.SetDirty(material);
+            }
+        }
+
         static Material CreateOrUpdateUrpMaterial(string name, Color color, bool transparent = false)
         {
-            var path = $"{Root}/Materials/{name}.mat";
+            return CreateOrUpdateUrpMaterialAtPath($"{Root}/Materials/{name}.mat", name, color, transparent);
+        }
+
+        static Material CreateOrUpdateUrpMaterialAtPath(
+            string path,
+            string name,
+            Color color,
+            bool transparent = false)
+        {
             var material = AssetDatabase.LoadAssetAtPath<Material>(path);
             if (material == null)
             {
@@ -1364,21 +1932,21 @@ namespace MachineLearning.Soccer.Editor
             foreach (var renderer in root.GetComponentsInChildren<Renderer>(true))
             {
                 var objectName = renderer.gameObject.name;
-                if (objectName == "AgentCube_Blue")
+                if (objectName == "AgentCube_Red")
                 {
-                    renderer.sharedMaterial = materials.Blue;
+                    renderer.sharedMaterial = materials.Red;
                 }
-                else if (objectName == "AgentCube_Purple")
+                else if (objectName == "AgentCube_Navy")
                 {
-                    renderer.sharedMaterial = materials.Purple;
+                    renderer.sharedMaterial = materials.Navy;
                 }
-                else if (objectName == "GoalBlue")
+                else if (objectName == "GoalRed")
                 {
-                    renderer.sharedMaterial = materials.GoalBlue;
+                    renderer.sharedMaterial = materials.GoalRed;
                 }
-                else if (objectName == "GoalPurple")
+                else if (objectName == "GoalNavy")
                 {
-                    renderer.sharedMaterial = materials.GoalPurple;
+                    renderer.sharedMaterial = materials.GoalNavy;
                 }
                 else if (objectName is "eye" or "mouth")
                 {
@@ -1416,9 +1984,9 @@ namespace MachineLearning.Soccer.Editor
                 $"The common arena must contain all six goal renderers: {root.name}");
             foreach (var renderer in goalRenderers)
             {
-                var expectedTag = renderer.gameObject.name.Contains("Blue", StringComparison.Ordinal)
-                    ? "blueGoal"
-                    : "purpleGoal";
+                var expectedTag = renderer.gameObject.name.Contains("Red", StringComparison.Ordinal)
+                    ? "redGoal"
+                    : "navyGoal";
                 Require(renderer.gameObject.CompareTag(expectedTag),
                     $"Goal renderer tag mismatch: {root.name}/{renderer.gameObject.name}");
 
@@ -1427,7 +1995,34 @@ namespace MachineLearning.Soccer.Editor
                 GameObjectUtility.SetStaticEditorFlags(
                     renderer.gameObject,
                     staticFlags & ~StaticEditorFlags.BatchingStatic);
+
+                // Goal mesh/collider is authored with its opening on local Z.
+                // Use an absolute scale so repeated Builder runs remain idempotent.
+                renderer.transform.localScale = new Vector3(1f, 1f, GoalLateralScale);
             }
+
+            var balls = root.GetComponentsInChildren<SoccerBallController>(true);
+            Require(balls.Length == 1, $"The common arena must contain exactly one Soccer ball: {root.name}");
+            var ball = balls[0];
+            ball.transform.localScale = Vector3.one * BallUniformScale;
+            var ballPosition = ball.transform.localPosition;
+            ballPosition.y = BallResetHeight;
+            ball.transform.localPosition = ballPosition;
+        }
+
+        static bool HasCommonBasicSkillRewards(SoccerRewardProfile profile)
+        {
+            return profile != null
+                && Mathf.Approximately(profile.passSuccess, 0.005f)
+                && Mathf.Approximately(profile.passIndividual, 0.005f)
+                && Mathf.Approximately(profile.controlledCarryGroup, 0.0025f)
+                && Mathf.Approximately(profile.controlledCarryIndividual, 0.005f)
+                && Mathf.Approximately(profile.wastefulStrongKickPenalty, 0.003f)
+                && Mathf.Approximately(profile.unsafeOwnGoalKickPenalty, 0.02f)
+                && Mathf.Approximately(profile.passIndividualRewardLimitPerPossession, 0.02f)
+                && Mathf.Approximately(profile.controlledCarryRewardLimitPerPossession, 0.03f)
+                && Mathf.Approximately(profile.wastefulStrongKickPenaltyLimitPerPossession, 0.015f)
+                && Mathf.Approximately(profile.behaviorPenaltyLimitPerMatch, 0.1f);
         }
 
         // 다섯 환경에 동일하게 배포한다. 변경 시 템플릿·프리팹·검증·공통 문서를 함께 갱신한다.
@@ -1619,14 +2214,14 @@ namespace MachineLearning.Soccer.Editor
 
         sealed class VisualMaterialSet
         {
-            public Material Blue;
-            public Material Purple;
-            public Material BlueKickPlate;
-            public Material PurpleKickPlate;
+            public Material Red;
+            public Material Navy;
+            public Material RedKickPlate;
+            public Material NavyKickPlate;
             public Material Eye;
             public Material Wall;
-            public Material GoalBlue;
-            public Material GoalPurple;
+            public Material GoalRed;
+            public Material GoalNavy;
             public Material GoalNetBlack;
             public Material GoalNetWhite;
             public Material Glass;

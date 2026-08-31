@@ -79,14 +79,14 @@
     -unity-font-style: bold;
 }
 
-.blue-value {
+.red-value {
     margin-bottom: 5px;
-    color: rgb(111, 201, 255);
+    color: rgb(255, 107, 120);
     font-size: 15px;
 }
 
-.purple-value {
-    color: rgb(201, 162, 255);
+.navy-value {
+    color: rgb(120, 175, 255);
     font-size: 15px;
 }
 

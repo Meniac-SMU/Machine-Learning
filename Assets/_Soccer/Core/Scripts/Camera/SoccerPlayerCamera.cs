@@ -8,8 +8,8 @@ namespace MachineLearning.Soccer
     [RequireComponent(typeof(Camera))]
     public sealed class SoccerPlayerCamera : MonoBehaviour
     {
-        public static readonly Vector3 DefaultOverviewPosition = new(0f, 82f, -78f);
-        public const float DefaultOverviewFieldOfView = 50f;
+        public static readonly Vector3 DefaultOverviewPosition = new(0f, 100f, -100f);
+        public const float DefaultOverviewFieldOfView = 55f;
 
         [SerializeField] SoccerEnvController environment;
         [Header("Human third-person view")]

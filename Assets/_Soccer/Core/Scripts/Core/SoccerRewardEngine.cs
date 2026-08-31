@@ -28,6 +28,11 @@ namespace MachineLearning.Soccer
         const float DribbleProgressDistance = 2f;
         const float DribbleBallProgressDistance = 1.5f;
         const float DribbleCandidateLifetimeSeconds = 3f;
+        const float ControlledCarryProgressDistance = 2f;
+        const float ControlledCarryMinimumSeconds = 0.4f;
+        const float ControlledCarryCandidateLifetimeSeconds = 4f;
+        const float ControlledBallDistance = 2.4f;
+        const float MinimumStableProgressControlSeconds = 0.35f;
         const float FormationSampleSeconds = 0.75f;
         const float MinimumFormationImprovement = 0.08f;
 
@@ -39,18 +44,23 @@ namespace MachineLearning.Soccer
         AgentSoccer m_PendingPossessionAgent;
         float m_PendingPossessionSince;
         AgentSoccer m_BallCarrier;
+        float m_BallCarrierControlSince;
         Team? m_PossessionTeam;
         float m_PossessionStartBallX;
         bool m_AttackSuccessAwarded;
         bool m_PossessionTransitionPending;
         readonly float[] m_LastLossTimes = { float.NegativeInfinity, float.NegativeInfinity };
         readonly float[] m_PassRewardTotals = new float[2];
+        readonly float[] m_PassIndividualRewardTotals = new float[2];
+        readonly float[] m_ControlledCarryRewardTotals = new float[2];
         readonly float[] m_ProgressivePassRewardTotals = new float[2];
         readonly float[] m_CombinationRewardTotals = new float[2];
         readonly float[] m_FormationRewardTotals = new float[2];
         readonly float[] m_ShapingRewardTotals = new float[2];
         readonly float[] m_MatchShapingRewardTotals = new float[2];
         readonly float[] m_CrowdingPenaltyTotals = new float[2];
+        readonly float[] m_WastefulStrongKickPenaltyTotals = new float[2];
+        readonly float[] m_BehaviorPenaltyMatchTotals = new float[2];
         readonly float[] m_CumulativeTeamRewards = new float[2];
         readonly float[] m_LastFormationScores = new float[2];
         readonly bool[] m_HasFormationScore = new bool[2];
@@ -61,9 +71,11 @@ namespace MachineLearning.Soccer
         };
         readonly List<AgentSoccer> m_CombinationSequence = new();
         readonly HashSet<AgentSoccer> m_DribbleRewardedAgents = new();
+        readonly HashSet<AgentSoccer> m_ControlledCarryRewardedAgents = new();
         float m_CombinationStartTime;
         float m_NextFormationSampleTime;
         DribbleCandidate m_DribbleCandidate;
+        ControlledCarryCandidate m_ControlledCarryCandidate;
         PassCandidate m_PendingPass;
 
         public Team? PossessionTeam => m_PossessionTransitionPending ? null : m_PossessionTeam;
@@ -73,6 +85,39 @@ namespace MachineLearning.Soccer
         public float GetCumulativeReward(Team team)
         {
             return m_CumulativeTeamRewards[(int)team];
+        }
+
+        public static string GetTeamRewardEventStatKey(Team team, SoccerRewardKind kind)
+        {
+            return $"Soccer/{GetTeamTelemetryName(team)}/Reward/{kind}";
+        }
+
+        public static string GetTeamRewardSummaryTotalStatKey(Team team)
+        {
+            return $"Soccer/{GetTeamTelemetryName(team)}/Reward/Summary Total";
+        }
+
+        public static string GetTeamMatchRewardStatKey(Team team)
+        {
+            return $"Soccer/{GetTeamTelemetryName(team)}/Match Reward";
+        }
+
+        public void RecordMatchRewardSummary()
+        {
+            if (!Academy.IsInitialized)
+            {
+                return;
+            }
+
+            var statsRecorder = Academy.Instance.StatsRecorder;
+            statsRecorder.Add(
+                GetTeamMatchRewardStatKey(Team.Red),
+                GetCumulativeReward(Team.Red),
+                StatAggregationMethod.Average);
+            statsRecorder.Add(
+                GetTeamMatchRewardStatKey(Team.Navy),
+                GetCumulativeReward(Team.Navy),
+                StatAggregationMethod.Average);
         }
 
         public void Configure(SoccerEnvController environment, SoccerMatchSetup matchSetup)
@@ -96,6 +141,7 @@ namespace MachineLearning.Soccer
 
             ConfirmPossessionIfStable();
             ConfirmPassIfStable();
+            RefreshBallCarrierControl();
             var sampleTeamShape = Time.time >= m_NextFormationSampleTime;
             if (sampleTeamShape)
             {
@@ -110,6 +156,7 @@ namespace MachineLearning.Soccer
             }
 
             EvaluateAttackSuccess();
+            EvaluateControlledCarrySuccess();
             EvaluateDribbleSuccess();
             if (sampleTeamShape)
             {
@@ -169,6 +216,11 @@ namespace MachineLearning.Soccer
             else if (m_PossessionTeam == agent.Team)
             {
                 // 팀 소유권을 유지한 패스의 수신자 갱신.
+                if (m_BallCarrier != agent)
+                {
+                    m_BallCarrierControlSince = Time.time;
+                }
+
                 m_BallCarrier = agent;
             }
 
@@ -176,6 +228,7 @@ namespace MachineLearning.Soccer
             {
                 if (!m_PossessionTransitionPending && m_PossessionTeam == agent.Team)
                 {
+                    BeginControlledCarryCandidate(agent);
                     BeginDribbleCandidate(agent);
                 }
             }
@@ -183,12 +236,53 @@ namespace MachineLearning.Soccer
                 && !m_PossessionTransitionPending
                 && m_PossessionTeam == agent.Team)
             {
+                BeginControlledCarryCandidate(agent);
                 BeginDribbleCandidate(agent);
             }
 
             m_LastTouchAgent = agent;
             m_LastTouchPosition = ballPosition;
             m_LastTouchTime = Time.time;
+        }
+
+        public void NotifyBallStrike(
+            AgentSoccer agent,
+            int kickAction,
+            Vector3 kickDirection,
+            bool safetyRedirected)
+        {
+            if (agent == null || m_Environment == null || !m_Environment.IsPlayActive || kickAction == 0)
+            {
+                return;
+            }
+
+            // 명시적 Kick 뒤의 공 비행을 일반 운반 checkpoint로 오인하지 않는다.
+            m_ControlledCarryCandidate = default;
+            if (safetyRedirected)
+            {
+                AwardBehaviorPenalty(agent, SoccerRewardKind.UnsafeOwnGoalKick, false);
+                return;
+            }
+
+            if (kickAction != 2)
+            {
+                return;
+            }
+
+            var ballPosition = m_Environment.Ball.transform.position;
+            var hasTeammateInLane = m_Environment.HasTeammateInKickLane(
+                agent,
+                ballPosition,
+                kickDirection);
+            if (!SoccerDefensiveClearanceRules.IsMeaningfulStrongKick(
+                    agent.Team,
+                    ballPosition,
+                    kickDirection,
+                    hasTeammateInLane,
+                    m_Environment.ArenaGeometry))
+            {
+                AwardBehaviorPenalty(agent, SoccerRewardKind.WastefulStrongKick, true);
+            }
         }
 
         public void AwardGoal(Team scoredTeam)
@@ -210,10 +304,12 @@ namespace MachineLearning.Soccer
             m_LastTouchTime = 0f;
             m_PendingPossessionAgent = null;
             m_BallCarrier = null;
+            m_BallCarrierControlSince = 0f;
             m_PossessionTeam = null;
             m_AttackSuccessAwarded = false;
             m_PossessionTransitionPending = false;
             m_DribbleCandidate = default;
+            m_ControlledCarryCandidate = default;
             m_PendingPass = default;
             ResetPossessionTracking();
             for (var index = 0; index < m_LastLossTimes.Length; index++)
@@ -227,6 +323,7 @@ namespace MachineLearning.Soccer
             // 경기 단위 보조 보상 상한 초기화.
             Array.Clear(m_MatchShapingRewardTotals, 0, m_MatchShapingRewardTotals.Length);
             Array.Clear(m_CrowdingPenaltyTotals, 0, m_CrowdingPenaltyTotals.Length);
+            Array.Clear(m_BehaviorPenaltyMatchTotals, 0, m_BehaviorPenaltyMatchTotals.Length);
             Array.Clear(m_CumulativeTeamRewards, 0, m_CumulativeTeamRewards.Length);
         }
 
@@ -297,13 +394,16 @@ namespace MachineLearning.Soccer
 
             m_PossessionTeam = newTeam;
             m_BallCarrier = confirmedCarrier;
+            m_BallCarrierControlSince = Time.time;
             m_DribbleCandidate = default;
+            m_ControlledCarryCandidate = default;
             m_PossessionTransitionPending = false;
             m_PendingPossessionAgent = null;
 
             // 상대의 짧은 접촉 뒤 같은 팀이 재확보한 경우 기존 소유권 상한 유지.
             if (previousTeam == newTeam)
             {
+                BeginControlledCarryCandidate(confirmedCarrier);
                 BeginDribbleCandidate(confirmedCarrier);
                 return;
             }
@@ -313,6 +413,7 @@ namespace MachineLearning.Soccer
             ResetPossessionTracking();
             m_CombinationSequence.Add(confirmedCarrier);
             m_CombinationStartTime = Time.time;
+            BeginControlledCarryCandidate(confirmedCarrier);
             BeginDribbleCandidate(confirmedCarrier);
 
             if (previousTeam.HasValue && previousTeam.Value != newTeam)
@@ -340,22 +441,59 @@ namespace MachineLearning.Soccer
             m_PossessionTransitionPending = false;
             m_PossessionTeam = null;
             m_BallCarrier = null;
+            m_BallCarrierControlSince = 0f;
             m_LastTouchAgent = null;
             m_LastTouchPosition = Vector3.zero;
             m_LastTouchTime = 0f;
             m_DribbleCandidate = default;
+            m_ControlledCarryCandidate = default;
             m_PendingPass = default;
+        }
+
+        void RefreshBallCarrierControl()
+        {
+            if (m_BallCarrier == null || m_Environment?.Ball == null)
+            {
+                return;
+            }
+
+            var controlDistance = Vector3.Distance(
+                m_BallCarrier.transform.position,
+                m_Environment.Ball.transform.position);
+            if (controlDistance <= ControlledBallDistance)
+            {
+                return;
+            }
+
+            // 2.4m 밖에 있던 시간은 안정 제어·운반 시간에 포함하지 않는다.
+            m_BallCarrierControlSince = Time.time;
+            m_ControlledCarryCandidate = default;
+            m_DribbleCandidate = default;
+            if (controlDistance <= PossessionControlDistance)
+            {
+                return;
+            }
+
+            // 패스가 비행하는 동안 팀 소유권과 cap은 유지하되 이전 선수를 carrier로 남기지 않는다.
+            m_BallCarrier = null;
+            m_BallCarrierControlSince = 0f;
         }
 
         void EvaluateAttackSuccess()
         {
-            if (!m_PossessionTeam.HasValue || m_AttackSuccessAwarded)
+            if (!m_PossessionTeam.HasValue
+                || m_AttackSuccessAwarded
+                || m_BallCarrier == null
+                || m_LastTouchAgent != m_BallCarrier
+                || Time.time - m_BallCarrierControlSince < MinimumStableProgressControlSeconds
+                || Vector3.Distance(m_BallCarrier.transform.position, m_Environment.Ball.transform.position)
+                    > ControlledBallDistance)
             {
                 return;
             }
 
             var team = m_PossessionTeam.Value;
-            var attackSign = team == Team.Blue ? 1f : -1f;
+            var attackSign = team == Team.Red ? 1f : -1f;
             var progress = (m_Environment.Ball.transform.position.x - m_PossessionStartBallX) * attackSign;
             if (progress < AttackProgressDistance)
             {
@@ -386,7 +524,17 @@ namespace MachineLearning.Soccer
                 ref m_PassRewardTotals[(int)team],
                 profile.passRewardLimitPerPossession);
 
-            var attackSign = team == Team.Blue ? 1f : -1f;
+            var individualRemaining = profile.passIndividualRewardLimitPerPossession
+                - m_PassIndividualRewardTotals[(int)team];
+            if (individualRemaining > 0f)
+            {
+                m_PassIndividualRewardTotals[(int)team] += AwardIndividual(
+                    passer,
+                    SoccerRewardKind.PassIndividual,
+                    individualRemaining);
+            }
+
+            var attackSign = team == Team.Red ? 1f : -1f;
             var forwardProgress = (receivePosition.x - passStart.x) * attackSign;
             if (forwardProgress >= MinimumProgressivePassDistance)
             {
@@ -451,6 +599,103 @@ namespace MachineLearning.Soccer
             m_CombinationStartTime = Time.time;
         }
 
+        void BeginControlledCarryCandidate(AgentSoccer agent)
+        {
+            if (agent == null
+                || m_ControlledCarryRewardedAgents.Contains(agent)
+                || m_Environment?.Ball == null)
+            {
+                return;
+            }
+
+            m_ControlledCarryCandidate = new ControlledCarryCandidate
+            {
+                Agent = agent,
+                StartingPosition = agent.transform.position,
+                StartingBallPosition = m_Environment.Ball.transform.position,
+                StartingTime = Time.time,
+                Valid = true
+            };
+        }
+
+        void EvaluateControlledCarrySuccess()
+        {
+            if (!m_ControlledCarryCandidate.Valid)
+            {
+                return;
+            }
+
+            var candidateAge = Time.time - m_ControlledCarryCandidate.StartingTime;
+            if (candidateAge > ControlledCarryCandidateLifetimeSeconds)
+            {
+                var carrier = m_ControlledCarryCandidate.Agent;
+                m_ControlledCarryCandidate = default;
+                if (carrier != null && carrier == m_BallCarrier && m_LastTouchAgent == carrier)
+                {
+                    BeginControlledCarryCandidate(carrier);
+                }
+
+                return;
+            }
+
+            var agent = m_ControlledCarryCandidate.Agent;
+            if (agent == null
+                || candidateAge < ControlledCarryMinimumSeconds
+                || m_BallCarrier != agent
+                || m_LastTouchAgent != agent
+                || m_PossessionTeam != agent.Team)
+            {
+                return;
+            }
+
+            var attackSign = agent.Team == Team.Red ? 1f : -1f;
+            var playerProgress = (agent.transform.position.x - m_ControlledCarryCandidate.StartingPosition.x)
+                * attackSign;
+            var ballProgress = (m_Environment.Ball.transform.position.x
+                - m_ControlledCarryCandidate.StartingBallPosition.x) * attackSign;
+            if (playerProgress < ControlledCarryProgressDistance
+                || ballProgress < ControlledCarryProgressDistance
+                || Vector3.Distance(agent.transform.position, m_Environment.Ball.transform.position)
+                    > ControlledBallDistance)
+            {
+                return;
+            }
+
+            var profile = GetProfile(agent.Team);
+            if (profile == null)
+            {
+                m_ControlledCarryCandidate = default;
+                return;
+            }
+
+            var teamIndex = (int)agent.Team;
+            var itemRemaining = profile.controlledCarryRewardLimitPerPossession
+                - m_ControlledCarryRewardTotals[teamIndex];
+            if (itemRemaining > 0f)
+            {
+                var groupNominal = Mathf.Max(
+                    0f,
+                    GetGroupRewardValue(agent.Team, SoccerRewardKind.ControlledCarry, agent));
+                var individualNominal = Mathf.Max(
+                    0f,
+                    GetIndividualRewardValue(agent, SoccerRewardKind.ControlledCarry));
+                var nominalTotal = groupNominal + individualNominal;
+                var scale = nominalTotal > 0f ? Mathf.Min(1f, itemRemaining / nominalTotal) : 0f;
+                var appliedGroup = ApplyGroupReward(
+                    agent.Team,
+                    SoccerRewardKind.ControlledCarry,
+                    groupNominal * scale);
+                var appliedIndividual = AwardIndividual(
+                    agent,
+                    SoccerRewardKind.ControlledCarry,
+                    Mathf.Max(0f, itemRemaining - appliedGroup));
+                m_ControlledCarryRewardTotals[teamIndex] += appliedGroup + appliedIndividual;
+            }
+
+            m_ControlledCarryRewardedAgents.Add(agent);
+            m_ControlledCarryCandidate = default;
+        }
+
         void BeginDribbleCandidate(AgentSoccer agent)
         {
             if (m_DribbleRewardedAgents.Contains(agent))
@@ -499,7 +744,7 @@ namespace MachineLearning.Soccer
             }
 
             var agent = m_DribbleCandidate.Agent;
-            var attackSign = agent.Team == Team.Blue ? 1f : -1f;
+            var attackSign = agent.Team == Team.Red ? 1f : -1f;
             var progress = (agent.transform.position.x - m_DribbleCandidate.StartingPosition.x) * attackSign;
             var ballProgress = (m_Environment.Ball.transform.position.x - m_DribbleCandidate.StartingBallPosition.x)
                 * attackSign;
@@ -697,21 +942,42 @@ namespace MachineLearning.Soccer
 
             m_Environment.AddTeamReward(team, reward);
             m_CumulativeTeamRewards[(int)team] += reward;
-            Record(kind, reward);
+            Record(team, kind, reward);
             return reward;
         }
 
-        void AwardIndividual(AgentSoccer agent, SoccerRewardKind kind)
+        float GetIndividualRewardValue(AgentSoccer agent, SoccerRewardKind kind)
         {
+            if (agent == null)
+            {
+                return 0f;
+            }
+
             var profile = GetProfile(agent.Team);
             if (profile == null)
             {
-                return;
+                return 0f;
             }
 
             var context = CreateContext(agent.Team, agent);
             var policy = GetPolicy(agent.Team);
-            var reward = policy != null ? policy.EvaluateIndividualReward(kind, context) : profile.GetIndividualReward(kind);
+            return policy != null
+                ? policy.EvaluateIndividualReward(kind, context)
+                : profile.GetIndividualReward(kind);
+        }
+
+        float AwardIndividual(
+            AgentSoccer agent,
+            SoccerRewardKind kind,
+            float maximumReward = float.PositiveInfinity)
+        {
+            var profile = agent != null ? GetProfile(agent.Team) : null;
+            if (profile == null)
+            {
+                return 0f;
+            }
+
+            var reward = Mathf.Min(GetIndividualRewardValue(agent, kind), maximumReward);
             var possessionRemaining = profile.shapingRewardLimitPerPossession
                 - m_ShapingRewardTotals[(int)agent.Team];
             var matchRemaining = profile.shapingRewardLimitPerMatch
@@ -719,14 +985,52 @@ namespace MachineLearning.Soccer
             reward = Mathf.Min(reward, Mathf.Min(possessionRemaining, matchRemaining));
             if (reward <= 0f)
             {
-                return;
+                return 0f;
             }
 
             m_ShapingRewardTotals[(int)agent.Team] += reward;
             m_MatchShapingRewardTotals[(int)agent.Team] += reward;
             agent.AddTrainingReward(reward);
             m_CumulativeTeamRewards[(int)agent.Team] += reward;
-            Record(kind, reward);
+            Record(agent.Team, kind, reward);
+            return reward;
+        }
+
+        void AwardBehaviorPenalty(
+            AgentSoccer agent,
+            SoccerRewardKind kind,
+            bool applyWastefulPossessionCap)
+        {
+            var profile = agent != null ? GetProfile(agent.Team) : null;
+            if (profile == null)
+            {
+                return;
+            }
+
+            var teamIndex = (int)agent.Team;
+            var matchRemaining = profile.behaviorPenaltyLimitPerMatch
+                - m_BehaviorPenaltyMatchTotals[teamIndex];
+            var possessionRemaining = applyWastefulPossessionCap
+                ? profile.wastefulStrongKickPenaltyLimitPerPossession
+                    - m_WastefulStrongKickPenaltyTotals[teamIndex]
+                : float.PositiveInfinity;
+            var penalty = Mathf.Min(
+                Mathf.Max(0f, GetIndividualRewardValue(agent, kind)),
+                Mathf.Min(matchRemaining, possessionRemaining));
+            if (penalty <= 0f)
+            {
+                return;
+            }
+
+            if (applyWastefulPossessionCap)
+            {
+                m_WastefulStrongKickPenaltyTotals[teamIndex] += penalty;
+            }
+
+            m_BehaviorPenaltyMatchTotals[teamIndex] += penalty;
+            agent.AddTrainingReward(-penalty);
+            m_CumulativeTeamRewards[teamIndex] -= penalty;
+            Record(agent.Team, kind, -penalty);
         }
 
         SoccerRewardContext CreateContext(Team team, AgentSoccer actor)
@@ -769,13 +1073,18 @@ namespace MachineLearning.Soccer
         void ResetPossessionTracking()
         {
             Array.Clear(m_PassRewardTotals, 0, m_PassRewardTotals.Length);
+            Array.Clear(m_PassIndividualRewardTotals, 0, m_PassIndividualRewardTotals.Length);
+            Array.Clear(m_ControlledCarryRewardTotals, 0, m_ControlledCarryRewardTotals.Length);
             Array.Clear(m_ProgressivePassRewardTotals, 0, m_ProgressivePassRewardTotals.Length);
             Array.Clear(m_CombinationRewardTotals, 0, m_CombinationRewardTotals.Length);
             Array.Clear(m_FormationRewardTotals, 0, m_FormationRewardTotals.Length);
             Array.Clear(m_ShapingRewardTotals, 0, m_ShapingRewardTotals.Length);
+            Array.Clear(m_WastefulStrongKickPenaltyTotals, 0, m_WastefulStrongKickPenaltyTotals.Length);
             Array.Clear(m_HasFormationScore, 0, m_HasFormationScore.Length);
             m_CombinationSequence.Clear();
             m_DribbleRewardedAgents.Clear();
+            m_ControlledCarryRewardedAgents.Clear();
+            m_ControlledCarryCandidate = default;
         }
 
         SoccerTeamRewardPolicyBase GetPolicy(Team team)
@@ -796,28 +1105,46 @@ namespace MachineLearning.Soccer
             return m_MatchSetup != null ? m_MatchSetup.GetDefinition(team)?.RewardProfile : null;
         }
 
-        void Record(SoccerRewardKind kind, float reward)
+        void Record(Team team, SoccerRewardKind kind, float reward)
         {
             if (Academy.IsInitialized)
             {
-                Academy.Instance.StatsRecorder.Add($"Soccer/Reward/{kind}", reward, StatAggregationMethod.Sum);
+                var statsRecorder = Academy.Instance.StatsRecorder;
+                // 기존 합산 태그는 과거 Run과 Dashboard 호환용으로 유지한다.
+                statsRecorder.Add($"Soccer/Reward/{kind}", reward, StatAggregationMethod.Sum);
+                statsRecorder.Add(GetTeamRewardEventStatKey(team, kind), reward, StatAggregationMethod.Sum);
+                statsRecorder.Add(GetTeamRewardSummaryTotalStatKey(team), reward, StatAggregationMethod.Sum);
             }
+        }
+
+        static string GetTeamTelemetryName(Team team)
+        {
+            return team == Team.Red ? "Red" : "Navy";
         }
 
         static bool IsInDefensiveThird(Team team, float ballX)
         {
-            return team == Team.Blue ? ballX < -20f : ballX > 20f;
+            return team == Team.Red ? ballX < -20f : ballX > 20f;
         }
 
         static Team Opponent(Team team)
         {
-            return team == Team.Blue ? Team.Purple : Team.Blue;
+            return team == Team.Red ? Team.Navy : Team.Red;
         }
 
         struct DribbleCandidate
         {
             public AgentSoccer Agent;
             public AgentSoccer Opponent;
+            public Vector3 StartingPosition;
+            public Vector3 StartingBallPosition;
+            public float StartingTime;
+            public bool Valid;
+        }
+
+        struct ControlledCarryCandidate
+        {
+            public AgentSoccer Agent;
             public Vector3 StartingPosition;
             public Vector3 StartingBallPosition;
             public float StartingTime;

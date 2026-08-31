@@ -1,0 +1,6 @@
+{
+  "name": "Soccer.Stadium.PlayModeTests",
+  "references": ["Soccer.Runtime", "Unity.ML-Agents"],
+  "optionalUnityReferences": ["TestAssemblies"],
+  "autoReferenced": false
+}
