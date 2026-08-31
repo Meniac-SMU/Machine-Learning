@@ -37,9 +37,33 @@ namespace MachineLearning.Soccer
         public GameObject ball;
         [HideInInspector] public Rigidbody ballRb;
         public List<PlayerInfo> AgentsList = new();
+        [SerializeField] SoccerArenaGeometry arenaGeometry;
 
-        SimpleMultiAgentGroup m_BlueAgentGroup;
-        SimpleMultiAgentGroup m_PurpleAgentGroup;
+        [Header("Kick tuning")]
+        [SerializeField, Min(0f)] float controlledKickPower = AgentSoccer.ControlledKickPower;
+        [SerializeField, Min(0f)] float strongKickPower = AgentSoccer.StrongKickPower;
+
+        public SoccerArenaGeometry ArenaGeometry => arenaGeometry;
+        public float ControlledKickPower => controlledKickPower;
+        public float StrongKickPower => strongKickPower;
+
+        public void ConfigureControlledKickPower(float power)
+        {
+            controlledKickPower = Mathf.Max(0f, power);
+        }
+
+        public void ConfigureStrongKickPower(float power)
+        {
+            strongKickPower = Mathf.Max(0f, power);
+        }
+
+        public void ConfigureArena(SoccerArenaGeometry geometry)
+        {
+            arenaGeometry = geometry;
+        }
+
+        SimpleMultiAgentGroup m_RedAgentGroup;
+        SimpleMultiAgentGroup m_NavyAgentGroup;
         Vector3 m_BallStartingPos;
         Quaternion m_BallStartingRotation;
         float m_GoalResetRemaining;
@@ -49,8 +73,8 @@ namespace MachineLearning.Soccer
         SoccerMatchSetup m_MatchSetup;
         SoccerRewardEngine m_RewardEngine;
 
-        public int BlueScore { get; private set; }
-        public int PurpleScore { get; private set; }
+        public int RedScore { get; private set; }
+        public int NavyScore { get; private set; }
         public float RemainingTime { get; private set; }
         public float GoalResetRemaining => m_GoalResetRemaining;
         public SoccerMatchState State { get; private set; } = SoccerMatchState.Playing;
@@ -73,8 +97,8 @@ namespace MachineLearning.Soccer
                 return;
             }
 
-            m_BlueAgentGroup = new SimpleMultiAgentGroup();
-            m_PurpleAgentGroup = new SimpleMultiAgentGroup();
+            m_RedAgentGroup = new SimpleMultiAgentGroup();
+            m_NavyAgentGroup = new SimpleMultiAgentGroup();
             m_MatchSetup = GetComponent<SoccerMatchSetup>();
             m_RewardEngine = GetComponent<SoccerRewardEngine>();
             m_RewardEngine?.Configure(this, m_MatchSetup);
@@ -100,13 +124,13 @@ namespace MachineLearning.Soccer
                     HumanControlledAgent = item.Agent;
                 }
 
-                if (item.Agent.Team == Team.Blue)
+                if (item.Agent.Team == Team.Red)
                 {
-                    m_BlueAgentGroup.RegisterAgent(item.Agent);
+                    m_RedAgentGroup.RegisterAgent(item.Agent);
                 }
                 else
                 {
-                    m_PurpleAgentGroup.RegisterAgent(item.Agent);
+                    m_NavyAgentGroup.RegisterAgent(item.Agent);
                 }
             }
 
@@ -187,15 +211,24 @@ namespace MachineLearning.Soccer
             m_RewardEngine?.NotifyBallTouch(agent);
         }
 
+        public void NotifyBallStrike(
+            AgentSoccer agent,
+            int kickAction,
+            Vector3 kickDirection,
+            bool safetyRedirected)
+        {
+            m_RewardEngine?.NotifyBallStrike(agent, kickAction, kickDirection, safetyRedirected);
+        }
+
         public void AddTeamReward(Team rewardTeam, float reward)
         {
-            if (rewardTeam == Team.Blue)
+            if (rewardTeam == Team.Red)
             {
-                m_BlueAgentGroup?.AddGroupReward(reward);
+                m_RedAgentGroup?.AddGroupReward(reward);
             }
             else
             {
-                m_PurpleAgentGroup?.AddGroupReward(reward);
+                m_NavyAgentGroup?.AddGroupReward(reward);
             }
         }
 
@@ -256,13 +289,13 @@ namespace MachineLearning.Soccer
             }
 
             m_LastScoringTeam = scoredTeam;
-            if (scoredTeam == Team.Blue)
+            if (scoredTeam == Team.Red)
             {
-                BlueScore++;
+                RedScore++;
             }
             else
             {
-                PurpleScore++;
+                NavyScore++;
             }
 
             if (m_RewardEngine != null)
@@ -272,7 +305,7 @@ namespace MachineLearning.Soccer
             else
             {
                 AddTeamReward(scoredTeam, 1f);
-                AddTeamReward(scoredTeam == Team.Blue ? Team.Purple : Team.Blue, -1f);
+                AddTeamReward(scoredTeam == Team.Red ? Team.Navy : Team.Red, -1f);
             }
 
             State = SoccerMatchState.GoalPause;
@@ -286,8 +319,8 @@ namespace MachineLearning.Soccer
 
         public void RestartMatch()
         {
-            BlueScore = 0;
-            PurpleScore = 0;
+            RedScore = 0;
+            NavyScore = 0;
             RemainingTime = matchDurationSeconds;
             m_GoalResetRemaining = 0f;
             m_RewardEngine?.ResetMatch();
@@ -367,33 +400,35 @@ namespace MachineLearning.Soccer
             RemainingTime = 0f;
             FreezeRound();
 
-            if (BlueScore > PurpleScore)
+            if (RedScore > NavyScore)
             {
                 if (m_RewardEngine != null)
                 {
-                    m_RewardEngine.AwardMatchResult(Team.Blue);
+                    m_RewardEngine.AwardMatchResult(Team.Red);
                 }
                 else
                 {
-                    AddTeamReward(Team.Blue, 0.5f);
-                    AddTeamReward(Team.Purple, -0.5f);
+                    AddTeamReward(Team.Red, 0.5f);
+                    AddTeamReward(Team.Navy, -0.5f);
                 }
             }
-            else if (PurpleScore > BlueScore)
+            else if (NavyScore > RedScore)
             {
                 if (m_RewardEngine != null)
                 {
-                    m_RewardEngine.AwardMatchResult(Team.Purple);
+                    m_RewardEngine.AwardMatchResult(Team.Navy);
                 }
                 else
                 {
-                    AddTeamReward(Team.Purple, 0.5f);
-                    AddTeamReward(Team.Blue, -0.5f);
+                    AddTeamReward(Team.Navy, 0.5f);
+                    AddTeamReward(Team.Red, -0.5f);
                 }
             }
 
-            m_BlueAgentGroup.EndGroupEpisode();
-            m_PurpleAgentGroup.EndGroupEpisode();
+            m_RewardEngine?.RecordMatchRewardSummary();
+
+            m_RedAgentGroup.EndGroupEpisode();
+            m_NavyAgentGroup.EndGroupEpisode();
             if (m_IsTraining)
             {
                 RestartMatch();
@@ -407,9 +442,24 @@ namespace MachineLearning.Soccer
                 return transform.position;
             }
 
-            var attackSign = requester.Team == Team.Blue ? 1f : -1f;
+            var attackSign = requester.Team == Team.Red ? 1f : -1f;
+            if (m_RewardEngine?.BallCarrier == requester)
+            {
+                if (TryGetAutonomousKickTarget(requester, out var kickTarget, out _))
+                {
+                    return ClampFieldTarget(ConstrainDefenderKeeperTarget(requester, kickTarget));
+                }
+
+                // 모델 없는 공통 fallback은 중원에서 즉시 Strong Kick을 반복하지 않고
+                // 공을 몸 앞에 둔 채 전진 lane으로 운반한다.
+                var carryTarget = ball.transform.position
+                    + Vector3.right * (attackSign * 10f)
+                    + Vector3.forward * (GetLaneSign(requester) * 3f);
+                return ClampFieldTarget(ConstrainDefenderKeeperTarget(requester, carryTarget));
+            }
+
             var closest = FindClosestTeammateToBall(requester.Team);
-            if (closest == requester || m_RewardEngine?.BallCarrier == requester)
+            if (closest == requester)
             {
                 return ClampFieldTarget(ConstrainDefenderKeeperTarget(requester, ball.transform.position));
             }
@@ -438,7 +488,10 @@ namespace MachineLearning.Soccer
             else if (opponentOwnsBall)
             {
                 // 공과 자기 골문 사이의 동적 수비 지원 위치.
-                var ownGoal = new Vector3(-attackSign * 58f, ball.transform.position.y, 0f);
+                var ownGoal = arenaGeometry != null
+                    ? arenaGeometry.GetGoalCenter(requester.Team, ball.transform.position.y)
+                        + Vector3.right * (attackSign * 4f)
+                    : new Vector3(-attackSign * 58f, ball.transform.position.y, 0f);
                 var coverRatio = requester.PositionRole switch
                 {
                     AgentSoccer.Position.DefenderKeeper => 0.38f,
@@ -473,12 +526,20 @@ namespace MachineLearning.Soccer
                 return true;
             }
 
-            if (ball == null || ShouldDefenderKeeperRecover(agent))
+            if (ball == null)
             {
                 return false;
             }
 
-            return SoccerDefenderKeeperRules.GetAttackingDepth(agent.Team, ball.transform.position.x) <= -12f;
+            var mode = SoccerDefenderKeeperRules.GetMode(agent, this);
+            if (mode == SoccerDefenderKeeperRules.DefenderKeeperMode.RecoverGoal)
+            {
+                return false;
+            }
+
+            return mode == SoccerDefenderKeeperRules.DefenderKeeperMode.EngageBall
+                || SoccerDefenderKeeperRules.GetAttackingDepth(agent.Team, ball.transform.position.x)
+                    <= SoccerDefenderKeeperRules.DefensiveEngagementDepth;
         }
 
         public Vector3 GetDefenderKeeperHomeTarget(AgentSoccer agent)
@@ -489,6 +550,193 @@ namespace MachineLearning.Soccer
         public Vector3 ConstrainDefenderKeeperTarget(AgentSoccer agent, Vector3 target)
         {
             return SoccerDefenderKeeperRules.ConstrainTarget(agent, this, target);
+        }
+
+        /// <summary>
+        /// 모델 없는 공통 fallback의 제한된 Pass/Shoot 선택. Neural의 Action 출력에는 개입하지 않는다.
+        /// </summary>
+        public bool TryGetAutonomousKickTarget(
+            AgentSoccer requester,
+            out Vector3 target,
+            out int kickAction)
+        {
+            target = ball != null ? ball.transform.position : Vector3.zero;
+            kickAction = 0;
+            if (requester == null || ball == null || m_RewardEngine?.BallCarrier != requester)
+            {
+                return false;
+            }
+
+            var ballPosition = ball.transform.position;
+            if (SoccerDefensiveClearanceRules.IsBallInOwnGoalDanger(requester.Team, ballPosition, arenaGeometry))
+            {
+                target = SoccerDefensiveClearanceRules.GetCentralClearanceTarget(ballPosition.y);
+                kickAction = 1;
+                return true;
+            }
+
+            var attackDepth = SoccerDefensiveClearanceRules.GetAttackingDepth(
+                requester.Team,
+                ballPosition.x);
+            if (attackDepth >= SoccerDefensiveClearanceRules.MinimumShootingDepth)
+            {
+                var shotTarget = SoccerDefensiveClearanceRules.GetOpponentGoalCenter(
+                    requester.Team,
+                    ballPosition.y,
+                    arenaGeometry);
+                if (SoccerDefensiveClearanceRules.PredictsOpponentGoal(
+                        requester.Team,
+                        ballPosition,
+                        shotTarget - ballPosition,
+                        arenaGeometry))
+                {
+                    target = shotTarget;
+                    kickAction = 2;
+                    return true;
+                }
+            }
+
+            if (IsUnderPressure(requester, 7f)
+                && TryFindAutonomousPassTarget(requester, out var passTarget))
+            {
+                target = passTarget.transform.position;
+                kickAction = 1;
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool HasTeammateInKickLane(
+            AgentSoccer requester,
+            Vector3 origin,
+            Vector3 direction)
+        {
+            if (requester == null)
+            {
+                return false;
+            }
+
+            direction.y = 0f;
+            if (direction.sqrMagnitude < 0.0001f)
+            {
+                return false;
+            }
+
+            direction.Normalize();
+            const float minimumDistance = 5f;
+            const float maximumDistance = 34f;
+            const float laneHalfWidth = 4.5f;
+            var laneHalfWidthSquared = laneHalfWidth * laneHalfWidth;
+            foreach (var item in AgentsList)
+            {
+                var teammate = item?.Agent;
+                if (teammate == null || teammate == requester || teammate.Team != requester.Team)
+                {
+                    continue;
+                }
+
+                var offset = teammate.transform.position - origin;
+                offset.y = 0f;
+                var projectedDistance = Vector3.Dot(offset, direction);
+                if (projectedDistance < minimumDistance || projectedDistance > maximumDistance)
+                {
+                    continue;
+                }
+
+                var lateralDistanceSquared = Mathf.Max(
+                    0f,
+                    offset.sqrMagnitude - projectedDistance * projectedDistance);
+                if (lateralDistanceSquared <= laneHalfWidthSquared)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        bool TryFindAutonomousPassTarget(AgentSoccer requester, out AgentSoccer bestTarget)
+        {
+            bestTarget = null;
+            var bestScore = float.NegativeInfinity;
+            var attackSign = requester.Team == Team.Red ? 1f : -1f;
+            foreach (var item in AgentsList)
+            {
+                var teammate = item?.Agent;
+                if (teammate == null || teammate == requester || teammate.Team != requester.Team)
+                {
+                    continue;
+                }
+
+                var offset = teammate.transform.position - requester.transform.position;
+                offset.y = 0f;
+                var distance = offset.magnitude;
+                if (distance < 5f || distance > 28f)
+                {
+                    continue;
+                }
+
+                var progress = offset.x * attackSign;
+                if (progress < -2f)
+                {
+                    continue;
+                }
+
+                var score = progress * 1.2f
+                    + Mathf.Min(GetNearestOpponentDistance(teammate.transform.position, requester.Team), 10f) * 0.7f
+                    - distance * 0.12f;
+                if (score <= bestScore)
+                {
+                    continue;
+                }
+
+                bestScore = score;
+                bestTarget = teammate;
+            }
+
+            return bestTarget != null;
+        }
+
+        bool IsUnderPressure(AgentSoccer requester, float range)
+        {
+            var rangeSquared = range * range;
+            foreach (var item in AgentsList)
+            {
+                var opponent = item?.Agent;
+                if (opponent == null || opponent.Team == requester.Team)
+                {
+                    continue;
+                }
+
+                if ((opponent.transform.position - requester.transform.position).sqrMagnitude <= rangeSquared)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        float GetNearestOpponentDistance(Vector3 position, Team requesterTeam)
+        {
+            var nearestSquared = float.PositiveInfinity;
+            foreach (var item in AgentsList)
+            {
+                var opponent = item?.Agent;
+                if (opponent == null || opponent.Team == requesterTeam)
+                {
+                    continue;
+                }
+
+                nearestSquared = Mathf.Min(
+                    nearestSquared,
+                    (opponent.transform.position - position).sqrMagnitude);
+            }
+
+            return float.IsPositiveInfinity(nearestSquared)
+                ? 20f
+                : Mathf.Sqrt(nearestSquared);
         }
 
         AgentSoccer FindClosestTeammateToBall(Team team)
@@ -531,10 +779,24 @@ namespace MachineLearning.Soccer
             return agent.PositionRole == AgentSoccer.Position.Striker ? 1f : -1f;
         }
 
-        static Vector3 ClampFieldTarget(Vector3 target)
+        Vector3 ClampFieldTarget(Vector3 target)
         {
-            target.x = Mathf.Clamp(target.x, -54f, 54f);
-            target.z = Mathf.Clamp(target.z, -34f, 34f);
+            if (arenaGeometry != null)
+            {
+                return arenaGeometry.ClampTarget(target);
+            }
+
+            // 활성 Prefab은 항상 ArenaGeometry를 제공한다. 편집 중 임시 누락에도
+            // 예전 경기장 수치가 아니라 동일한 Stadium 경계를 사용한다.
+            const float playerMargin = 0.55f;
+            target.z = Mathf.Clamp(target.z,
+                -SoccerArenaGeometry.StadiumHalfWidth + playerMargin,
+                SoccerArenaGeometry.StadiumHalfWidth - playerMargin);
+            var inGoalLane = Mathf.Abs(target.z) <= SoccerArenaGeometry.StadiumGoalHalfWidth - playerMargin;
+            var depth = SoccerArenaGeometry.StadiumHalfLength
+                + (inGoalLane ? SoccerArenaGeometry.StadiumGoalDepth : 0f)
+                - playerMargin;
+            target.x = Mathf.Clamp(target.x, -depth, depth);
             return target;
         }
 
@@ -550,12 +812,12 @@ namespace MachineLearning.Soccer
                 return string.Empty;
             }
 
-            if (BlueScore == PurpleScore)
+            if (RedScore == NavyScore)
             {
                 return "FULL TIME\nDRAW";
             }
 
-            return $"FULL TIME\n{(BlueScore > PurpleScore ? "BLUE" : "PURPLE")} WINS";
+            return $"FULL TIME\n{SoccerTeamVisuals.DisplayName(RedScore > NavyScore ? Team.Red : Team.Navy)} WINS";
         }
     }
 }

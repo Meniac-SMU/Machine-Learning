@@ -1,7 +1,7 @@
-# 공통 Base 파이프라인 검증 설정이다. 개별 팀 담당자는 이 파일 대신 자신의 Teams/<담당 폴더>/Training YAML을 수정한다.
-# 담당자 접미사는 물리 폴더명에만 쓰며 behaviors 키 Soccer4v4_Base에는 붙이지 않는다.
-# extrinsic.strength는 모든 Unity 보상의 일괄 배율이며 사건별 수치는 BaseRewardProfile에서 조정한다.
-# 이 파일은 짧은 Trainer 연결·파이프라인 검증용이며 장기 성능 학습 설정이 아니다.
+# Shared Base pipeline smoke-test configuration. Team owners should edit their own Teams/<owner>/Training YAML instead.
+# Owner suffixes are folder-only; keep the behavior key as Soccer4v4_Base.
+# extrinsic.strength scales all Unity rewards; tune individual events in BaseRewardProfile.
+# This file verifies the Trainer connection and pipeline; it is not a long performance-training configuration.
 behaviors:
   Soccer4v4_Base:
     trainer_type: poca

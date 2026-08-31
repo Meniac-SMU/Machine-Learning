@@ -1,6 +1,6 @@
-# Press_KMG 담당 영역: 이 YAML, Profiles/PressRewardProfile.asset, Models/*.onnx.
-# 담당자 접미사는 물리 폴더명에만 쓰며 behaviors 키 Soccer4v4_Press는 TeamDefinition과 동일하게 유지한다.
-# extrinsic.strength는 모든 Unity 보상의 일괄 배율이며 사건별 수치는 PressRewardProfile에서 조정한다.
+# Press_KMG owns this YAML, Profiles/PressRewardProfile.asset, and Models/*.onnx.
+# Owner suffixes are folder-only; keep Soccer4v4_Press aligned with TeamDefinition.
+# extrinsic.strength scales all Unity rewards; tune individual events in PressRewardProfile.
 behaviors:
   Soccer4v4_Press:
     trainer_type: poca
@@ -25,7 +25,7 @@ behaviors:
         gamma: 0.995
         strength: 1.0
     keep_checkpoints: 3
-    max_steps: 100000
+    max_steps: 500000
     time_horizon: 128
     summary_freq: 10000
 

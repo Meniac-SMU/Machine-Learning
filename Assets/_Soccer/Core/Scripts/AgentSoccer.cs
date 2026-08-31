@@ -10,8 +10,8 @@ namespace MachineLearning.Soccer
 {
     public enum Team
     {
-        Blue = 0,
-        Purple = 1
+        Red = 0,
+        Navy = 1
     }
 
     /// <summary>
@@ -31,8 +31,15 @@ namespace MachineLearning.Soccer
         public const int VectorObservationSize = 43;
         public const int KickActionBranch = 3;
 
-        public const float ControlledKickPower = 1500f;
-        public const float StrongKickPower = 4000f;
+        public const float ControlledKickPower = 2000f;
+        public const float StrongKickPower = 5000f;
+        public float EffectiveControlledKickPower => m_Environment != null
+            ? m_Environment.ControlledKickPower : ControlledKickPower;
+        public float EffectiveStrongKickPower => m_Environment != null
+            ? m_Environment.StrongKickPower : StrongKickPower;
+        public const float DefenderKeeperForwardSpeedMultiplier = 1.05f;
+        public const float MidfielderForwardSpeedMultiplier = 1.1f;
+        public const float StrikerForwardSpeedMultiplier = 1.25f;
         const float DribblePushPower = 120f;
         const float InputDeadZone = 0.15f;
         const float ObservationDistanceScale = 80f;
@@ -58,6 +65,7 @@ namespace MachineLearning.Soccer
         SoccerTeamDefinition m_TeamDefinition;
         ISoccerRuleController m_RuleController;
         float m_ActiveKickPower = StrongKickPower;
+        int m_ActiveKickAction;
 
         public Team Team => team;
         public Position PositionRole => position;
@@ -81,26 +89,26 @@ namespace MachineLearning.Soccer
             m_Environment = GetComponentInParent<SoccerEnvController>();
             m_BehaviorParameters = GetComponent<BehaviorParameters>();
             m_DecisionRequester = GetComponent<DecisionRequester>();
-            team = m_BehaviorParameters.TeamId == (int)Team.Blue ? Team.Blue : Team.Purple;
+            team = m_BehaviorParameters.TeamId == (int)Team.Red ? Team.Red : Team.Navy;
             if (initialPos == Vector3.zero)
             {
                 initialPos = transform.position;
             }
 
-            rotSign = team == Team.Blue ? 1f : -1f;
+            rotSign = team == Team.Red ? 1f : -1f;
             switch (position)
             {
                 case Position.DefenderKeeper:
                     m_LateralSpeed = 0.9f;
-                    m_ForwardSpeed = 1.05f;
+                    m_ForwardSpeed = DefenderKeeperForwardSpeedMultiplier;
                     break;
                 case Position.Striker:
                     m_LateralSpeed = 0.65f;
-                    m_ForwardSpeed = 1.25f;
+                    m_ForwardSpeed = StrikerForwardSpeedMultiplier;
                     break;
                 default:
                     m_LateralSpeed = 0.75f;
-                    m_ForwardSpeed = 1.1f;
+                    m_ForwardSpeed = MidfielderForwardSpeedMultiplier;
                     break;
             }
 
@@ -117,10 +125,13 @@ namespace MachineLearning.Soccer
             position = configuredPosition;
             humanControllable = canUseHumanInput;
             initialPos = startingPosition;
-            rotSign = configuredTeam == Team.Blue ? 1f : -1f;
+            rotSign = configuredTeam == Team.Red ? 1f : -1f;
         }
 
-        public void ApplyTeamDefinition(SoccerTeamDefinition definition, ModelAsset modelOverride = null)
+        public void ApplyTeamDefinition(
+            SoccerTeamDefinition definition,
+            ModelAsset modelOverride = null,
+            bool useDefinitionModel = true)
         {
             if (definition == null)
             {
@@ -131,7 +142,9 @@ namespace MachineLearning.Soccer
             m_BehaviorParameters ??= GetComponent<BehaviorParameters>();
             m_BehaviorParameters.BehaviorName = definition.BehaviorName;
             m_BehaviorParameters.Model = definition.UsesNeuralPolicy
-                ? modelOverride != null ? modelOverride : definition.InferenceModel
+                ? modelOverride != null
+                    ? modelOverride
+                    : useDefinitionModel ? definition.InferenceModel : null
                 : null;
             FindRuleController();
         }
@@ -144,7 +157,13 @@ namespace MachineLearning.Soccer
             m_HumanTurn = 0f;
             m_BehaviorParameters ??= GetComponent<BehaviorParameters>();
             m_DecisionRequester ??= GetComponent<DecisionRequester>();
-            agentRb ??= GetComponent<Rigidbody>();
+            // Serialized Unity object references can be a native "fake null" during
+            // scene activation. The overloaded null check is required here because
+            // SoccerMatchSetup runs before Agent.Initialize for non-trainable teams.
+            if (agentRb == null)
+            {
+                agentRb = GetComponent<Rigidbody>();
+            }
             agentRb.interpolation = !training && m_UseHumanInput
                 ? RigidbodyInterpolation.Interpolate
                 : RigidbodyInterpolation.None;
@@ -203,13 +222,14 @@ namespace MachineLearning.Soccer
                 this,
                 m_Environment,
                 movement,
-                out var recoveringToGoal);
-            if (recoveringToGoal && movement.sqrMagnitude > 0.0001f)
+                out var defenderKeeperMode);
+            if (defenderKeeperMode != SoccerDefenderKeeperRules.DefenderKeeperMode.Free
+                && movement.sqrMagnitude > 0.0001f)
             {
-                var localRecoveryDirection = transform.InverseTransformDirection(movement.normalized);
-                rotationInput = localRecoveryDirection.x > 0.08f
+                var localKeeperDirection = transform.InverseTransformDirection(movement.normalized);
+                rotationInput = localKeeperDirection.x > 0.08f
                     ? 1f
-                    : localRecoveryDirection.x < -0.08f ? -1f : 0f;
+                    : localKeeperDirection.x < -0.08f ? -1f : 0f;
             }
 
             transform.Rotate(0f, rotationInput * m_Settings.rotationSpeed * Time.fixedDeltaTime, 0f);
@@ -217,7 +237,7 @@ namespace MachineLearning.Soccer
             agentRb.linearVelocity = SoccerDefenderKeeperRules.ConstrainVelocity(
                 this,
                 agentRb.linearVelocity,
-                recoveringToGoal);
+                defenderKeeperMode);
             ClampPlanarVelocity();
         }
 
@@ -356,10 +376,19 @@ namespace MachineLearning.Soccer
 
             var toBall = m_Environment.Ball.transform.position - transform.position;
             toBall.y = 0f;
+            if (!m_Environment.TryGetAutonomousKickTarget(this, out var kickTarget, out var kickAction))
+            {
+                return;
+            }
+
+            var targetDirection = kickTarget - m_Environment.Ball.transform.position;
+            targetDirection.y = 0f;
             actions[KickActionBranch] = toBall.sqrMagnitude <= 1.8f * 1.8f
                 && toBall.sqrMagnitude > 0.0001f
-                && Vector3.Dot(transform.forward, toBall.normalized) >= 0.55f
-                ? 2
+                && targetDirection.sqrMagnitude > 0.0001f
+                && Vector3.Dot(transform.forward, toBall.normalized) >= 0.45f
+                && Vector3.Dot(transform.forward, targetDirection.normalized) >= 0.72f
+                ? kickAction
                 : 0;
         }
 
@@ -373,11 +402,13 @@ namespace MachineLearning.Soccer
             switch (actions[KickActionBranch])
             {
                 case 1:
-                    m_ActiveKickPower = ControlledKickPower;
+                    m_ActiveKickAction = 1;
+                    m_ActiveKickPower = EffectiveControlledKickPower;
                     m_KickPlate.TryKick();
                     break;
                 case 2:
-                    m_ActiveKickPower = StrongKickPower;
+                    m_ActiveKickAction = 2;
+                    m_ActiveKickPower = EffectiveStrongKickPower;
                     m_KickPlate.TryKick();
                     break;
             }
@@ -396,9 +427,12 @@ namespace MachineLearning.Soccer
         public override void CollectObservations(VectorSensor sensor)
         {
             sensor.AddOneHotObservation((int)position, 3);
-            var attackSign = team == Team.Blue ? 1f : -1f;
-            sensor.AddObservation(transform.position.x * attackSign / 60f);
-            sensor.AddObservation(transform.position.z / 40f);
+            var attackSign = team == Team.Red ? 1f : -1f;
+            var arena = m_Environment != null ? m_Environment.ArenaGeometry : null;
+            var observationHalfLength = arena != null ? arena.HalfLength : SoccerArenaGeometry.StadiumHalfLength;
+            var observationHalfWidth = arena != null ? arena.HalfWidth : SoccerArenaGeometry.StadiumHalfWidth;
+            sensor.AddObservation(transform.position.x * attackSign / observationHalfLength);
+            sensor.AddObservation(transform.position.z / observationHalfWidth);
             var velocity = agentRb != null ? agentRb.linearVelocity : Vector3.zero;
             sensor.AddObservation(velocity.x * attackSign / ObservationVelocityScale);
             sensor.AddObservation(velocity.z / ObservationVelocityScale);
@@ -420,7 +454,7 @@ namespace MachineLearning.Soccer
             sensor.AddObservation(m_KickPlate != null && m_KickPlate.CanKick ? 1f : 0f);
 
             AddOtherAgentObservations(sensor, team, 3, attackSign);
-            AddOtherAgentObservations(sensor, team == Team.Blue ? Team.Purple : Team.Blue, 4, attackSign);
+            AddOtherAgentObservations(sensor, team == Team.Red ? Team.Navy : Team.Red, 4, attackSign);
         }
 
         void AddOtherAgentObservations(VectorSensor sensor, Team observedTeam, int requiredCount, float attackSign)
@@ -491,8 +525,8 @@ namespace MachineLearning.Soccer
 
         void PushBall(Collision collision, bool allowDribblePush)
         {
-            var strongKick = m_KickPlate != null && m_KickPlate.TryConsumeStrike();
-            if (!strongKick && !allowDribblePush)
+            var explicitStrike = m_KickPlate != null && m_KickPlate.TryConsumeStrike();
+            if (!explicitStrike && !allowDribblePush)
             {
                 return;
             }
@@ -500,12 +534,62 @@ namespace MachineLearning.Soccer
             var toBall = collision.transform.position - transform.position;
             toBall.y = 0f;
             var contactDirection = toBall.sqrMagnitude > 0.0001f ? toBall.normalized : transform.forward;
-            var direction = Vector3.Slerp(contactDirection, transform.forward, strongKick ? 0.65f : 0.25f).normalized;
+            var requestedDirection = Vector3.Slerp(
+                contactDirection,
+                transform.forward,
+                explicitStrike ? 0.65f : 0.25f).normalized;
+            var direction = requestedDirection;
+            var safetyRedirected = false;
+            var appliedPower = DribblePushPower;
             var ballRigidbody = collision.rigidbody ?? collision.gameObject.GetComponent<Rigidbody>();
-            if (ballRigidbody != null)
+            if (ballRigidbody == null)
             {
-                ballRigidbody.AddForce(direction * (strongKick ? m_ActiveKickPower : DribblePushPower));
+                return;
             }
+
+            if (explicitStrike)
+            {
+                direction = SoccerDefensiveClearanceRules.ResolveKickDirection(
+                    team,
+                    collision.transform.position,
+                    requestedDirection,
+                    ballRigidbody.linearVelocity,
+                    m_ActiveKickPower,
+                    ballRigidbody.mass,
+                    Time.fixedDeltaTime,
+                    out safetyRedirected,
+                    m_Environment != null ? m_Environment.ArenaGeometry : null);
+                appliedPower = safetyRedirected ? EffectiveControlledKickPower : m_ActiveKickPower;
+                if (safetyRedirected)
+                {
+                    var redirectedVelocity = SoccerDefensiveClearanceRules.PredictPostStrikeVelocity(
+                        ballRigidbody.linearVelocity,
+                        direction,
+                        appliedPower,
+                        ballRigidbody.mass,
+                        Time.fixedDeltaTime);
+                    if (SoccerDefensiveClearanceRules.PredictsOwnGoal(
+                            team,
+                            collision.transform.position,
+                            redirectedVelocity,
+                            m_Environment != null ? m_Environment.ArenaGeometry : null))
+                    {
+                        // 중앙 Controlled Kick만으로 기존 골문 방향 속도를 상쇄할 수 없으면
+                        // 해당 X 성분만 제거한 뒤 안전한 필드 방향 힘을 적용한다.
+                        ballRigidbody.linearVelocity = SoccerDefensiveClearanceRules.RemoveOwnGoalwardVelocity(
+                            team,
+                            ballRigidbody.linearVelocity);
+                    }
+                }
+
+                m_Environment?.NotifyBallStrike(
+                    this,
+                    m_ActiveKickAction,
+                    direction,
+                    safetyRedirected);
+            }
+
+            ballRigidbody.AddForce(direction * appliedPower);
         }
 
         public void AddTrainingReward(float reward)
@@ -517,7 +601,8 @@ namespace MachineLearning.Soccer
         {
             m_KickPlate ??= GetComponentInChildren<SoccerKickPlate>(true);
             m_KickPlate?.ResetPlate();
-            m_ActiveKickPower = StrongKickPower;
+            m_ActiveKickPower = EffectiveStrongKickPower;
+            m_ActiveKickAction = 0;
         }
 
         public override void OnEpisodeBegin()

@@ -1,0 +1,7 @@
+{
+  "name": "Soccer.Stadium.EditModeTests",
+  "references": ["Soccer.Runtime", "Soccer.Stadium.Editor", "Unity.ML-Agents"],
+  "includePlatforms": ["Editor"],
+  "optionalUnityReferences": ["TestAssemblies"],
+  "autoReferenced": false
+}

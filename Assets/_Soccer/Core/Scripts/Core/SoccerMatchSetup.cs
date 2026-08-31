@@ -1,5 +1,6 @@
 using Unity.InferenceEngine;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace MachineLearning.Soccer
 {
@@ -7,22 +8,27 @@ namespace MachineLearning.Soccer
     public sealed class SoccerMatchSetup : MonoBehaviour
     {
         // Builder가 관리하는 팀 배선이다. 팀 담당자는 자기 프로필·모델 슬롯 외 상대와 학습 플래그를 재배선하지 않는다.
-        [SerializeField] SoccerTeamDefinition blueTeam;
-        [SerializeField] SoccerTeamDefinition purpleTeam;
-        [SerializeField] SoccerTeamRewardPolicyBase blueRewardPolicy;
-        [SerializeField] SoccerTeamRewardPolicyBase purpleRewardPolicy;
+        [FormerlySerializedAs("blueTeam")] [SerializeField] SoccerTeamDefinition redTeam;
+        [FormerlySerializedAs("purpleTeam")] [SerializeField] SoccerTeamDefinition navyTeam;
+        [FormerlySerializedAs("blueRewardPolicy")] [SerializeField] SoccerTeamRewardPolicyBase redRewardPolicy;
+        [FormerlySerializedAs("purpleRewardPolicy")] [SerializeField] SoccerTeamRewardPolicyBase navyRewardPolicy;
         [Header("프리팹 전용 모델 슬롯")]
-        [SerializeField] ModelAsset blueModelOverride;
-        [SerializeField] ModelAsset purpleModelOverride;
-        [SerializeField] bool trainBlue = true;
-        [SerializeField] bool trainPurple;
+        [FormerlySerializedAs("blueModelOverride")] [SerializeField] ModelAsset redModelOverride;
+        [FormerlySerializedAs("purpleModelOverride")] [SerializeField] ModelAsset navyModelOverride;
+        [FormerlySerializedAs("trainBlue")] [SerializeField] bool trainRed = true;
+        [FormerlySerializedAs("trainPurple")] [SerializeField] bool trainNavy;
+        [Header("규칙 기반 Fallback 강제")]
+        [SerializeField] bool forceRedFallback;
+        [SerializeField] bool forceNavyFallback;
 
-        public SoccerTeamDefinition BlueTeam => blueTeam;
-        public SoccerTeamDefinition PurpleTeam => purpleTeam;
-        public bool TrainBlue => trainBlue;
-        public bool TrainPurple => trainPurple;
-        public ModelAsset BlueModelOverride => blueModelOverride;
-        public ModelAsset PurpleModelOverride => purpleModelOverride;
+        public SoccerTeamDefinition RedTeam => redTeam;
+        public SoccerTeamDefinition NavyTeam => navyTeam;
+        public bool TrainRed => trainRed;
+        public bool TrainNavy => trainNavy;
+        public ModelAsset RedModelOverride => redModelOverride;
+        public ModelAsset NavyModelOverride => navyModelOverride;
+        public bool ForceRedFallback => forceRedFallback;
+        public bool ForceNavyFallback => forceNavyFallback;
 
         void Awake()
         {
@@ -31,61 +37,78 @@ namespace MachineLearning.Soccer
         }
 
         public void Configure(
-            SoccerTeamDefinition configuredBlueTeam,
-            SoccerTeamDefinition configuredPurpleTeam,
-            SoccerTeamRewardPolicyBase configuredBluePolicy,
-            SoccerTeamRewardPolicyBase configuredPurplePolicy,
-            bool configuredTrainBlue,
-            bool configuredTrainPurple,
-            ModelAsset configuredBlueModelOverride = null,
-            ModelAsset configuredPurpleModelOverride = null)
+            SoccerTeamDefinition configuredRedTeam,
+            SoccerTeamDefinition configuredNavyTeam,
+            SoccerTeamRewardPolicyBase configuredRedPolicy,
+            SoccerTeamRewardPolicyBase configuredNavyPolicy,
+            bool configuredTrainRed,
+            bool configuredTrainNavy,
+            ModelAsset configuredRedModelOverride = null,
+            ModelAsset configuredNavyModelOverride = null,
+            bool configuredForceRedFallback = false,
+            bool configuredForceNavyFallback = false)
         {
-            blueTeam = configuredBlueTeam;
-            purpleTeam = configuredPurpleTeam;
-            blueRewardPolicy = configuredBluePolicy;
-            purpleRewardPolicy = configuredPurplePolicy;
-            trainBlue = configuredTrainBlue;
-            trainPurple = configuredTrainPurple;
-            blueModelOverride = configuredBlueModelOverride;
-            purpleModelOverride = configuredPurpleModelOverride;
-            blueRewardPolicy?.Configure(blueTeam);
-            purpleRewardPolicy?.Configure(purpleTeam);
+            redTeam = configuredRedTeam;
+            navyTeam = configuredNavyTeam;
+            redRewardPolicy = configuredRedPolicy;
+            navyRewardPolicy = configuredNavyPolicy;
+            trainRed = configuredTrainRed;
+            trainNavy = configuredTrainNavy;
+            redModelOverride = configuredRedModelOverride;
+            navyModelOverride = configuredNavyModelOverride;
+            forceRedFallback = configuredForceRedFallback;
+            forceNavyFallback = configuredForceNavyFallback;
+            redRewardPolicy?.Configure(redTeam);
+            navyRewardPolicy?.Configure(navyTeam);
         }
 
         public SoccerTeamDefinition GetDefinition(Team team)
         {
-            return team == Team.Blue ? blueTeam : purpleTeam;
+            return team == Team.Red ? redTeam : navyTeam;
         }
 
         public SoccerTeamRewardPolicyBase GetRewardPolicy(Team team)
         {
-            return team == Team.Blue ? blueRewardPolicy : purpleRewardPolicy;
+            return team == Team.Red ? redRewardPolicy : navyRewardPolicy;
         }
 
         public bool IsTrainable(Team team)
         {
             var definition = GetDefinition(team);
-            if (definition == null || !definition.UsesNeuralPolicy)
+            if (definition == null || !definition.UsesNeuralPolicy || IsFallbackForced(team))
             {
                 return false;
             }
 
-            return team == Team.Blue ? trainBlue : trainPurple;
+            return team == Team.Red ? trainRed : trainNavy;
         }
 
         public ModelAsset GetConfiguredModel(Team team)
         {
-            var modelOverride = team == Team.Blue ? blueModelOverride : purpleModelOverride;
+            if (IsFallbackForced(team))
+            {
+                return null;
+            }
+
+            var modelOverride = team == Team.Red ? redModelOverride : navyModelOverride;
             return modelOverride != null ? modelOverride : GetDefinition(team)?.InferenceModel;
+        }
+
+        public bool IsFallbackForced(Team team)
+        {
+            return team == Team.Red ? forceRedFallback : forceNavyFallback;
         }
 
         public void ApplyDefinitions()
         {
-            blueRewardPolicy?.Configure(blueTeam);
-            purpleRewardPolicy?.Configure(purpleTeam);
+            redRewardPolicy?.Configure(redTeam);
+            navyRewardPolicy?.Configure(navyTeam);
             foreach (var agent in GetComponentsInChildren<AgentSoccer>(true))
             {
-                agent.ApplyTeamDefinition(GetDefinition(agent.Team), GetConfiguredModel(agent.Team));
+                agent.ApplyTeamDefinition(
+                    GetDefinition(agent.Team),
+                    GetConfiguredModel(agent.Team),
+                    !IsFallbackForced(agent.Team));
             }
         }
 

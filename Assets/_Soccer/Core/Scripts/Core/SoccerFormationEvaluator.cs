@@ -132,7 +132,7 @@ namespace MachineLearning.Soccer
             Vector3 ballPosition,
             bool ownsBall)
         {
-            var attackSign = team == Team.Blue ? 1f : -1f;
+            var attackSign = team == Team.Red ? 1f : -1f;
             var ballDepth = ballPosition.x * attackSign;
             var behindCount = 0;
             var aheadCount = 0;
@@ -166,7 +166,7 @@ namespace MachineLearning.Soccer
             Vector3 ballPosition,
             bool ownsBall)
         {
-            var attackSign = team == Team.Blue ? 1f : -1f;
+            var attackSign = team == Team.Red ? 1f : -1f;
             var defender = FindRole(agents, AgentSoccer.Position.DefenderKeeper);
             if (defender == null)
             {
@@ -183,11 +183,16 @@ namespace MachineLearning.Soccer
                     possessionDepth);
             }
 
-            // 수비 전환과 중립 상황에서는 골문 앞 시작 깊이로 돌아갈수록 높게 평가한다.
+            // 위협 공이 수비 진영에 들어오면 공통 Keeper 지시의 적극 차단 깊이를 기준으로 평가한다.
             var defenderDepth = defender.transform.position.x * attackSign;
             var homeDepth = defender.StartingPosition.x * attackSign;
-            var distanceFromHomeDepth = Mathf.Abs(defenderDepth - homeDepth);
-            return 1f - Mathf.InverseLerp(6f, 30f, distanceFromHomeDepth);
+            var targetDepth = ballPosition.x * attackSign <= SoccerDefenderKeeperRules.DefensiveEngagementDepth
+                ? SoccerDefenderKeeperRules.CalculateEngagementTargetDepth(
+                    homeDepth,
+                    ballPosition.x * attackSign)
+                : homeDepth;
+            var distanceFromTargetDepth = Mathf.Abs(defenderDepth - targetDepth);
+            return 1f - Mathf.InverseLerp(6f, 30f, distanceFromTargetDepth);
         }
 
         static AgentSoccer FindRole(IReadOnlyList<AgentSoccer> agents, AgentSoccer.Position role)
