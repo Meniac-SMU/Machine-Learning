@@ -2,7 +2,7 @@
 
 - 대상: Core, 학습, Rule, UI 담당자
 - 상태: 공통 런타임 계약의 단일 기준
-- 마지막 검토: 2026-08-26
+- 마지막 검토: 2026-09-04
 
 이 문서의 값은 모든 활성 Soccer 환경에 공통이다. 한 팀의 실험을 위해 바꾸지 않는다. 구현 기준은 `AgentSoccer`, `SoccerEnvController`, `SoccerSettings`, `SoccerDefenderKeeperRules`, `SoccerDefensiveClearanceRules`와 `SoccerProjectBuilder`다.
 
@@ -68,7 +68,31 @@ Discrete Branch는 `[3,3,3,3]`이다.
 
 Neural, model 없는 fallback, Rule FSM은 같은 Branch를 `AgentSoccer`에 전달한다. Branch 순서나 의미를 팀 전용으로 바꾸지 않는다.
 
+### Neural 근거리 슈팅 기술층
+
+사람도 공 접촉과 슛 타이밍을 맞추기 어려운 현재 물리를 고려해 `SoccerNeuralKickAdvisor`를 모든 Neural 팀의 공통 기술층으로 사용한다. 이 코드는 신경망이 이동·회전·소유 판단을 담당한다는 전제에서 다음의 제한된 Kick 선택만 보정한다.
+
+- 확정된 공 소유자이고 공이 선수 `1.8m` 안에 있으며 KickPlate가 준비된 경우만 적용한다.
+- 상대 골문 중심까지 `24m` 이내에서 실제 접촉 혼합 방향이 골대 안쪽 `0.5m` 여유 범위를 통과할 때, Neural이 킥하지 않았다면 `12m` 안은 Controlled, 그 밖은 Strong Kick을 권장한다.
+- 같은 근거리에서 Neural이 골문 밖으로 향한 킥을 요청하면 그 결정 주기에는 킥을 보류한다. 골문 궤적으로 요청한 기존 킥의 힘은 바꾸지 않는다.
+- Human, Rule, 모델 없는 fallback, 공 미소유자, 골문 `24m` 밖에는 개입하지 않는다. L1 최종에서는 Controller가 기술층을 끄고 실제 8m 운반이 확인된 뒤에만 다시 켠다.
+- 개입 횟수는 `Soccer/Skill Advice/Shot Recommended`, `Off Target Shot Deferred`와 Red/Navy 분리 태그에 합계로 기록한다.
+
+이 기술층은 Observation `379`, Action `[3,3,3,3]`, 킥 힘과 접촉 방향을 바꾸지 않지만 실행 Action 분포에는 개입한다. 따라서 기존 ONNX도 새 Player에서 다시 평가해야 하고, 최종 모델의 성과는 신경망 단독 기술과 코드 보조가 합쳐진 결과로 명시한다.
+
+최종 L1 `CarryAndScore`에서는 8m 운반 전 킥 branch 1/2도 action mask로 잠근다. r016 첫 100k에서 기존 정책이 99.3%의 에피소드에서 운반 전에 킥해 운반 충족률이 2.35%에 머문 원인에 대한 직접 기술 제약이다. 같은 선수가 잠깐 공을 놓쳤다가 다시 잡으면 운반 진행을 보존하고, 다른 Red가 소유하면 진행과 잠금을 다시 시작한다. 8m 달성 시 킥과 슈팅 기술층을 함께 열고 `Soccer/Skill Advice/Carry Gate Unlocked`로 기록한다. 이 제약 역시 L1 커리큘럼 Neural에만 적용하며 Human·Rule·fallback과 일반 Stadium 경기는 바꾸지 않는다.
+
 ## 사람 조작
+
+L2 준비용 `soccer_l2_pass_aim_gate`(기본0)는 난이도<1에서만 켤 수 있는 임시 킥 action mask다. 확정 Neural carrier의 실제 접촉 혼합식 예상 방향이 유리한 동료 통로와 맞지 않으면 킥1/2를 차단하되 이동/회전/킥 힘/관측379/Action[3,3,3,3]/성공 판정은 변경하지 않는다. Human/Rule/fallback 제외, 라운드 초기화/Controller 해제 시 정리한다. 난이도1에서는 강제 해제하며 개입 횟수를 별도 기록한다. L1 슈팅 기술층과 구분한다.
+
+L2 방향 학습은 최초 소유 때 고정한 지정 수신자의 킥 전 예상 방향 개선과 실제 명시적 킥의 동료 방향 품질을 보상 신호로만 사용한다. 첫 자세는 무보상 기준선이며 두 구간은 팀/라운드 cap0.1을 공유한다. 킥 방향·힘·Action을 대신 선택하지 않고, 느슨한 방향 품질을 기존 패스 통로/수신 성공으로 인정하지 않는다. 상세 cap과 지급 조건은 보상 기준표를 따른다. 관측379/Action[3,3,3,3]/L0·L1 기술층은 유지한다.
+
+L2 최신 거리 기준(2026-09-04 r003 진단 후)은 **공 순변위2m**, 킥 시점 대상 거리3~16m다. 수신자 중심 도착 전 실제 접촉하는 거리를 구분한 것이며, 아래 이전3m 공 순변위 서술보다 우선한다. 일반 경기 패스 거리3m는 바꾸지 않는다. 확정된 지정 수신자 제어 확인과 나머지 L2 조건은 유지한다.
+
+L2-A의 명시적 `soccer_l2_waiting_assist=1`은 준비 단계에서만 지정 발신자 외 필드 선수에게 대기를 제공한다. 지정 수신자는 현재 발신자 전방15.5m에서 시작한다. Env 등록 + Agent action mask/평면 속도 제한이며 순간이동·자동 패스·킥 힘 변경은 없다. 유리한 실제 패스가 나가면 대기를 해제한다. Human·Rule·Heuristic fallback은 제외하고 Keeper는 기존 보호를 유지한다. 기본값 0 및 최종 난이도 1에서는 비활성이다. 학습 결과에는 코드 보조 포함 여부를 함께 기록한다.
+
+L2 ShortPass 커리큘럼은 별도 레슨으로, L1 슈팅 기술층과 8m 운반 전 킥 잠금을 사용하지 않는다. 확정 소유자의 공 1.8m 이내 킥 기회 조건은 유지한다. 패스 조준·실행과 수신자 이동은 Neural이 결정하며 코드가 패스 방향/힘을 자동 선택하지 않는다. 킥 당시 더 유리한 수신자와 실제 킥 통로를 고정하고, 순변위2m 이후 해당 선수가 현재 확정 carrier·최종 접촉자·공2.4m 이내인지 FixedUpdate에서 확인한다. r002 진단 후 인계와 인계 후 유지를 분리하여 추가0.75초 유지 조건은 제거했다. 단순 터치 콜백만으로 완료하지 않는다. 일반 경기 패스 판정과 보상 수치는 그대로다.
 
 | 동작 | 키보드 | Xbox Controller |
 | --- | --- | --- |
@@ -158,7 +182,7 @@ Stadium 복사본의 `SM_Tree_*`·`SM_Fir_*` 나무 배치와 Terrain 나무 인
 - 이미 하프라인을 넘었으면 즉시 `RecoverGoal` 대상이다.
 - 상대가 먼 지역에서 소유하거나 공보다 지나치게 앞선 경우 `RecoverGoal`로 시작 Goal 깊이에 복귀한다.
 - 상대 또는 중립 공이 자기 공격 기준 깊이 `-8m` 이하에 있거나 골문으로 빠르게 향하면 `EngageBall`로 전환해 공과 골문 사이를 적극 차단한다.
-- `RecoverGoal`의 Z 추적 폭은 `±14m`, `EngageBall`의 Z 추적 폭은 `±18m`다. Engage 목표는 시작 위치와 공 위치를 `72%` 비율로 보간하되 공격 깊이 `-6m`를 넘지 않는다.
+- `RecoverGoal`의 Z 추적 폭은 `±28m`(기존`±14m`의2배), `EngageBall`의 Z 추적 폭은 `±36m`(기존`±18m`의2배)다. Engage 목표는 시작 위치와 공 위치를 `72%` 비율로 보간하되 공격 깊이 `-6m`를 넘지 않는다. 하프라인의 전진 안전 경계는 확대하지 않는다.
 - 공이 골문 위험 깊이 `-48m` 이하에 있으면 공 위치까지 직접 들어간다. 목표 위치는 Stadium의 실제 반폭·Goal 깊이·둥근 모서리를 반영해 Clamp하므로 골라인 안의 공에도 접근할 수 있다.
 
 Neural, fallback, Rule 모두 최종 `ConstrainMovement`와 `ConstrainVelocity`를 통과한다. Rule은 별도로 긴급 `RecoverGoal` 상태를 사용하지만 공통 shield를 우회할 수 없다.

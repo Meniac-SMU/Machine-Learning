@@ -1,0 +1,38 @@
+{
+  "protocolVersion": "MNG_M1_v3",
+  "stage": "M1_AttackChoice",
+  "generatorVersion": 2,
+  "plannerVersion": 2,
+  "validationSeed": 21001,
+  "scenarioCount": 100,
+  "mirrorPairs": 50,
+  "episodeSeconds": 20,
+  "spawnJitter": {
+    "maximumAxisOffsetMeters": 0.75,
+    "deterministicFromSeed": true,
+    "mirrorPaired": true,
+    "carrierKickPlateAnchorLocked": true,
+    "application": "initial-spawn-and-central-kickoff-only"
+  },
+  "individualMovement": {
+    "roleAnchors": true,
+    "roleSpecificBallFollow": true,
+    "singlePrimaryPresser": true,
+    "presserHoldSeconds": 1.25,
+    "presserSwitchAdvantageMeters": 3.0,
+    "minimumFormationTargetSeparationMeters": 3.0
+  },
+  "randomBaseline": {
+    "runKind": "uniform-valid-command",
+    "seed": 21001,
+    "goals": 66,
+    "ownGoals": 0,
+    "timeouts": 34
+  },
+  "promotion": {
+    "minimumGoalRate": 0.70,
+    "maximumOwnGoals": 0,
+    "minimumGainOverRandomPercentagePoints": 10,
+    "effectiveRequiredGoals": 76
+  }
+}

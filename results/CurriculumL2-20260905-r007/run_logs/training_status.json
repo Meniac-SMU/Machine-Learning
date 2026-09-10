@@ -1,0 +1,56 @@
+{
+    "soccer_l2_spawn_difficulty": {
+        "lesson_num": 0
+    },
+    "soccer_l2_waiting_assist": {
+        "lesson_num": 0
+    },
+    "soccer_l2_pass_aim_gate": {
+        "lesson_num": 0
+    },
+    "Soccer4v4_Base": {
+        "checkpoints": [
+            {
+                "steps": 49939,
+                "file_path": "results\\CurriculumL2-20260905-r007\\Soccer4v4_Base\\Soccer4v4_Base-49939.onnx",
+                "reward": 0.07205314889189697,
+                "creation_time": 1788538744.8368924,
+                "auxillary_file_paths": [
+                    "results\\CurriculumL2-20260905-r007\\Soccer4v4_Base\\Soccer4v4_Base-49939.pt"
+                ]
+            },
+            {
+                "steps": 99924,
+                "file_path": "results\\CurriculumL2-20260905-r007\\Soccer4v4_Base\\Soccer4v4_Base-99924.onnx",
+                "reward": 0.079020196160015,
+                "creation_time": 1788538823.1580913,
+                "auxillary_file_paths": [
+                    "results\\CurriculumL2-20260905-r007\\Soccer4v4_Base\\Soccer4v4_Base-99924.pt"
+                ]
+            },
+            {
+                "steps": 100436,
+                "file_path": "results\\CurriculumL2-20260905-r007\\Soccer4v4_Base\\Soccer4v4_Base-100436.onnx",
+                "reward": 0.079020196160015,
+                "creation_time": 1788538823.463177,
+                "auxillary_file_paths": [
+                    "results\\CurriculumL2-20260905-r007\\Soccer4v4_Base\\Soccer4v4_Base-100436.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 100436,
+            "file_path": "results\\CurriculumL2-20260905-r007\\Soccer4v4_Base.onnx",
+            "reward": 0.079020196160015,
+            "creation_time": 1788538823.463177,
+            "auxillary_file_paths": [
+                "results\\CurriculumL2-20260905-r007\\Soccer4v4_Base\\Soccer4v4_Base-100436.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.2.0.dev0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

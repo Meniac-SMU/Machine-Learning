@@ -1,0 +1,50 @@
+{
+    "soccer_l1_phase": {
+        "lesson_num": 0
+    },
+    "Soccer4v4_Base": {
+        "checkpoints": [
+            {
+                "steps": 99961,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\CurriculumL1-20260902-r003\\Soccer4v4_Base\\Soccer4v4_Base-99961.onnx",
+                "reward": 0.017921779184501635,
+                "creation_time": 1788352278.7963297,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\CurriculumL1-20260902-r003\\Soccer4v4_Base\\Soccer4v4_Base-99961.pt"
+                ]
+            },
+            {
+                "steps": 199998,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\CurriculumL1-20260902-r003\\Soccer4v4_Base\\Soccer4v4_Base-199998.onnx",
+                "reward": 0.024503921318786048,
+                "creation_time": 1788352610.6211872,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\CurriculumL1-20260902-r003\\Soccer4v4_Base\\Soccer4v4_Base-199998.pt"
+                ]
+            },
+            {
+                "steps": 219548,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\CurriculumL1-20260902-r003\\Soccer4v4_Base\\Soccer4v4_Base-219548.onnx",
+                "reward": 0.01950443500781135,
+                "creation_time": 1788352660.4730422,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\CurriculumL1-20260902-r003\\Soccer4v4_Base\\Soccer4v4_Base-219548.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 219548,
+            "file_path": "C:\\GitHub\\Machine-Learning\\results\\CurriculumL1-20260902-r003\\Soccer4v4_Base.onnx",
+            "reward": 0.01950443500781135,
+            "creation_time": 1788352660.4730422,
+            "auxillary_file_paths": [
+                "C:\\GitHub\\Machine-Learning\\results\\CurriculumL1-20260902-r003\\Soccer4v4_Base\\Soccer4v4_Base-219548.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.2.0.dev0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

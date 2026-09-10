@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using MachineLearning.Soccer.Curriculum;
 using MachineLearning.Soccer.Teams.Attack;
 using MachineLearning.Soccer.Teams.Defense;
 using MachineLearning.Soccer.Teams.Press;
@@ -48,6 +49,12 @@ namespace MachineLearning.Soccer.Editor
         public const string StadiumDefenseEnvironmentPrefabPath = Root + "/Teams/" + DefenseFolder + "/Prefabs/StadiumEnvironment_Defense.prefab";
         public const string StadiumPressEnvironmentPrefabPath = Root + "/Teams/" + PressFolder + "/Prefabs/StadiumEnvironment_Press.prefab";
         public const string StadiumRuleEnvironmentPrefabPath = Root + "/Teams/" + RuleFolder + "/Prefabs/StadiumEnvironment_Rule.prefab";
+        public const string CurriculumL0EnvironmentPrefabPath = Root + "/Curriculum/L0_BallApproach/Prefabs/StadiumEnvironment_CurriculumL0.prefab";
+        public const string CurriculumL1EnvironmentPrefabPath = Root + "/Curriculum/L1_CarryAndShoot/Prefabs/StadiumEnvironment_CurriculumL1.prefab";
+        public const string CurriculumL2EnvironmentPrefabPath = Root + "/Curriculum/L2_ShortPass/Prefabs/StadiumEnvironment_CurriculumL2.prefab";
+        public const string CurriculumL2FindEnvironmentPrefabPath = Root + "/Curriculum/L2_Find/Prefabs/StadiumEnvironment_CurriculumL2Find.prefab";
+        public const string CurriculumL2ScoreEnvironmentPrefabPath = Root + "/Curriculum/L2_Score/Prefabs/StadiumEnvironment_CurriculumL2Score.prefab";
+        public const string CurriculumL3EnvironmentPrefabPath = Root + "/Curriculum/L3_ProgressivePlay/Prefabs/StadiumEnvironment_CurriculumL3.prefab";
         const string ScenePath = Root + "/Scenes/Soccer4v4.unity";
         const string BaseScenePath = Root + "/Core/Scenes/Soccer4v4_Base.unity";
         const string AttackScenePath = Root + "/Teams/" + AttackFolder + "/Scenes/Soccer4v4_Attack.unity";
@@ -59,6 +66,12 @@ namespace MachineLearning.Soccer.Editor
         public const string StadiumDefenseScenePath = Root + "/Teams/" + DefenseFolder + "/Scenes/Stadium4v4_Defense.unity";
         public const string StadiumPressScenePath = Root + "/Teams/" + PressFolder + "/Scenes/Stadium4v4_Press.unity";
         public const string StadiumRuleScenePath = Root + "/Teams/" + RuleFolder + "/Scenes/Stadium4v4_Rule.unity";
+        public const string CurriculumL0ScenePath = Root + "/Curriculum/L0_BallApproach/Scenes/Stadium4v4_CurriculumL0.unity";
+        public const string CurriculumL1ScenePath = Root + "/Curriculum/L1_CarryAndShoot/Scenes/Stadium4v4_CurriculumL1.unity";
+        public const string CurriculumL2ScenePath = Root + "/Curriculum/L2_ShortPass/Scenes/Stadium4v4_CurriculumL2.unity";
+        public const string CurriculumL2FindScenePath = Root + "/Curriculum/L2_Find/Scenes/Stadium4v4_CurriculumL2Find.unity";
+        public const string CurriculumL2ScoreScenePath = Root + "/Curriculum/L2_Score/Scenes/Stadium4v4_CurriculumL2Score.unity";
+        public const string CurriculumL3ScenePath = Root + "/Curriculum/L3_ProgressivePlay/Scenes/Stadium4v4_CurriculumL3.unity";
         const string BaseProfilePath = Root + "/Core/Profiles/BaseRewardProfile.asset";
         const string BaseDefinitionPath = Root + "/Core/Profiles/BaseTeamDefinition.asset";
         const string PanelSettingsPath = Root + "/UI/SoccerPanelSettings.asset";
@@ -130,6 +143,7 @@ namespace MachineLearning.Soccer.Editor
                 defenseDefinition,
                 pressDefinition,
                 ruleDefinition);
+            BuildCurriculumWorkspaces(baseDefinition);
             AddSceneToBuildSettings();
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
@@ -159,16 +173,64 @@ namespace MachineLearning.Soccer.Editor
                 AssetDatabase.LoadAssetAtPath<SoccerTeamDefinition>(Root + "/Teams/" + DefenseFolder + "/Profiles/DefenseTeamDefinition.asset"),
                 AssetDatabase.LoadAssetAtPath<SoccerTeamDefinition>(Root + "/Teams/" + PressFolder + "/Profiles/PressTeamDefinition.asset"),
                 AssetDatabase.LoadAssetAtPath<SoccerTeamDefinition>(Root + "/Teams/" + RuleFolder + "/Profiles/RuleTeamDefinition.asset"));
+            BuildCurriculumWorkspaces(AssetDatabase.LoadAssetAtPath<SoccerTeamDefinition>(BaseDefinitionPath));
             AddSceneToBuildSettings();
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
             ValidateActiveStadiumAssets();
+            ValidateCurriculumAssets();
+        }
+
+        [MenuItem("Tools/Soccer/Build curriculum L0 to L3 workspaces")]
+        public static void BuildCurriculumWorkspacesBatch()
+        {
+            EnsureDirectories();
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            BuildCurriculumWorkspaces(AssetDatabase.LoadAssetAtPath<SoccerTeamDefinition>(BaseDefinitionPath));
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            ValidateCurriculumAssets();
+            Debug.Log("Soccer curriculum L0/L1/L2/L2-Find/L2-Score/L3 workspaces generated successfully.");
+        }
+
+        [MenuItem("Tools/Soccer/Build curriculum L2-Find and L2-Score workspaces")]
+        public static void BuildCurriculumL2FindScoreBatch()
+        {
+            EnsureDirectories();
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            BuildCurriculumL2FindScore(AssetDatabase.LoadAssetAtPath<SoccerTeamDefinition>(BaseDefinitionPath));
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            ValidateCurriculumAssets();
+        }
+
+        [MenuItem("Tools/Soccer/Build curriculum L2 workspace only")]
+        public static void BuildCurriculumL2Batch()
+        {
+            EnsureDirectories();
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            BuildCurriculumL2(AssetDatabase.LoadAssetAtPath<SoccerTeamDefinition>(BaseDefinitionPath));
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            ValidateCurriculumAssets();
+        }
+
+        [MenuItem("Tools/Soccer/Build curriculum L3 workspace only")]
+        public static void BuildCurriculumL3Batch()
+        {
+            EnsureDirectories();
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            BuildCurriculumL3(AssetDatabase.LoadAssetAtPath<SoccerTeamDefinition>(BaseDefinitionPath));
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            ValidateCurriculumAssets();
         }
 
         [MenuItem("Tools/Soccer/Validate active 4v4 Stadiums")]
         public static void ValidateGeneratedAssets()
         {
             ValidateActiveStadiumAssets();
+            ValidateCurriculumAssets();
         }
 
         static void ValidateLegacyGeneratedAssets()
@@ -449,6 +511,122 @@ namespace MachineLearning.Soccer.Editor
             Require(AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(UxmlPath) != null,
                 "Soccer HUD UXML is missing.");
             Debug.Log("ACTIVE STADIUM VALIDATION PASS: Base, Attack, Defense, Press and Rule share one Stadium contract.");
+        }
+
+        static void ValidateCurriculumAssets()
+        {
+            var prefabPaths = new[]
+            {
+                CurriculumL0EnvironmentPrefabPath,
+                CurriculumL1EnvironmentPrefabPath,
+                CurriculumL2EnvironmentPrefabPath,
+                CurriculumL2FindEnvironmentPrefabPath,
+                CurriculumL2ScoreEnvironmentPrefabPath,
+                CurriculumL3EnvironmentPrefabPath
+            };
+            Require(prefabPaths.All(path => AssetDatabase.LoadAssetAtPath<GameObject>(path) != null),
+                "Curriculum L0/L1/L2/L2-Find/L2-Score/L3 Stadium prefabs must exist.");
+            Require(prefabPaths
+                    .Append(StadiumBaseEnvironmentPrefabPath)
+                    .Select(AssetDatabase.AssetPathToGUID)
+                    .Distinct(StringComparer.Ordinal)
+                    .Count() == 7,
+                "Core and all six curriculum prefabs must have independent GUIDs.");
+            Require(prefabPaths.All(path => PrefabUtility.GetPrefabAssetType(
+                    AssetDatabase.LoadAssetAtPath<GameObject>(path)) == PrefabAssetType.Regular),
+                "Curriculum environments must be independent regular prefabs, not variants.");
+
+            ValidateCurriculumEnvironment(
+                CurriculumL0EnvironmentPrefabPath,
+                SoccerCurriculumLesson.L0BallApproach,
+                20f);
+            ValidateCurriculumEnvironment(
+                CurriculumL1EnvironmentPrefabPath,
+                SoccerCurriculumLesson.L1CarryAndShoot,
+                30f);
+
+            ValidateSceneWiring(CurriculumL0ScenePath, CurriculumL0EnvironmentPrefabPath);
+            ValidateSceneWiring(CurriculumL1ScenePath, CurriculumL1EnvironmentPrefabPath);
+            ValidateCurriculumEnvironment(CurriculumL2EnvironmentPrefabPath, SoccerCurriculumLesson.L2ShortPass, 20f);
+            ValidateSceneWiring(CurriculumL2ScenePath, CurriculumL2EnvironmentPrefabPath);
+            ValidateCurriculumScene(CurriculumL2ScenePath, SoccerCurriculumLesson.L2ShortPass);
+            ValidateCurriculumEnvironment(CurriculumL2FindEnvironmentPrefabPath, SoccerCurriculumLesson.L2Find, 15f);
+            ValidateSceneWiring(CurriculumL2FindScenePath, CurriculumL2FindEnvironmentPrefabPath);
+            ValidateCurriculumScene(CurriculumL2FindScenePath, SoccerCurriculumLesson.L2Find);
+            ValidateCurriculumEnvironment(CurriculumL2ScoreEnvironmentPrefabPath, SoccerCurriculumLesson.L2Score, 30f);
+            ValidateSceneWiring(CurriculumL2ScoreScenePath, CurriculumL2ScoreEnvironmentPrefabPath);
+            ValidateCurriculumScene(CurriculumL2ScoreScenePath, SoccerCurriculumLesson.L2Score);
+            ValidateCurriculumScene(CurriculumL0ScenePath, SoccerCurriculumLesson.L0BallApproach);
+            ValidateCurriculumScene(CurriculumL1ScenePath, SoccerCurriculumLesson.L1CarryAndShoot);
+            ValidateCurriculumEnvironment(CurriculumL3EnvironmentPrefabPath, SoccerCurriculumLesson.L3ProgressivePlay, 20f);
+            ValidateSceneWiring(CurriculumL3ScenePath, CurriculumL3EnvironmentPrefabPath);
+            ValidateCurriculumScene(CurriculumL3ScenePath, SoccerCurriculumLesson.L3ProgressivePlay);
+            Debug.Log("CURRICULUM VALIDATION PASS: L0/L1/L2/L2-Find/L2-Score/L3 preserve the Base policy contract.");
+        }
+
+        static void ValidateCurriculumEnvironment(
+            string prefabPath,
+            SoccerCurriculumLesson expectedLesson,
+            float expectedDurationSeconds)
+        {
+            var root = PrefabUtility.LoadPrefabContents(prefabPath);
+            try
+            {
+                var environment = root.GetComponent<SoccerEnvController>();
+                var setup = root.GetComponent<SoccerMatchSetup>();
+                var curriculum = root.GetComponent<SoccerCurriculumController>();
+                var agents = root.GetComponentsInChildren<AgentSoccer>(true);
+                Require(environment != null && setup != null && curriculum != null,
+                    $"Curriculum runtime wiring is incomplete: {prefabPath}");
+                Require(Mathf.Approximately(environment.matchDurationSeconds, expectedDurationSeconds),
+                    $"Curriculum episode duration mismatch: {prefabPath}");
+                Require(curriculum.Lesson == expectedLesson,
+                    $"Curriculum lesson mismatch: {prefabPath}");
+                Require(Mathf.Approximately(curriculum.GroupSuccessReward, 0.4f)
+                    && Mathf.Approximately(curriculum.IndividualSuccessReward, 0.1f),
+                    $"Curriculum completion reward mismatch: {prefabPath}");
+                Require(setup.TrainRed && !setup.TrainNavy
+                    && !setup.ForceRedFallback && setup.ForceNavyFallback,
+                    $"Curriculum must train only Red and force Navy fallback isolation: {prefabPath}");
+                Require(setup.RedTeam != null && setup.NavyTeam != null
+                    && setup.RedTeam.BehaviorName == "Soccer4v4_Base"
+                    && setup.NavyTeam.BehaviorName == "Soccer4v4_Base",
+                    $"Curriculum must keep the Base BehaviorName: {prefabPath}");
+                Require(setup.RedModelOverride == null && setup.GetConfiguredModel(Team.Navy) == null,
+                    $"Curriculum prefab must not pin Red or Navy ONNX overrides: {prefabPath}");
+                Require(agents.Length == 8
+                    && agents.Count(agent => agent.Team == Team.Red) == 4
+                    && agents.Count(agent => agent.Team == Team.Navy) == 4,
+                    $"Curriculum prefab must serialize the complete 4v4 roster: {prefabPath}");
+                Require(agents.All(agent => agent.gameObject.activeSelf),
+                    $"All agents must be active in the prefab so the environment can register them before Navy isolation: {prefabPath}");
+
+                foreach (var agent in agents)
+                {
+                    var behavior = agent.GetComponent<BehaviorParameters>();
+                    Require(behavior != null && behavior.BehaviorName == "Soccer4v4_Base",
+                        $"Curriculum BehaviorName mismatch on {agent.name}: {prefabPath}");
+                    Require(behavior.BrainParameters.VectorObservationSize == AgentSoccer.VectorObservationSize,
+                        $"Curriculum observation size mismatch on {agent.name}: {prefabPath}");
+                    Require(behavior.BrainParameters.ActionSpec.BranchSizes.SequenceEqual(new[] { 3, 3, 3, 3 }),
+                        $"Curriculum action contract mismatch on {agent.name}: {prefabPath}");
+                }
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(root);
+            }
+        }
+
+        static void ValidateCurriculumScene(string scenePath, SoccerCurriculumLesson expectedLesson)
+        {
+            Require(File.Exists(Path.GetFullPath(scenePath)), $"Curriculum scene is missing: {scenePath}");
+            var scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+            var curricula = scene.GetRootGameObjects()
+                .SelectMany(rootObject => rootObject.GetComponentsInChildren<SoccerCurriculumController>(true))
+                .ToArray();
+            Require(curricula.Length == 1 && curricula[0].Lesson == expectedLesson,
+                $"Curriculum scene must contain exactly one matching lesson controller: {scenePath}");
         }
 
         static void ValidateWorkspaceEnvironment(
@@ -1220,6 +1398,149 @@ namespace MachineLearning.Soccer.Editor
             CreateStadiumScene(StadiumDefenseScenePath, defenseEnvironment, true);
             CreateStadiumScene(StadiumPressScenePath, pressEnvironment, true);
             CreateStadiumScene(StadiumRuleScenePath, ruleEnvironment, true);
+        }
+
+        static void BuildCurriculumWorkspaces(SoccerTeamDefinition baseDefinition)
+        {
+            Require(baseDefinition != null,
+                "BaseTeamDefinition must exist before curriculum workspaces are built.");
+            Require(AssetDatabase.LoadAssetAtPath<GameObject>(StadiumBaseEnvironmentPrefabPath) != null,
+                $"Canonical Core Stadium prefab is missing: {StadiumBaseEnvironmentPrefabPath}");
+            Require(File.Exists(Path.GetFullPath(StadiumBaseScenePath)),
+                $"Canonical Core Stadium scene is missing: {StadiumBaseScenePath}");
+
+            var l0Environment = CreateStadiumWorkspaceEnvironmentPrefab(
+                StadiumBaseEnvironmentPrefabPath,
+                CurriculumL0EnvironmentPrefabPath,
+                "StadiumEnvironment_CurriculumL0",
+                baseDefinition,
+                baseDefinition,
+                typeof(BaseRewardPolicy),
+                true,
+                false);
+            ConfigureCurriculumEnvironment(
+                CurriculumL0EnvironmentPrefabPath,
+                baseDefinition,
+                SoccerCurriculumLesson.L0BallApproach,
+                20f);
+
+            var l1Environment = CreateStadiumWorkspaceEnvironmentPrefab(
+                StadiumBaseEnvironmentPrefabPath,
+                CurriculumL1EnvironmentPrefabPath,
+                "StadiumEnvironment_CurriculumL1",
+                baseDefinition,
+                baseDefinition,
+                typeof(BaseRewardPolicy),
+                true,
+                false);
+            ConfigureCurriculumEnvironment(
+                CurriculumL1EnvironmentPrefabPath,
+                baseDefinition,
+                SoccerCurriculumLesson.L1CarryAndShoot,
+                30f);
+
+            l0Environment = AssetDatabase.LoadAssetAtPath<GameObject>(CurriculumL0EnvironmentPrefabPath);
+            l1Environment = AssetDatabase.LoadAssetAtPath<GameObject>(CurriculumL1EnvironmentPrefabPath);
+            CreateStadiumScene(CurriculumL0ScenePath, l0Environment, true);
+            CreateStadiumScene(CurriculumL1ScenePath, l1Environment, true);
+            BuildCurriculumL2(baseDefinition);
+            BuildCurriculumL2FindScore(baseDefinition);
+            BuildCurriculumL3(baseDefinition);
+        }
+
+        static void BuildCurriculumL2(SoccerTeamDefinition baseDefinition)
+        {
+            Require(baseDefinition != null, "BaseTeamDefinition is required for L2.");
+            CreateStadiumWorkspaceEnvironmentPrefab(StadiumBaseEnvironmentPrefabPath,
+                CurriculumL2EnvironmentPrefabPath, "StadiumEnvironment_CurriculumL2",
+                baseDefinition, baseDefinition, typeof(BaseRewardPolicy), true, false);
+            ConfigureCurriculumEnvironment(CurriculumL2EnvironmentPrefabPath, baseDefinition,
+                SoccerCurriculumLesson.L2ShortPass, 20f);
+            CreateStadiumScene(CurriculumL2ScenePath,
+                AssetDatabase.LoadAssetAtPath<GameObject>(CurriculumL2EnvironmentPrefabPath), true);
+        }
+
+        static void BuildCurriculumL3(SoccerTeamDefinition baseDefinition)
+        {
+            Require(baseDefinition != null, "BaseTeamDefinition is required for L3.");
+            CreateStadiumWorkspaceEnvironmentPrefab(StadiumBaseEnvironmentPrefabPath,
+                CurriculumL3EnvironmentPrefabPath, "StadiumEnvironment_CurriculumL3",
+                baseDefinition, baseDefinition, typeof(BaseRewardPolicy), true, false);
+            ConfigureCurriculumEnvironment(CurriculumL3EnvironmentPrefabPath, baseDefinition,
+                SoccerCurriculumLesson.L3ProgressivePlay, 20f);
+            CreateStadiumScene(CurriculumL3ScenePath,
+                AssetDatabase.LoadAssetAtPath<GameObject>(CurriculumL3EnvironmentPrefabPath), true);
+        }
+
+        static void BuildCurriculumL2FindScore(SoccerTeamDefinition baseDefinition)
+        {
+            Require(baseDefinition != null, "BaseTeamDefinition is required for L2-Find and L2-Score.");
+            CreateStadiumWorkspaceEnvironmentPrefab(StadiumBaseEnvironmentPrefabPath,
+                CurriculumL2FindEnvironmentPrefabPath, "StadiumEnvironment_CurriculumL2Find",
+                baseDefinition, baseDefinition, typeof(BaseRewardPolicy), true, false);
+            ConfigureCurriculumEnvironment(CurriculumL2FindEnvironmentPrefabPath, baseDefinition,
+                SoccerCurriculumLesson.L2Find, 15f);
+            CreateStadiumScene(CurriculumL2FindScenePath,
+                AssetDatabase.LoadAssetAtPath<GameObject>(CurriculumL2FindEnvironmentPrefabPath), true);
+
+            CreateStadiumWorkspaceEnvironmentPrefab(StadiumBaseEnvironmentPrefabPath,
+                CurriculumL2ScoreEnvironmentPrefabPath, "StadiumEnvironment_CurriculumL2Score",
+                baseDefinition, baseDefinition, typeof(BaseRewardPolicy), true, false);
+            ConfigureCurriculumEnvironment(CurriculumL2ScoreEnvironmentPrefabPath, baseDefinition,
+                SoccerCurriculumLesson.L2Score, 30f);
+            CreateStadiumScene(CurriculumL2ScoreScenePath,
+                AssetDatabase.LoadAssetAtPath<GameObject>(CurriculumL2ScoreEnvironmentPrefabPath), true);
+        }
+
+        static void ConfigureCurriculumEnvironment(
+            string prefabPath,
+            SoccerTeamDefinition baseDefinition,
+            SoccerCurriculumLesson lesson,
+            float episodeSeconds)
+        {
+            var root = PrefabUtility.LoadPrefabContents(prefabPath);
+            try
+            {
+                var environment = root.GetComponent<SoccerEnvController>();
+                var setup = root.GetComponent<SoccerMatchSetup>();
+                Require(environment != null && setup != null,
+                    $"Curriculum prefab is missing shared runtime components: {prefabPath}");
+                setup.Configure(
+                    baseDefinition,
+                    baseDefinition,
+                    setup.GetRewardPolicy(Team.Red),
+                    setup.GetRewardPolicy(Team.Navy),
+                    true,
+                    false,
+                    null,
+                    null,
+                    false,
+                    true);
+                environment.matchDurationSeconds = episodeSeconds;
+
+                var curriculum = root.GetComponent<SoccerCurriculumController>()
+                    ?? root.AddComponent<SoccerCurriculumController>();
+                curriculum.Configure(lesson);
+                foreach (var agent in root.GetComponentsInChildren<AgentSoccer>(true))
+                {
+                    var behavior = agent.GetComponent<BehaviorParameters>();
+                    behavior.Model = null;
+                    behavior.BehaviorType = agent.Team == Team.Red
+                        ? BehaviorType.Default
+                        : BehaviorType.HeuristicOnly;
+                    agent.gameObject.SetActive(true);
+                }
+
+                EditorUtility.SetDirty(environment);
+                EditorUtility.SetDirty(setup);
+                EditorUtility.SetDirty(curriculum);
+                var saved = PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
+                Require(saved != null, $"Could not save curriculum prefab: {prefabPath}");
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(root);
+            }
         }
 
         static GameObject CreateStadiumWorkspaceEnvironmentPrefab(
@@ -2099,7 +2420,8 @@ namespace MachineLearning.Soccer.Editor
                 Root + "/Core/Models",
                 Root + "/Core/Prefabs",
                 Root + "/Core/Scenes",
-                Root + "/Core/Training"
+                Root + "/Core/Training",
+                Root + "/Curriculum/Runtime"
             };
             foreach (var teamName in new[] { AttackFolder, DefenseFolder, PressFolder })
             {
@@ -2113,6 +2435,22 @@ namespace MachineLearning.Soccer.Editor
             directories.Add(Root + "/Teams/" + RuleFolder + "/Profiles");
             directories.Add(Root + "/Teams/" + RuleFolder + "/Prefabs");
             directories.Add(Root + "/Teams/" + RuleFolder + "/Scenes");
+
+            foreach (var curriculumFolder in new[]
+                     {
+                         "L0_BallApproach",
+                         "L1_CarryAndShoot",
+                         "L2_ShortPass",
+                         "L2_Find",
+                         "L2_Score",
+                         "L3_ProgressivePlay",
+                         "L4_Weak4v4"
+                     })
+            {
+                directories.Add($"{Root}/Curriculum/{curriculumFolder}/Prefabs");
+                directories.Add($"{Root}/Curriculum/{curriculumFolder}/Scenes");
+                directories.Add($"{Root}/Curriculum/{curriculumFolder}/Training");
+            }
 
             foreach (var directory in directories)
             {

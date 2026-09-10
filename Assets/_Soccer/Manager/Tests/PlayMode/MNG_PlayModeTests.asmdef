@@ -1,0 +1,11 @@
+{
+  "name": "MNG.PlayModeTests",
+  "rootNamespace": "MachineLearning.Soccer.Manager.Tests",
+  "references": [
+    "MNG.Runtime",
+    "Soccer.Runtime",
+    "Unity.ML-Agents"
+  ],
+  "optionalUnityReferences": ["TestAssemblies"],
+  "autoReferenced": false
+}

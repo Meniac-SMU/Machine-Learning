@@ -1,0 +1,9 @@
+{
+  "name": "Soccer.Curriculum",
+  "rootNamespace": "MachineLearning.Soccer.Curriculum",
+  "references": [
+    "Soccer.Runtime",
+    "Unity.ML-Agents"
+  ],
+  "autoReferenced": true
+}

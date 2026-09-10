@@ -1,0 +1,12 @@
+{
+  "name": "MNG.Editor",
+  "rootNamespace": "MachineLearning.Soccer.Manager.Editor",
+  "references": [
+    "MNG.Runtime",
+    "Soccer.Runtime",
+    "Unity.ML-Agents",
+    "Unity.InferenceEngine"
+  ],
+  "includePlatforms": ["Editor"],
+  "autoReferenced": true
+}

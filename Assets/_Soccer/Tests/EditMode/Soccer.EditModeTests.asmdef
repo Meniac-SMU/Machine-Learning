@@ -2,6 +2,7 @@
   "name": "Soccer.EditModeTests",
   "references": [
     "Soccer.Runtime",
+    "Soccer.Curriculum",
     "Soccer.Editor",
     "Soccer.Team.Rule",
     "Unity.ML-Agents",

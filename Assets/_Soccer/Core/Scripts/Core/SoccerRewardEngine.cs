@@ -6,6 +6,18 @@ using UnityEngine;
 
 namespace MachineLearning.Soccer
 {
+    public enum SoccerCurriculumRewardStage
+    {
+        Disabled,
+        L0Possession,
+        L1Finish,
+        L1Carry,
+        L2Pass,
+        L3ProgressivePlay,
+        L2Find,
+        L2Score
+    }
+
     /// <summary>
     /// 공 접촉 사건을 소유권·연계·수비 보상으로 변환하는 중앙 보상 장부.
     /// 사건 판정은 Neural과 Rule 공통이며 팀별 세기는 RewardProfile/RewardPolicy에서만 조정한다.
@@ -77,14 +89,192 @@ namespace MachineLearning.Soccer
         DribbleCandidate m_DribbleCandidate;
         ControlledCarryCandidate m_ControlledCarryCandidate;
         PassCandidate m_PendingPass;
+        bool m_SuppressTacticalTeamShape;
+        bool m_CurriculumRewardMode;
+        SoccerCurriculumRewardStage m_CurriculumRewardStage;
 
         public Team? PossessionTeam => m_PossessionTransitionPending ? null : m_PossessionTeam;
         public Team? LastTouchTeam => m_LastTouchAgent != null ? m_LastTouchAgent.Team : null;
         public AgentSoccer BallCarrier => m_BallCarrier;
+        public bool SuppressesTacticalTeamShape => m_SuppressTacticalTeamShape;
+        public bool UsesCurriculumRewards => m_CurriculumRewardMode;
+        public SoccerCurriculumRewardStage CurriculumRewardStage => m_CurriculumRewardStage;
 
         public float GetCumulativeReward(Team team)
         {
             return m_CumulativeTeamRewards[(int)team];
+        }
+
+        /// <summary>
+        /// 커리큘럼의 짧은 과제를 완료했을 때만 사용하는 명시적 보상 경로.
+        /// Base/팀별 RewardProfile 수치는 바꾸지 않으며 공통 상한, 팀별 장부와 TensorBoard 태그는 유지한다.
+        /// </summary>
+        public float AwardCurriculumLessonSuccess(
+            Team team,
+            AgentSoccer actor,
+            float groupReward,
+            float individualReward)
+        {
+            var appliedGroup = ApplyGroupReward(
+                team,
+                SoccerRewardKind.CurriculumLessonSuccess,
+                Mathf.Max(0f, groupReward));
+            var appliedIndividual = ApplyExplicitIndividualReward(
+                actor,
+                SoccerRewardKind.CurriculumLessonSuccess,
+                Mathf.Max(0f, individualReward));
+            return appliedGroup + appliedIndividual;
+        }
+
+        /// <summary>
+        /// 커리큘럼 전용의 제한된 개별 shaping 보상을 공통 장부와 TensorBoard 태그로 지급한다.
+        /// 호출 측 커리큘럼은 에피소드별 상한을 별도로 적용해야 한다.
+        /// </summary>
+        public float AwardCurriculumIndividualReward(
+            AgentSoccer actor,
+            SoccerRewardKind kind,
+            float reward)
+        {
+            if (kind is not SoccerRewardKind.CurriculumApproachProgress
+                and not SoccerRewardKind.CurriculumPossessionEstablished
+                and not SoccerRewardKind.CurriculumSupportShape
+                and not SoccerRewardKind.CurriculumDribbleProgress
+                and not SoccerRewardKind.CurriculumShotAttempt
+                and not SoccerRewardKind.CurriculumShotOnTarget
+                and not SoccerRewardKind.CurriculumShotAlignment
+                and not SoccerRewardKind.CurriculumGoal
+                and not SoccerRewardKind.CurriculumPassAttempt
+                and not SoccerRewardKind.CurriculumPassReception
+                and not SoccerRewardKind.CurriculumPassDelivered
+                and not SoccerRewardKind.CurriculumPassDirection
+                and not SoccerRewardKind.CurriculumReceiverProgress
+                and not SoccerRewardKind.CurriculumStableReceiver
+                and not SoccerRewardKind.CurriculumFindProgress
+                and not SoccerRewardKind.CurriculumFindHeading
+                and not SoccerRewardKind.CurriculumFastFind
+                and not SoccerRewardKind.CurriculumScoreProgress)
+            {
+                Debug.LogError($"{kind} is not a curriculum shaping reward.", this);
+                return 0f;
+            }
+
+            return ApplyExplicitIndividualReward(actor, kind, Mathf.Max(0f, reward));
+        }
+
+        /// <summary>
+        /// Signed L2-Find potential for one explicitly selected actor. This is kept
+        /// separate so no other curriculum individual reward can become negative.
+        /// </summary>
+        public float AwardCurriculumSignedIndividualReward(
+            AgentSoccer actor,
+            SoccerRewardKind kind,
+            float reward)
+        {
+            if (kind is not SoccerRewardKind.CurriculumFindProgress
+                and not SoccerRewardKind.CurriculumFindHeading)
+            {
+                Debug.LogError($"{kind} is not a signed L2-Find shaping reward.", this);
+                return 0f;
+            }
+
+            return ApplyExplicitSignedIndividualReward(actor, kind, reward);
+        }
+
+        /// <summary>
+        /// Curriculum-only group shaping and terminal penalties. The controller owns
+        /// per-episode caps and passes a signed value; the stage allowlist remains final.
+        /// </summary>
+        public float AwardCurriculumGroupReward(Team team, SoccerRewardKind kind, float reward)
+        {
+            if (kind is not SoccerRewardKind.CurriculumFindProgress
+                and not SoccerRewardKind.CurriculumScoreProgress
+                and not SoccerRewardKind.CurriculumLongPassGoalBonus
+                and not SoccerRewardKind.CurriculumOwnGoalPenalty
+                and not SoccerRewardKind.CurriculumFindTimeoutPenalty
+                and not SoccerRewardKind.CurriculumFindMissPenalty)
+            {
+                Debug.LogError($"{kind} is not a curriculum group reward.", this);
+                return 0f;
+            }
+
+            return ApplyGroupReward(team, kind, reward);
+        }
+
+        // Caller owns the once-per-round event. Isolated from ordinary match penalties.
+        public float AwardCurriculumPassOpportunityLoss(AgentSoccer actor)
+        {
+            if (m_CurriculumRewardStage != SoccerCurriculumRewardStage.L2Pass
+                || actor == null || GetProfile(actor.Team) == null) return 0f;
+            const float penalty = -0.15f;
+            actor.AddTrainingReward(penalty);
+            m_CumulativeTeamRewards[(int)actor.Team] += penalty;
+            Record(actor.Team, SoccerRewardKind.CurriculumPassOpportunityLost, penalty);
+            return penalty;
+        }
+
+        /// <summary>
+        /// 기존 bool 호출은 L0 허용 목록에 연결한다. L1 이상은 명시적 Stage를 사용한다.
+        /// 소유권 사건 추적은 유지하되 실제 지급의 모든 경로에서 레슨별 허용 목록을 적용한다.
+        /// </summary>
+        public void ConfigureCurriculumRewardMode(bool suppressTacticalTeamShape)
+        {
+            ConfigureCurriculumRewardStage(suppressTacticalTeamShape
+                ? SoccerCurriculumRewardStage.L0Possession
+                : SoccerCurriculumRewardStage.Disabled);
+        }
+
+        public void ConfigureCurriculumRewardStage(SoccerCurriculumRewardStage stage)
+        {
+            m_CurriculumRewardStage = stage;
+            m_CurriculumRewardMode = stage != SoccerCurriculumRewardStage.Disabled;
+            m_SuppressTacticalTeamShape = m_CurriculumRewardMode;
+            Array.Clear(m_HasFormationScore, 0, m_HasFormationScore.Length);
+        }
+
+        // Final delivery allowlist: tactical detectors still maintain possession state,
+        // but neither positive rewards nor penalties from later lessons can leak in.
+        public static bool IsRewardAllowed(SoccerCurriculumRewardStage stage, SoccerRewardKind kind)
+        {
+            if (stage == SoccerCurriculumRewardStage.Disabled)
+                return true;
+            if (kind is SoccerRewardKind.CurriculumPossessionEstablished
+                or SoccerRewardKind.CurriculumLessonSuccess)
+                return true;
+            if (stage == SoccerCurriculumRewardStage.L0Possession)
+                return kind == SoccerRewardKind.CurriculumApproachProgress;
+            if (stage == SoccerCurriculumRewardStage.L2Find)
+                return kind is SoccerRewardKind.CurriculumFindProgress
+                    or SoccerRewardKind.CurriculumFindHeading
+                    or SoccerRewardKind.CurriculumFastFind
+                    or SoccerRewardKind.CurriculumFindTimeoutPenalty
+                    or SoccerRewardKind.CurriculumFindMissPenalty;
+            if (stage == SoccerCurriculumRewardStage.L2Score)
+                return kind is SoccerRewardKind.CurriculumScoreProgress
+                    or SoccerRewardKind.CurriculumShotAttempt
+                    or SoccerRewardKind.CurriculumShotOnTarget
+                    or SoccerRewardKind.CurriculumGoal
+                    or SoccerRewardKind.CurriculumLongPassGoalBonus
+                    or SoccerRewardKind.CurriculumOwnGoalPenalty;
+            if (kind == SoccerRewardKind.CurriculumSupportShape)
+                return true;
+            if (kind == SoccerRewardKind.CurriculumShotAlignment)
+                return stage == SoccerCurriculumRewardStage.L1Finish;
+            if (stage is SoccerCurriculumRewardStage.L2Pass or SoccerCurriculumRewardStage.L3ProgressivePlay)
+                return kind is SoccerRewardKind.CurriculumPassAttempt
+                    or SoccerRewardKind.CurriculumPassReception
+                    or SoccerRewardKind.CurriculumPassDelivered
+                    or SoccerRewardKind.CurriculumPassDirection
+                    or SoccerRewardKind.CurriculumPassOpportunityLost
+                    || (stage == SoccerCurriculumRewardStage.L3ProgressivePlay
+                        && kind is SoccerRewardKind.CurriculumReceiverProgress
+                            or SoccerRewardKind.CurriculumStableReceiver);
+            if (stage is SoccerCurriculumRewardStage.L1Finish or SoccerCurriculumRewardStage.L1Carry)
+                return kind is SoccerRewardKind.CurriculumShotAttempt
+                    or SoccerRewardKind.CurriculumShotOnTarget
+                    or SoccerRewardKind.CurriculumGoal
+                    || (stage == SoccerCurriculumRewardStage.L1Carry
+                        && kind == SoccerRewardKind.CurriculumDribbleProgress);
+            return false;
         }
 
         public static string GetTeamRewardEventStatKey(Team team, SoccerRewardKind kind)
@@ -147,7 +337,10 @@ namespace MachineLearning.Soccer
             {
                 m_NextFormationSampleTime = Time.time + FormationSampleSeconds;
                 RefreshTeamAgentBuffers();
-                EvaluateTeammateCrowding();
+                if (!m_SuppressTacticalTeamShape)
+                {
+                    EvaluateTeammateCrowding();
+                }
             }
 
             if (m_PossessionTransitionPending || !m_PossessionTeam.HasValue)
@@ -158,7 +351,7 @@ namespace MachineLearning.Soccer
             EvaluateAttackSuccess();
             EvaluateControlledCarrySuccess();
             EvaluateDribbleSuccess();
-            if (sampleTeamShape)
+            if (sampleTeamShape && !m_SuppressTacticalTeamShape)
             {
                 EvaluateFormationChange();
             }
@@ -287,6 +480,11 @@ namespace MachineLearning.Soccer
 
         public void AwardGoal(Team scoredTeam)
         {
+            if (m_CurriculumRewardMode)
+            {
+                return;
+            }
+
             AwardGroup(scoredTeam, SoccerRewardKind.GoalResult, 1f, null);
             AwardGroup(Opponent(scoredTeam), SoccerRewardKind.GoalResult, -1f, null);
         }
@@ -705,7 +903,9 @@ namespace MachineLearning.Soccer
 
             var nearestOpponent = m_Environment.AgentsList
                 .Select(item => item?.Agent)
-                .Where(candidate => candidate != null && candidate.Team != agent.Team)
+                .Where(candidate => candidate != null
+                    && candidate.gameObject.activeInHierarchy
+                    && candidate.Team != agent.Team)
                 .OrderBy(candidate => (candidate.transform.position - agent.transform.position).sqrMagnitude)
                 .FirstOrDefault();
             if (nearestOpponent == null
@@ -822,7 +1022,7 @@ namespace MachineLearning.Soccer
             foreach (var item in m_Environment.AgentsList)
             {
                 var agent = item?.Agent;
-                if (agent != null)
+                if (agent != null && agent.gameObject.activeInHierarchy)
                 {
                     m_TeamAgentBuffers[(int)agent.Team].Add(agent);
                 }
@@ -913,12 +1113,14 @@ namespace MachineLearning.Soccer
         // 그룹 보상은 공통 상한·누적 장부·Stats 기록을 보장하기 위해 이 경로를 거친다.
         float ApplyGroupReward(Team team, SoccerRewardKind kind, float reward)
         {
+            if (!IsRewardAllowed(m_CurriculumRewardStage, kind))
+                return 0f;
             if (Mathf.Abs(reward) < 0.00001f)
             {
                 return 0f;
             }
 
-            if (reward > 0f && kind is not SoccerRewardKind.GoalResult and not SoccerRewardKind.MatchResult)
+            if (reward > 0f && !BypassesProfileShapingCap(kind))
             {
                 var profile = GetProfile(team);
                 if (profile == null)
@@ -978,18 +1180,54 @@ namespace MachineLearning.Soccer
             }
 
             var reward = Mathf.Min(GetIndividualRewardValue(agent, kind), maximumReward);
-            var possessionRemaining = profile.shapingRewardLimitPerPossession
-                - m_ShapingRewardTotals[(int)agent.Team];
-            var matchRemaining = profile.shapingRewardLimitPerMatch
-                - m_MatchShapingRewardTotals[(int)agent.Team];
-            reward = Mathf.Min(reward, Mathf.Min(possessionRemaining, matchRemaining));
+            return ApplyExplicitIndividualReward(agent, kind, reward);
+        }
+
+        float ApplyExplicitIndividualReward(AgentSoccer agent, SoccerRewardKind kind, float reward)
+        {
+            if (!IsRewardAllowed(m_CurriculumRewardStage, kind))
+                return 0f;
+            var profile = agent != null ? GetProfile(agent.Team) : null;
+            if (profile == null)
+            {
+                return 0f;
+            }
+
+            if (!BypassesProfileShapingCap(kind))
+            {
+                var possessionRemaining = profile.shapingRewardLimitPerPossession
+                    - m_ShapingRewardTotals[(int)agent.Team];
+                var matchRemaining = profile.shapingRewardLimitPerMatch
+                    - m_MatchShapingRewardTotals[(int)agent.Team];
+                reward = Mathf.Min(reward, Mathf.Min(possessionRemaining, matchRemaining));
+            }
             if (reward <= 0f)
             {
                 return 0f;
             }
 
-            m_ShapingRewardTotals[(int)agent.Team] += reward;
-            m_MatchShapingRewardTotals[(int)agent.Team] += reward;
+            if (!BypassesProfileShapingCap(kind))
+            {
+                m_ShapingRewardTotals[(int)agent.Team] += reward;
+                m_MatchShapingRewardTotals[(int)agent.Team] += reward;
+            }
+            agent.AddTrainingReward(reward);
+            m_CumulativeTeamRewards[(int)agent.Team] += reward;
+            Record(agent.Team, kind, reward);
+            return reward;
+        }
+
+        float ApplyExplicitSignedIndividualReward(
+            AgentSoccer agent,
+            SoccerRewardKind kind,
+            float reward)
+        {
+            if (!IsRewardAllowed(m_CurriculumRewardStage, kind)
+                || agent == null
+                || GetProfile(agent.Team) == null
+                || Mathf.Abs(reward) <= 0.000001f)
+                return 0f;
+
             agent.AddTrainingReward(reward);
             m_CumulativeTeamRewards[(int)agent.Team] += reward;
             Record(agent.Team, kind, reward);
@@ -1001,6 +1239,8 @@ namespace MachineLearning.Soccer
             SoccerRewardKind kind,
             bool applyWastefulPossessionCap)
         {
+            if (!IsRewardAllowed(m_CurriculumRewardStage, kind))
+                return;
             var profile = agent != null ? GetProfile(agent.Team) : null;
             if (profile == null)
             {
@@ -1046,6 +1286,7 @@ namespace MachineLearning.Soccer
             var nearbyAgents = m_Environment.AgentsList
                 .Select(item => item?.Agent)
                 .Where(agent => agent != null
+                    && agent.gameObject.activeInHierarchy
                     && agent.Team == team
                     && Vector3.Distance(agent.transform.position, recoveryPosition) <= CoordinatedPressRange)
                 .ToArray();
@@ -1120,6 +1361,33 @@ namespace MachineLearning.Soccer
         static string GetTeamTelemetryName(Team team)
         {
             return team == Team.Red ? "Red" : "Navy";
+        }
+
+        static bool BypassesProfileShapingCap(SoccerRewardKind kind)
+        {
+            return kind is SoccerRewardKind.GoalResult
+                or SoccerRewardKind.MatchResult
+                or SoccerRewardKind.CurriculumApproachProgress
+                or SoccerRewardKind.CurriculumPossessionEstablished
+                or SoccerRewardKind.CurriculumSupportShape
+                or SoccerRewardKind.CurriculumDribbleProgress
+                or SoccerRewardKind.CurriculumShotAttempt
+                or SoccerRewardKind.CurriculumShotOnTarget
+                or SoccerRewardKind.CurriculumGoal
+                or SoccerRewardKind.CurriculumLessonSuccess
+                or SoccerRewardKind.CurriculumShotAlignment
+                or SoccerRewardKind.CurriculumPassAttempt
+                or SoccerRewardKind.CurriculumPassReception
+                or SoccerRewardKind.CurriculumPassDelivered
+                or SoccerRewardKind.CurriculumPassDirection
+                or SoccerRewardKind.CurriculumReceiverProgress
+                or SoccerRewardKind.CurriculumStableReceiver
+                or SoccerRewardKind.CurriculumFindProgress
+                or SoccerRewardKind.CurriculumScoreProgress
+                or SoccerRewardKind.CurriculumLongPassGoalBonus
+                or SoccerRewardKind.CurriculumOwnGoalPenalty
+                or SoccerRewardKind.CurriculumFindTimeoutPenalty
+                or SoccerRewardKind.CurriculumFindMissPenalty;
         }
 
         static bool IsInDefensiveThird(Team team, float ballX)

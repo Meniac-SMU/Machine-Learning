@@ -1,0 +1,53 @@
+{
+    "soccer_l2_spawn_difficulty": {
+        "lesson_num": 0
+    },
+    "soccer_l2_waiting_assist": {
+        "lesson_num": 0
+    },
+    "Soccer4v4_Base": {
+        "checkpoints": [
+            {
+                "steps": 49928,
+                "file_path": "results\\CurriculumL2-20260905-r006\\Soccer4v4_Base\\Soccer4v4_Base-49928.onnx",
+                "reward": 0.11450630677459032,
+                "creation_time": 1788537323.81694,
+                "auxillary_file_paths": [
+                    "results\\CurriculumL2-20260905-r006\\Soccer4v4_Base\\Soccer4v4_Base-49928.pt"
+                ]
+            },
+            {
+                "steps": 99932,
+                "file_path": "results\\CurriculumL2-20260905-r006\\Soccer4v4_Base\\Soccer4v4_Base-99932.onnx",
+                "reward": 0.08229350667291631,
+                "creation_time": 1788537402.964096,
+                "auxillary_file_paths": [
+                    "results\\CurriculumL2-20260905-r006\\Soccer4v4_Base\\Soccer4v4_Base-99932.pt"
+                ]
+            },
+            {
+                "steps": 100060,
+                "file_path": "results\\CurriculumL2-20260905-r006\\Soccer4v4_Base\\Soccer4v4_Base-100060.onnx",
+                "reward": 0.08229350667291631,
+                "creation_time": 1788537403.1126177,
+                "auxillary_file_paths": [
+                    "results\\CurriculumL2-20260905-r006\\Soccer4v4_Base\\Soccer4v4_Base-100060.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 100060,
+            "file_path": "results\\CurriculumL2-20260905-r006\\Soccer4v4_Base.onnx",
+            "reward": 0.08229350667291631,
+            "creation_time": 1788537403.1126177,
+            "auxillary_file_paths": [
+                "results\\CurriculumL2-20260905-r006\\Soccer4v4_Base\\Soccer4v4_Base-100060.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.2.0.dev0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

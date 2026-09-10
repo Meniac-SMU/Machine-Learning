@@ -1,0 +1,116 @@
+{
+    "soccer_l2_find_near_spawn_probability": {
+        "lesson_num": 0
+    },
+    "soccer_l2_find_maximum_initial_heading_error": {
+        "lesson_num": 3
+    },
+    "Soccer4v4_Base": {
+        "checkpoints": [
+            {
+                "steps": 99920,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Find-20260907-r017\\Soccer4v4_Base\\Soccer4v4_Base-99920.onnx",
+                "reward": 0.1573598129038192,
+                "creation_time": 1788766862.094038,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Find-20260907-r017\\Soccer4v4_Base\\Soccer4v4_Base-99920.pt"
+                ]
+            },
+            {
+                "steps": 149996,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Find-20260907-r017\\Soccer4v4_Base\\Soccer4v4_Base-149996.onnx",
+                "reward": 0.1529995756379018,
+                "creation_time": 1788766973.1265728,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Find-20260907-r017\\Soccer4v4_Base\\Soccer4v4_Base-149996.pt"
+                ]
+            },
+            {
+                "steps": 199978,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Find-20260907-r017\\Soccer4v4_Base\\Soccer4v4_Base-199978.onnx",
+                "reward": 0.25410299003124237,
+                "creation_time": 1788767100.2778685,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Find-20260907-r017\\Soccer4v4_Base\\Soccer4v4_Base-199978.pt"
+                ]
+            },
+            {
+                "steps": 249994,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Find-20260907-r017\\Soccer4v4_Base\\Soccer4v4_Base-249994.onnx",
+                "reward": 0.1554519932388383,
+                "creation_time": 1788767218.9429226,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Find-20260907-r017\\Soccer4v4_Base\\Soccer4v4_Base-249994.pt"
+                ]
+            },
+            {
+                "steps": 299994,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Find-20260907-r017\\Soccer4v4_Base\\Soccer4v4_Base-299994.onnx",
+                "reward": 0.09562154114246368,
+                "creation_time": 1788767342.0428429,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Find-20260907-r017\\Soccer4v4_Base\\Soccer4v4_Base-299994.pt"
+                ]
+            },
+            {
+                "steps": 349930,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Find-20260907-r017\\Soccer4v4_Base\\Soccer4v4_Base-349930.onnx",
+                "reward": 0.16968014950935656,
+                "creation_time": 1788767457.364199,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Find-20260907-r017\\Soccer4v4_Base\\Soccer4v4_Base-349930.pt"
+                ]
+            },
+            {
+                "steps": 399994,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Find-20260907-r017\\Soccer4v4_Base\\Soccer4v4_Base-399994.onnx",
+                "reward": 0.13545638343526256,
+                "creation_time": 1788767557.8206785,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Find-20260907-r017\\Soccer4v4_Base\\Soccer4v4_Base-399994.pt"
+                ]
+            },
+            {
+                "steps": 449991,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Find-20260907-r017\\Soccer4v4_Base\\Soccer4v4_Base-449991.onnx",
+                "reward": 0.2274507326739175,
+                "creation_time": 1788767661.643831,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Find-20260907-r017\\Soccer4v4_Base\\Soccer4v4_Base-449991.pt"
+                ]
+            },
+            {
+                "steps": 499969,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Find-20260907-r017\\Soccer4v4_Base\\Soccer4v4_Base-499969.onnx",
+                "reward": 0.15254813881560428,
+                "creation_time": 1788767780.8637888,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Find-20260907-r017\\Soccer4v4_Base\\Soccer4v4_Base-499969.pt"
+                ]
+            },
+            {
+                "steps": 500248,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Find-20260907-r017\\Soccer4v4_Base\\Soccer4v4_Base-500248.onnx",
+                "reward": 0.14904172354727052,
+                "creation_time": 1788767781.11515,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Find-20260907-r017\\Soccer4v4_Base\\Soccer4v4_Base-500248.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 500248,
+            "file_path": "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Find-20260907-r017\\Soccer4v4_Base.onnx",
+            "reward": 0.14904172354727052,
+            "creation_time": 1788767781.11515,
+            "auxillary_file_paths": [
+                "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Find-20260907-r017\\Soccer4v4_Base\\Soccer4v4_Base-500248.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.2.0.dev0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

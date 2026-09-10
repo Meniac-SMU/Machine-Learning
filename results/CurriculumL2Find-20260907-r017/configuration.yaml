@@ -1,0 +1,141 @@
+default_settings: null
+behaviors:
+  Soccer4v4_Base:
+    trainer_type: poca
+    hyperparameters:
+      batch_size: 1024
+      buffer_size: 10240
+      learning_rate: 3.0e-05
+      beta: 0.001
+      epsilon: 0.2
+      lambd: 0.95
+      num_epoch: 3
+      learning_rate_schedule: constant
+      beta_schedule: constant
+      epsilon_schedule: constant
+    checkpoint_interval: 50000
+    network_settings:
+      normalize: false
+      hidden_units: 256
+      num_layers: 2
+      vis_encode_type: simple
+      memory:
+        sequence_length: 64
+        memory_size: 128
+      goal_conditioning_type: hyper
+      deterministic: false
+    reward_signals:
+      extrinsic:
+        gamma: 0.995
+        strength: 1.0
+        network_settings:
+          normalize: false
+          hidden_units: 128
+          num_layers: 2
+          vis_encode_type: simple
+          memory: null
+          goal_conditioning_type: hyper
+          deterministic: false
+    init_path: results/CurriculumL2Find-20260907-r014/Soccer4v4_Base/Soccer4v4_Base-300060.pt
+    keep_checkpoints: 10
+    even_checkpoints: false
+    max_steps: 500000
+    time_horizon: 128
+    summary_freq: 10000
+    threaded: false
+    self_play: null
+    behavioral_cloning: null
+env_settings:
+  env_path: C:\GitHub\Machine-Learning\Builds\SoccerTraining\SoccerTraining.exe
+  env_args:
+  - --training-profile
+  - curriculum-l2-find
+  - -job-worker-count
+  - '1'
+  base_port: 5740
+  num_envs: 16
+  num_areas: 1
+  timeout_wait: 120
+  seed: 27182822
+  max_lifetime_restarts: 10
+  restarts_rate_limit_n: 1
+  restarts_rate_limit_period_s: 60
+engine_settings:
+  width: 84
+  height: 84
+  quality_level: 5
+  time_scale: 10.0
+  target_frame_rate: -1
+  capture_frame_rate: 60
+  no_graphics: true
+  no_graphics_monitor: false
+environment_parameters:
+  soccer_l2_find_near_spawn_probability:
+    curriculum:
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 27182822
+          value: 0.0
+      name: soccer_l2_find_near_spawn_probability
+      completion_criteria: null
+  soccer_l2_find_maximum_initial_heading_error:
+    curriculum:
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 27182823
+          value: 60.0
+      name: front-ray-rehearsal
+      completion_criteria:
+        behavior: Soccer4v4_Base
+        measure: progress
+        min_lesson_length: 0
+        signal_smoothing: false
+        threshold: 0.1
+        require_reset: false
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 27182824
+          value: 100.0
+      name: side-entry-rehearsal
+      completion_criteria:
+        behavior: Soccer4v4_Base
+        measure: progress
+        min_lesson_length: 0
+        signal_smoothing: false
+        threshold: 0.3
+        require_reset: false
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 27182825
+          value: 140.0
+      name: blind-side-rehearsal
+      completion_criteria:
+        behavior: Soccer4v4_Base
+        measure: progress
+        min_lesson_length: 0
+        signal_smoothing: false
+        threshold: 0.5
+        require_reset: false
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 27182826
+          value: 180.0
+      name: uniform-360-consolidation
+      completion_criteria: null
+checkpoint_settings:
+  run_id: CurriculumL2Find-20260907-r017
+  initialize_from: null
+  load_model: false
+  resume: false
+  force: false
+  train_model: false
+  inference: false
+  results_dir: C:\GitHub\Machine-Learning\results
+torch_settings:
+  device: cuda
+debug: false

@@ -1,0 +1,10 @@
+{
+  "name": "MNG.Runtime",
+  "rootNamespace": "MachineLearning.Soccer.Manager",
+  "references": [
+    "Soccer.Runtime",
+    "Unity.ML-Agents",
+    "Unity.InputSystem"
+  ],
+  "autoReferenced": true
+}

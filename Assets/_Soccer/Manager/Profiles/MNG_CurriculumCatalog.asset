@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f5ae67a051bcb642ab4393d755e02d8, type: 3}
+  m_Name: MNG_CurriculumCatalog
+  m_EditorClassIdentifier: MNG.Runtime::MachineLearning.Soccer.Manager.MNG_CurriculumCatalog
+  m1EpisodeSeconds: 20
+  m1MinimumGoalDistance: 20
+  m1MaximumGoalDistance: 35
+  m1TrainingSeed: 11001
+  m1ValidationSeed: 21001
+  m1EvaluationScenarioCount: 100
+  m1TimeScale: 20
+  m2EpisodeSeconds: 20
+  m2MinimumThreatDistance: 18
+  m2MaximumThreatDistance: 35
+  m2RecoveryDeadlineSeconds: 10
+  m2OpponentPossessionSeconds: 0.3
+  m2RecoveryPossessionSeconds: 0.2
+  m2TrainingSeed: 12001
+  m2ValidationSeed: 22001
+  m2EvaluationScenarioCount: 100
+  m2TimeScale: 1
+  m3TrainingMatchSeconds: 60
+  m3FullMatchSeconds: 300
+  m3TrainingSeed: 13001
+  m3ValidationSeed: 23001
+  m3FormalEvaluationMatches: 40
+  m3TimeScale: 20

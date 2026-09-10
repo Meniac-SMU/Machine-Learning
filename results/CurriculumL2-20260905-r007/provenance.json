@@ -1,0 +1,23 @@
+{
+  "run_id": "CurriculumL2-20260905-r007",
+  "workers": 16,
+  "seed": 12345,
+  "initial_max_steps": 100000,
+  "checkpoint_interval": 50000,
+  "source_config": "source-config.yaml",
+  "source_config_sha256": "519713CF6BB7B667E9A3FCA59196ED85751D0B668A3AB0D8FB04E0B4545891D9",
+  "initial_checkpoint": "results/CurriculumL2-20260905-r006/Soccer4v4_Base/Soccer4v4_Base-100060.pt",
+  "initial_checkpoint_sha256": "A38D173F20A01EA0DABF55B22BA432EA1207FA43BC23DD688C70AC2E3A0D554F",
+  "runtime_dll_sha256": "120C1B036788097CB58FAF30543A9CE9AF86D1734CCBB109B190F93BA4D8CE82",
+  "curriculum_dll_sha256": "92AFA42A07226A36199EA7F4864A1E1B437E1DCDD9C366AFB843B1DDD20F6DD8",
+  "preserved_player": "Builds/SoccerTraining-L2-pass-gate",
+  "source_snapshot": "Logs/L2-pass-gate-source",
+  "initial_frozen_evaluations": [
+    {"seed": 17423, "gate": 0, "episodes": 100, "success": 0.32, "report": "Logs/L2-r006-pass-gate-off-seed17423-100.json"},
+    {"seed": 17423, "gate": 1, "episodes": 100, "success": 0.27, "report": "Logs/L2-r006-pass-gate-on-seed17423-100.json"},
+    {"seed": 29471, "gate": 0, "episodes": 100, "success": 0.20, "report": "Logs/L2-r006-pass-gate-0-seed29471-100.json"},
+    {"seed": 29471, "gate": 1, "episodes": 100, "success": 0.16, "report": "Logs/L2-r006-pass-gate-1-seed29471-100.json"}
+  ],
+  "interpretation": "Gate alone did not improve success. This bounded run tests adaptation of neural movement and turning under the explicit lane constraint. No automatic extension.",
+  "approved_l1_checkpoint_sha256": "82842DAC039282288D72C64D290021C4ED0D8EDE6D6EB839B405141395637069"
+}

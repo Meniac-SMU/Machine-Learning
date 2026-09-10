@@ -9571,8 +9571,8 @@ GameObject:
   - component: {fileID: 8797676947312168400}
   - component: {fileID: 1417213119322910424}
   - component: {fileID: 1655905795334335487}
-  - component: {fileID: 6987463258926278132}
-  - component: {fileID: 5686472922341223303}
+  - component: {fileID: 8279059673899829156}
+  - component: {fileID: 8278037124372258005}
   m_Layer: 0
   m_Name: StadiumEnvironment_Base
   m_TagString: Untagged
@@ -9674,12 +9674,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Soccer.Runtime::MachineLearning.Soccer.SoccerMatchSetup
   redTeam: {fileID: 11400000, guid: 94edaf92b2f9e2840a4835b8e16184f3, type: 2}
   navyTeam: {fileID: 11400000, guid: 94edaf92b2f9e2840a4835b8e16184f3, type: 2}
-  redRewardPolicy: {fileID: 6987463258926278132}
-  navyRewardPolicy: {fileID: 5686472922341223303}
+  redRewardPolicy: {fileID: 8279059673899829156}
+  navyRewardPolicy: {fileID: 8278037124372258005}
   redModelOverride: {fileID: 0}
   navyModelOverride: {fileID: 0}
   trainRed: 1
   trainNavy: 1
+  forceRedFallback: 0
+  forceNavyFallback: 0
 --- !u!114 &1417213119322910424
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9711,7 +9713,7 @@ MonoBehaviour:
   goalDepth: 5.6345015
   cornerRadius: 2.8977776
   goalModelWidthMultiplier: 2
---- !u!114 &6987463258926278132
+--- !u!114 &8279059673899829156
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9724,7 +9726,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Soccer.Runtime::MachineLearning.Soccer.BaseRewardPolicy
   teamDefinition: {fileID: 11400000, guid: 94edaf92b2f9e2840a4835b8e16184f3, type: 2}
---- !u!114 &5686472922341223303
+--- !u!114 &8278037124372258005
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

@@ -1,0 +1,36 @@
+# r006: preserve signed shaping through the final approach and reduce random action entropy.
+# Initialized from preserved r005 1,000,244; no action, rotation, movement, or speed is scripted.
+behaviors:
+  Soccer4v4_Base:
+    trainer_type: poca
+    init_path: results/CurriculumL2Find-20260906-r005/Soccer4v4_Base/Soccer4v4_Base-1000244.pt
+    hyperparameters:
+      batch_size: 1024
+      buffer_size: 10240
+      learning_rate: 0.00005
+      beta: 0.001
+      epsilon: 0.2
+      lambd: 0.95
+      num_epoch: 3
+      learning_rate_schedule: constant
+    network_settings:
+      normalize: false
+      hidden_units: 256
+      num_layers: 2
+      memory:
+        sequence_length: 64
+        memory_size: 128
+    reward_signals:
+      extrinsic:
+        gamma: 0.995
+        strength: 1.0
+    checkpoint_interval: 50000
+    keep_checkpoints: 11
+    max_steps: 500000
+    time_horizon: 128
+    summary_freq: 10000
+engine_settings:
+  no_graphics: true
+  time_scale: 10
+  target_frame_rate: -1
+  capture_frame_rate: 60

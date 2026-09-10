@@ -1,0 +1,32 @@
+[
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\Builds\\SoccerTraining\\SoccerTraining_Data\\Managed\\Soccer.Runtime.dll",
+    "Algorithm": "SHA256",
+    "Hash": "D79BA4AE66D7F9C5EDB26237144F9E4B5F7B1F02029556706A1D5F4F6ABA5442"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\Builds\\SoccerTraining\\SoccerTraining_Data\\Managed\\Soccer.Curriculum.dll",
+    "Algorithm": "SHA256",
+    "Hash": "254A5984EE65378A63BAF2C26CACF60A0AE15ACE433569C6AE95C69306CDE46F"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\results\\CurriculumL1-20260904-r017\\Soccer4v4_Base\\Soccer4v4_Base-99916.pt",
+    "Algorithm": "SHA256",
+    "Hash": "82842DAC039282288D72C64D290021C4ED0D8EDE6D6EB839B405141395637069"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2-20260904-r004\\Soccer4v4_Base\\Soccer4v4_Base-200964.pt",
+    "Algorithm": "SHA256",
+    "Hash": "F927EB0C12F1F7E0D2A4C734B852D80DE2891FA1A3F0D8489BACAF45CFDB448F"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\Assets\\_Soccer\\Curriculum\\L2_ShortPass\\Training\\curriculum_l2_direction_poca.yaml",
+    "Algorithm": "SHA256",
+    "Hash": "527357BDED8F211B6CDEA67D65C11C0EBCB3F4F894099F5E6596B1FEC494ACC5"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\ProjectSettings\\ProjectSettings.asset",
+    "Algorithm": "SHA256",
+    "Hash": "54FE0BA053A6860458DBF2BDEBE716F5F7989E0DF55556519FB9237444D49D85"
+  }
+]

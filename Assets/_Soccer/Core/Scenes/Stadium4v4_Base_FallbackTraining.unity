@@ -431,6 +431,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8797676947312168400, guid: cac38866d2473ec4c9ec658b066da356, type: 3}
+      propertyPath: redModelOverride
+      value: 
+      objectReference: {fileID: 5022602860645237092, guid: 3726a82e8a9a93c4ea02073d41faa4e5, type: 3}
+    - target: {fileID: 8797676947312168400, guid: cac38866d2473ec4c9ec658b066da356, type: 3}
       propertyPath: forceNavyFallback
       value: 1
       objectReference: {fileID: 0}

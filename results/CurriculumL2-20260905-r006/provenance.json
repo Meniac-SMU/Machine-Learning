@@ -1,0 +1,18 @@
+{
+  "run_id": "CurriculumL2-20260905-r006",
+  "workers": 16,
+  "seed": 12345,
+  "initial_max_steps": 100000,
+  "checkpoint_interval": 50000,
+  "source_config": "source-config.yaml",
+  "source_config_sha256": "0E834CE32838EE2EE874209231926E4271E19FB8EC3F619DBE9FDBF38D4C798A",
+  "initial_checkpoint": "results/CurriculumL2-20260904-r005/Soccer4v4_Base/Soccer4v4_Base-200256.pt",
+  "initial_checkpoint_sha256": "A2FDAA6333A3A40A5ABDAA11F1FD8C9694B968BFC56F0D67E160D146C5258806",
+  "runtime_dll_sha256": "02CFB6E5843970178BB41AF31B3A8CB40D9BACF3C8968F456F62D650B2011E18",
+  "curriculum_dll_sha256": "0E72E11220D54616A0B3571CF7AF95FF18067255F81D1E794BB0D3551236C52E",
+  "preserved_player": "Builds/SoccerTraining-L2-preparation",
+  "source_snapshot": "Logs/L2-preparation-source",
+  "initial_frozen_evaluation": "Logs/L2-r005-preparation-seed17423-100.json",
+  "initial_frozen_success": 0.24,
+  "approved_l1_checkpoint_sha256": "82842DAC039282288D72C64D290021C4ED0D8EDE6D6EB839B405141395637069"
+}

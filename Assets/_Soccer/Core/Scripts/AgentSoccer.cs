@@ -66,6 +66,9 @@ namespace MachineLearning.Soccer
         ISoccerRuleController m_RuleController;
         float m_ActiveKickPower = StrongKickPower;
         int m_ActiveKickAction;
+        int m_LastForwardAction;
+        int m_LastLateralAction;
+        int m_LastRotationAction;
 
         public Team Team => team;
         public Position PositionRole => position;
@@ -75,6 +78,9 @@ namespace MachineLearning.Soccer
         public SoccerKickPlate KickPlate => m_KickPlate;
         public SoccerTeamDefinition TeamDefinition => m_TeamDefinition;
         public bool IsRuleControlled => m_TeamDefinition != null && !m_TeamDefinition.UsesNeuralPolicy;
+        public int LastForwardAction => m_LastForwardAction;
+        public int LastLateralAction => m_LastLateralAction;
+        public int LastRotationAction => m_LastRotationAction;
         public ModelAsset ActiveModel
         {
             get
@@ -207,6 +213,16 @@ namespace MachineLearning.Soccer
             }
 
             var forwardAction = actions[0];
+            m_LastForwardAction = forwardAction;
+            m_LastLateralAction = actions.Length > 1 ? actions[1] : 0;
+            m_LastRotationAction = actions.Length > 2 ? actions[2] : 0;
+            if (m_Environment != null && m_Environment.IsCurriculumWaitingAgent(this))
+            {
+                var velocity = agentRb.linearVelocity;
+                agentRb.linearVelocity = new Vector3(0f, velocity.y, 0f);
+                agentRb.angularVelocity = Vector3.zero;
+                return;
+            }
             var lateralAction = actions[1];
             var rotationAction = actions[2];
             var forwardInput = forwardAction == 1 ? 1f : forwardAction == 2 ? -1f : 0f;
@@ -216,6 +232,15 @@ namespace MachineLearning.Soccer
             // 이동과 회전의 동시 입력 처리.
             var movement = transform.forward * (forwardInput * m_ForwardSpeed)
                 + transform.right * (lateralInput * m_LateralSpeed);
+            if (m_Environment != null && m_Environment.IsCurriculumReceivingAgent(this))
+            {
+                var receive = m_Environment.Ball.transform.position - transform.position;
+                receive.y = 0f;
+                if (receive.sqrMagnitude > .0001f) movement = receive.normalized * 1.3f;
+            }
+            else if (m_Environment != null
+                && m_Environment.TryGetCurriculumPassSupportDirection(this, out var support))
+                movement = support * 1.3f;
             movement = Vector3.ClampMagnitude(movement, 1.3f);
             // Neural·fallback·Rule 모두 거치는 공통 골키퍼 최종 보호층이다. 전술 코드에서 우회하지 않는다.
             movement = SoccerDefenderKeeperRules.ConstrainMovement(
@@ -238,6 +263,7 @@ namespace MachineLearning.Soccer
                 this,
                 agentRb.linearVelocity,
                 defenderKeeperMode);
+            SoccerDefenderKeeperRules.EnforceHardBoundary(this, agentRb);
             ClampPlanarVelocity();
         }
 
@@ -269,7 +295,13 @@ namespace MachineLearning.Soccer
         public override void OnActionReceived(ActionBuffers actionBuffers)
         {
             MoveAgent(actionBuffers.DiscreteActions);
-            ApplyKickAction(actionBuffers.DiscreteActions);
+            var requestedKick = actionBuffers.DiscreteActions.Length > KickActionBranch
+                ? actionBuffers.DiscreteActions[KickActionBranch]
+                : 0;
+            var resolvedKick = !m_UseHumanInput && !IsRuleControlled && m_Environment != null
+                ? m_Environment.ResolveNeuralKickAction(this, requestedKick)
+                : requestedKick;
+            ApplyKickAction(resolvedKick);
         }
 
         public override void Heuristic(in ActionBuffers actionsOut)
@@ -392,14 +424,17 @@ namespace MachineLearning.Soccer
                 : 0;
         }
 
-        void ApplyKickAction(ActionSegment<int> actions)
+        void ApplyKickAction(int kickAction)
         {
-            if (m_KickPlate == null || actions.Length <= KickActionBranch || !m_KickPlate.CanKick)
+            if (m_KickPlate == null
+                || !m_KickPlate.CanKick
+                || (m_Environment != null && (!m_Environment.CanRequestKick(this)
+                    || m_Environment.IsCurriculumPassAimBlocked(this))))
             {
                 return;
             }
 
-            switch (actions[KickActionBranch])
+            switch (kickAction)
             {
                 case 1:
                     m_ActiveKickAction = 1;
@@ -416,10 +451,41 @@ namespace MachineLearning.Soccer
 
         public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
         {
-            if (m_KickPlate != null && !m_KickPlate.CanKick)
+            if (m_Environment != null && m_Environment.IsCurriculumWaitingAgent(this))
+            {
+                for (var branch = 0; branch <= KickActionBranch; branch++)
+                {
+                    actionMask.SetActionEnabled(branch, 1, false);
+                    actionMask.SetActionEnabled(branch, 2, false);
+                }
+                return;
+            }
+            if (m_KickPlate != null
+                && (!m_KickPlate.CanKick || (m_Environment != null && !m_Environment.CanRequestKick(this))))
             {
                 actionMask.SetActionEnabled(KickActionBranch, 1, false);
                 actionMask.SetActionEnabled(KickActionBranch, 2, false);
+            }
+            else if (m_KickPlate != null && m_Environment != null
+                && m_Environment.IsCurriculumPassAimGateActive(this))
+            {
+                var blocked = m_Environment.IsCurriculumPassAimBlocked(this);
+                if (Academy.IsInitialized)
+                {
+                    var recorder = Academy.Instance.StatsRecorder;
+                    recorder.Add("Soccer/Skill Advice/L2 Pass Gate Blocked Fraction", blocked ? 1f : 0f,
+                        StatAggregationMethod.Average);
+                    if (blocked)
+                    {
+                        recorder.Add("Soccer/Skill Advice/L2 Pass Gate Decisions", 1f, StatAggregationMethod.Sum);
+                        recorder.Add($"Soccer/{team}/Skill Advice/L2 Pass Gate Decisions", 1f, StatAggregationMethod.Sum);
+                    }
+                }
+                if (blocked)
+                {
+                    actionMask.SetActionEnabled(KickActionBranch, 1, false);
+                    actionMask.SetActionEnabled(KickActionBranch, 2, false);
+                }
             }
         }
 
@@ -465,7 +531,11 @@ namespace MachineLearning.Soccer
                 foreach (var item in m_Environment.AgentsList)
                 {
                     var other = item?.Agent;
-                    if (other == null || other == this || other.Team != observedTeam || added >= requiredCount)
+                    if (other == null
+                        || !other.gameObject.activeInHierarchy
+                        || other == this
+                        || other.Team != observedTeam
+                        || added >= requiredCount)
                     {
                         continue;
                     }
@@ -531,13 +601,8 @@ namespace MachineLearning.Soccer
                 return;
             }
 
-            var toBall = collision.transform.position - transform.position;
-            toBall.y = 0f;
-            var contactDirection = toBall.sqrMagnitude > 0.0001f ? toBall.normalized : transform.forward;
-            var requestedDirection = Vector3.Slerp(
-                contactDirection,
-                transform.forward,
-                explicitStrike ? 0.65f : 0.25f).normalized;
+            var requestedDirection = CalculateBallPushDirection(
+                transform.position, transform.forward, collision.transform.position, explicitStrike);
             var direction = requestedDirection;
             var safetyRedirected = false;
             var appliedPower = DribblePushPower;
@@ -559,6 +624,8 @@ namespace MachineLearning.Soccer
                     Time.fixedDeltaTime,
                     out safetyRedirected,
                     m_Environment != null ? m_Environment.ArenaGeometry : null);
+                if (!safetyRedirected && m_Environment != null && !m_UseHumanInput && !IsRuleControlled)
+                    direction = m_Environment.ResolveNeuralPassDirection(this, direction);
                 appliedPower = safetyRedirected ? EffectiveControlledKickPower : m_ActiveKickPower;
                 if (safetyRedirected)
                 {
@@ -592,6 +659,16 @@ namespace MachineLearning.Soccer
             ballRigidbody.AddForce(direction * appliedPower);
         }
 
+        // Shared by actual contact and curriculum diagnostics; the original blend is unchanged.
+        public static Vector3 CalculateBallPushDirection(
+            Vector3 agentPosition, Vector3 agentForward, Vector3 ballPosition, bool explicitStrike)
+        {
+            var toBall = ballPosition - agentPosition;
+            toBall.y = 0f;
+            var contactDirection = toBall.sqrMagnitude > 0.0001f ? toBall.normalized : agentForward;
+            return Vector3.Slerp(contactDirection, agentForward, explicitStrike ? 0.65f : 0.25f).normalized;
+        }
+
         public void AddTrainingReward(float reward)
         {
             AddReward(reward);
@@ -607,6 +684,9 @@ namespace MachineLearning.Soccer
 
         public override void OnEpisodeBegin()
         {
+            m_LastForwardAction = 0;
+            m_LastLateralAction = 0;
+            m_LastRotationAction = 0;
             ResetKickPlate();
             m_RuleController?.ResetController();
         }

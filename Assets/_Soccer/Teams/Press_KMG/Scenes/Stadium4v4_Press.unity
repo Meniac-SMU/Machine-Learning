@@ -119,84 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &168701015
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 3174510285225120796, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3174510285225120796, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3174510285225120796, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3174510285225120796, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3174510285225120796, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3174510285225120796, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3174510285225120796, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3174510285225120796, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3174510285225120796, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3174510285225120796, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5598122179387274068, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
-      propertyPath: m_Name
-      value: StadiumEnvironment_Press
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
---- !u!114 &168701016 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3990328397158546594, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
-  m_PrefabInstance: {fileID: 168701015}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e397bc3ae78c466a8d44400f5b68e38, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!23 &168701017 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 2083063486802580303, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
-  m_PrefabInstance: {fileID: 168701015}
-  m_PrefabAsset: {fileID: 0}
---- !u!23 &168701018 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 6996086890487936293, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
-  m_PrefabInstance: {fileID: 168701015}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &715445462
 GameObject:
   m_ObjectHideFlags: 0
@@ -229,7 +151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae38a4855dfe8314c95c76f50717c182, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Soccer.Runtime::MachineLearning.Soccer.SoccerPlayerCamera
-  environment: {fileID: 168701016}
+  environment: {fileID: 1941910297}
   followDistance: 7.5
   followHeight: 3.4
   lookAhead: 2.6
@@ -247,11 +169,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fee7cbfbbbc43474695aa0b954a8e00e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Soccer.Runtime::MachineLearning.Soccer.SoccerGoalOcclusionFader
-  environment: {fileID: 168701016}
+  environment: {fileID: 1941910297}
   redGoalRendererOverrides:
-  - {fileID: 168701017}
+  - {fileID: 1941910298}
   navyGoalRendererOverrides:
-  - {fileID: 168701018}
+  - {fileID: 1941910299}
   occludedAlpha: 0.25
   fadeSpeed: 8
   boundsPadding: 0.4
@@ -360,7 +282,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e648877619931941aac61c392529e2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Soccer.Runtime::MachineLearning.Soccer.SoccerHudController
-  environment: {fileID: 168701016}
+  environment: {fileID: 1941910297}
   rewardPanelBottomRight: 1
 --- !u!114 &1017392500
 MonoBehaviour:
@@ -452,6 +374,84 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1941910296
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3174510285225120796, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3174510285225120796, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3174510285225120796, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3174510285225120796, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3174510285225120796, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3174510285225120796, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3174510285225120796, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3174510285225120796, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3174510285225120796, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3174510285225120796, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5598122179387274068, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
+      propertyPath: m_Name
+      value: StadiumEnvironment_Press
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
+--- !u!114 &1941910297 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3990328397158546594, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
+  m_PrefabInstance: {fileID: 1941910296}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e397bc3ae78c466a8d44400f5b68e38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!23 &1941910298 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2083063486802580303, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
+  m_PrefabInstance: {fileID: 1941910296}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &1941910299 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 6996086890487936293, guid: 1b044ef9a6382cb4f99c599a9ceb3227, type: 3}
+  m_PrefabInstance: {fileID: 1941910296}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -459,4 +459,4 @@ SceneRoots:
   - {fileID: 1638229704}
   - {fileID: 715445467}
   - {fileID: 1017392501}
-  - {fileID: 168701015}
+  - {fileID: 1941910296}

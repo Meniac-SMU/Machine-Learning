@@ -69,9 +69,23 @@ namespace MachineLearning.Soccer
         float m_GoalResetRemaining;
         bool m_IsTraining;
         bool m_AIEnabled;
+        bool m_KickActionsEnabled = true;
+        bool m_CurriculumControlledKicks;
+        bool m_NeuralShotAdviceEnabled = true;
+        bool m_CurriculumPassAimGate;
+        bool m_CurriculumPassAdvice;
+        readonly HashSet<AgentSoccer> m_CurriculumWaitingAgents = new();
+        readonly HashSet<AgentSoccer> m_CurriculumReceivingAgents = new();
+        AgentSoccer m_CurriculumPassSupportAgent;
+        AgentSoccer m_CurriculumPassSupportAnchor;
         Team m_LastScoringTeam;
         SoccerMatchSetup m_MatchSetup;
         SoccerRewardEngine m_RewardEngine;
+
+        public event Action RoundResetCompleted;
+        public event Action<AgentSoccer, int, Vector3, bool> BallStrikeCompleted;
+        public event Action<AgentSoccer> BallTouchCompleted;
+        public event Action MatchTimedOut;
 
         public int RedScore { get; private set; }
         public int NavyScore { get; private set; }
@@ -82,6 +96,7 @@ namespace MachineLearning.Soccer
         public bool IsAIEnabled => m_AIEnabled;
         public bool StartsInAIMode => startInAIMode;
         public bool IsTraining => m_IsTraining;
+        public bool KickActionsEnabled => m_KickActionsEnabled;
         public GameObject Ball => ball;
         public Team? PossessionTeam => m_RewardEngine != null ? m_RewardEngine.PossessionTeam : null;
         public Team? LastTouchTeam => m_RewardEngine != null ? m_RewardEngine.LastTouchTeam : null;
@@ -209,6 +224,7 @@ namespace MachineLearning.Soccer
         public void NotifyBallTouch(AgentSoccer agent)
         {
             m_RewardEngine?.NotifyBallTouch(agent);
+            BallTouchCompleted?.Invoke(agent);
         }
 
         public void NotifyBallStrike(
@@ -218,6 +234,7 @@ namespace MachineLearning.Soccer
             bool safetyRedirected)
         {
             m_RewardEngine?.NotifyBallStrike(agent, kickAction, kickDirection, safetyRedirected);
+            BallStrikeCompleted?.Invoke(agent, kickAction, kickDirection, safetyRedirected);
         }
 
         public void AddTeamReward(Team rewardTeam, float reward)
@@ -279,6 +296,208 @@ namespace MachineLearning.Soccer
         public void ConfigureStartMode(bool startsWithAI)
         {
             startInAIMode = startsWithAI;
+        }
+
+        public void ConfigureCurriculumConstraints(bool kickActionsEnabled, bool controlledKicks = false)
+        {
+            m_KickActionsEnabled = kickActionsEnabled;
+            m_CurriculumControlledKicks = controlledKicks;
+        }
+
+        public void ConfigureNeuralShotAdvice(bool enabled)
+        {
+            m_NeuralShotAdviceEnabled = enabled;
+        }
+
+        public void SetCurriculumWaitingAgent(AgentSoccer actor, bool waiting)
+        {
+            if (actor == null) return;
+            if (waiting) m_CurriculumWaitingAgents.Add(actor);
+            else m_CurriculumWaitingAgents.Remove(actor);
+        }
+
+        public void ClearCurriculumWaitingAgents() => m_CurriculumWaitingAgents.Clear();
+
+        public void ConfigureCurriculumPassAimGate(bool enabled) => m_CurriculumPassAimGate = enabled;
+
+        public void ConfigureCurriculumPassAdvice(bool enabled) => m_CurriculumPassAdvice = enabled;
+
+        public void ConfigureCurriculumPassSupport(AgentSoccer actor, AgentSoccer anchor)
+        {
+            m_CurriculumPassSupportAgent = actor;
+            m_CurriculumPassSupportAnchor = anchor;
+        }
+
+        public bool TryGetCurriculumPassSupportDirection(AgentSoccer actor, out Vector3 direction)
+        {
+            direction = Vector3.zero;
+            if (!m_CurriculumPassAdvice || actor == null || actor != m_CurriculumPassSupportAgent
+                || m_CurriculumReceivingAgents.Contains(actor)
+                || actor.IsRuleControlled || actor.IsUsingHumanInput) return false;
+            var anchor = BallCarrier != null ? BallCarrier : m_CurriculumPassSupportAnchor;
+            if (anchor == null || anchor == actor) return false;
+            var sign = actor.Team == Team.Red ? 1f : -1f;
+            var destination = anchor.transform.position + new Vector3(8f * sign, 0f, 0f);
+            direction = destination - actor.transform.position;
+            direction.y = 0f;
+            if (direction.sqrMagnitude < .25f) direction = Vector3.zero;
+            else direction.Normalize();
+            if (Academy.IsInitialized)
+            {
+                var recorder = Academy.Instance.StatsRecorder;
+                recorder.Add("Soccer/Skill Advice/Pass Support Positioning Seconds",
+                    Time.fixedDeltaTime, StatAggregationMethod.Sum);
+                recorder.Add($"Soccer/{actor.Team}/Skill Advice/Pass Support Positioning Seconds",
+                    Time.fixedDeltaTime, StatAggregationMethod.Sum);
+            }
+            return true;
+        }
+
+        public void SetCurriculumReceivingAgent(AgentSoccer actor, bool receiving)
+        {
+            if (actor == null) return;
+            if (receiving) m_CurriculumReceivingAgents.Add(actor);
+            else m_CurriculumReceivingAgents.Remove(actor);
+        }
+
+        public void ClearCurriculumReceivingAgents() => m_CurriculumReceivingAgents.Clear();
+
+        public bool IsCurriculumReceivingAgent(AgentSoccer actor)
+        {
+            if (!m_CurriculumPassAdvice || actor == null || !m_CurriculumReceivingAgents.Contains(actor)
+                || actor.IsRuleControlled || actor.IsUsingHumanInput) return false;
+            if (Academy.IsInitialized)
+            {
+                var recorder = Academy.Instance.StatsRecorder;
+                recorder.Add("Soccer/Skill Advice/Pass Receiver Chase Seconds",
+                    Time.fixedDeltaTime, StatAggregationMethod.Sum);
+                recorder.Add($"Soccer/{actor.Team}/Skill Advice/Pass Receiver Chase Seconds",
+                    Time.fixedDeltaTime, StatAggregationMethod.Sum);
+            }
+            return true;
+        }
+
+        public bool IsCurriculumPassAimGateActive(AgentSoccer actor)
+        {
+            if (!m_CurriculumPassAimGate || actor == null || actor.IsUsingHumanInput || actor.IsRuleControlled)
+                return false;
+            var behavior = actor.GetComponent<Unity.MLAgents.Policies.BehaviorParameters>();
+            return behavior != null
+                && behavior.BehaviorType != Unity.MLAgents.Policies.BehaviorType.HeuristicOnly;
+        }
+
+        public bool IsCurriculumPassAimBlocked(AgentSoccer actor)
+        {
+            // Physical kick readiness remains separate from this opt-in teaching gate.
+            if (!IsCurriculumPassAimGateActive(actor) || !CanRequestKick(actor)
+                || ball == null || BallCarrier != actor) return false;
+            var position = ball.transform.position;
+            var direction = AgentSoccer.CalculateBallPushDirection(
+                actor.transform.position, actor.transform.forward, position, true);
+            var goal = SoccerDefensiveClearanceRules.GetOpponentGoalCenter(actor.Team, position.y, arenaGeometry);
+            foreach (var item in AgentsList)
+            {
+                var target = item?.Agent;
+                if (target == null || target == actor || !target.isActiveAndEnabled || target.Team != actor.Team) continue;
+                if (SoccerCurriculumPassRules.IsAdvantageousTarget(actor.transform.position, target.transform.position, goal)
+                    && SoccerCurriculumPassRules.IsDirectedAtTarget(position, direction, target.transform.position)) return false;
+            }
+            return true;
+        }
+
+        public bool IsCurriculumWaitingAgent(AgentSoccer actor)
+        {
+            if (actor == null || !m_CurriculumWaitingAgents.Contains(actor)
+                || actor.IsUsingHumanInput || actor.IsRuleControlled) return false;
+            var behavior = actor.GetComponent<Unity.MLAgents.Policies.BehaviorParameters>();
+            return behavior != null
+                && behavior.BehaviorType != Unity.MLAgents.Policies.BehaviorType.HeuristicOnly;
+        }
+
+        public bool CanRequestKick(AgentSoccer actor)
+        {
+            if (IsCurriculumWaitingAgent(actor)) return false;
+            if (!m_KickActionsEnabled) return false;
+            if (!m_CurriculumControlledKicks) return true;
+            if (actor == null || ball == null || BallCarrier != actor) return false;
+            var offset = ball.transform.position - actor.transform.position;
+            offset.y = 0f;
+            return offset.sqrMagnitude <= 1.8f * 1.8f;
+        }
+
+        public int ResolveNeuralKickAction(AgentSoccer actor, int requestedAction)
+        {
+            if (IsCurriculumPassAdviceActive(actor) && FindCurriculumPassAdviceTarget(actor) != null)
+            {
+                RecordPassAdvice(actor, requestedAction == 0 ? "Pass Recommended" : "Requested Pass Aimed");
+                // A 6-16m handoff must leave the passer's plate before its next
+                // contact; teach Strong while keeping the Neural timing/target gate.
+                return 2;
+            }
+            if (!m_NeuralShotAdviceEnabled || actor == null || ball == null
+                || actor.IsRuleControlled || actor.IsUsingHumanInput)
+            {
+                return requestedAction;
+            }
+
+            var resolved = SoccerNeuralKickAdvisor.ResolveShotAction(
+                actor.Team,
+                actor.transform.position,
+                actor.transform.forward,
+                ball.transform.position,
+                requestedAction,
+                BallCarrier == actor,
+                CanRequestKick(actor) && actor.KickPlate != null && actor.KickPlate.CanKick,
+                arenaGeometry,
+                out var advice);
+            if (advice != SoccerNeuralKickAdvice.None && Academy.IsInitialized)
+            {
+                var label = advice == SoccerNeuralKickAdvice.ShotRecommended
+                    ? "Shot Recommended"
+                    : "Off Target Shot Deferred";
+                var recorder = Academy.Instance.StatsRecorder;
+                recorder.Add($"Soccer/Skill Advice/{label}", 1f, StatAggregationMethod.Sum);
+                recorder.Add($"Soccer/{actor.Team}/Skill Advice/{label}", 1f, StatAggregationMethod.Sum);
+            }
+
+            return resolved;
+        }
+
+        public Vector3 ResolveNeuralPassDirection(AgentSoccer actor, Vector3 fallback)
+        {
+            if (!m_CurriculumPassAdvice || actor == null || ball == null || BallCarrier != actor
+                || actor.IsRuleControlled || actor.IsUsingHumanInput) return fallback;
+            var behavior = actor.GetComponent<Unity.MLAgents.Policies.BehaviorParameters>();
+            if (behavior == null || behavior.BehaviorType == Unity.MLAgents.Policies.BehaviorType.HeuristicOnly)
+                return fallback;
+            var target = FindCurriculumPassAdviceTarget(actor);
+            if (target == null) return fallback;
+            RecordPassAdvice(actor, "Pass Direction Aimed");
+            return SoccerNeuralPassAdvisor.ResolveDirection(ball.transform.position, target, fallback);
+        }
+
+        bool IsCurriculumPassAdviceActive(AgentSoccer actor)
+        {
+            if (!m_CurriculumPassAdvice || actor == null || ball == null || BallCarrier != actor
+                || actor.IsRuleControlled || actor.IsUsingHumanInput || !CanRequestKick(actor)
+                || actor.KickPlate == null || !actor.KickPlate.CanKick) return false;
+            var behavior = actor.GetComponent<Unity.MLAgents.Policies.BehaviorParameters>();
+            return behavior != null && behavior.BehaviorType != Unity.MLAgents.Policies.BehaviorType.HeuristicOnly;
+        }
+
+        AgentSoccer FindCurriculumPassAdviceTarget(AgentSoccer actor)
+        {
+            var position = ball.transform.position;
+            var goal = SoccerDefensiveClearanceRules.GetOpponentGoalCenter(actor.Team, position.y, arenaGeometry);
+            return SoccerNeuralPassAdvisor.FindTarget(actor, position, goal, AgentsList);
+        }
+
+        static void RecordPassAdvice(AgentSoccer actor, string label)
+        {
+            if (!Academy.IsInitialized) return;
+            var recorder = Academy.Instance.StatsRecorder;
+            recorder.Add($"Soccer/Skill Advice/{label}", 1f, StatAggregationMethod.Sum);
+            recorder.Add($"Soccer/{actor.Team}/Skill Advice/{label}", 1f, StatAggregationMethod.Sum);
         }
 
         public void GoalTouched(Team scoredTeam)
@@ -371,6 +590,7 @@ namespace MachineLearning.Soccer
             m_RewardEngine?.ResetPossession();
             State = SoccerMatchState.Playing;
             m_GoalResetRemaining = 0f;
+            RoundResetCompleted?.Invoke();
         }
 
         void FreezeRound()
@@ -399,6 +619,7 @@ namespace MachineLearning.Soccer
             State = SoccerMatchState.Finished;
             RemainingTime = 0f;
             FreezeRound();
+            MatchTimedOut?.Invoke();
 
             if (RedScore > NavyScore)
             {
@@ -433,6 +654,26 @@ namespace MachineLearning.Soccer
             {
                 RestartMatch();
             }
+        }
+
+        /// <summary>
+        /// 짧은 커리큘럼 과제를 성공 즉시 하나의 그룹 에피소드로 확정하고 다음 과제를 시작한다.
+        /// 일반 경기의 득점/종료 경로에는 영향을 주지 않는다.
+        /// </summary>
+        public void CompleteTrainingDrill()
+        {
+            if (State == SoccerMatchState.Finished || m_RedAgentGroup == null || m_NavyAgentGroup == null)
+            {
+                return;
+            }
+
+            State = SoccerMatchState.Finished;
+            RemainingTime = 0f;
+            FreezeRound();
+            m_RewardEngine?.RecordMatchRewardSummary();
+            m_RedAgentGroup.EndGroupEpisode();
+            m_NavyAgentGroup.EndGroupEpisode();
+            RestartMatch();
         }
 
         public Vector3 GetAutonomousTarget(AgentSoccer requester)
@@ -631,7 +872,10 @@ namespace MachineLearning.Soccer
             foreach (var item in AgentsList)
             {
                 var teammate = item?.Agent;
-                if (teammate == null || teammate == requester || teammate.Team != requester.Team)
+                if (teammate == null
+                    || !teammate.gameObject.activeInHierarchy
+                    || teammate == requester
+                    || teammate.Team != requester.Team)
                 {
                     continue;
                 }
@@ -664,7 +908,10 @@ namespace MachineLearning.Soccer
             foreach (var item in AgentsList)
             {
                 var teammate = item?.Agent;
-                if (teammate == null || teammate == requester || teammate.Team != requester.Team)
+                if (teammate == null
+                    || !teammate.gameObject.activeInHierarchy
+                    || teammate == requester
+                    || teammate.Team != requester.Team)
                 {
                     continue;
                 }
@@ -704,7 +951,7 @@ namespace MachineLearning.Soccer
             foreach (var item in AgentsList)
             {
                 var opponent = item?.Agent;
-                if (opponent == null || opponent.Team == requester.Team)
+                if (opponent == null || !opponent.gameObject.activeInHierarchy || opponent.Team == requester.Team)
                 {
                     continue;
                 }
@@ -724,7 +971,7 @@ namespace MachineLearning.Soccer
             foreach (var item in AgentsList)
             {
                 var opponent = item?.Agent;
-                if (opponent == null || opponent.Team == requesterTeam)
+                if (opponent == null || !opponent.gameObject.activeInHierarchy || opponent.Team == requesterTeam)
                 {
                     continue;
                 }
@@ -746,7 +993,7 @@ namespace MachineLearning.Soccer
             foreach (var item in AgentsList)
             {
                 var teammate = item?.Agent;
-                if (teammate == null || teammate.Team != team)
+                if (teammate == null || !teammate.gameObject.activeInHierarchy || teammate.Team != team)
                 {
                     continue;
                 }
