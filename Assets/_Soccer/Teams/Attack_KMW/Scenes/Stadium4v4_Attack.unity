@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &299048070
+--- !u!1001 &419570261
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -176,10 +176,10 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7c4dd0e29d3be7a419e1d623737be9ff, type: 3}
---- !u!114 &299048071 stripped
+--- !u!114 &419570262 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8027598192186381623, guid: 7c4dd0e29d3be7a419e1d623737be9ff, type: 3}
-  m_PrefabInstance: {fileID: 299048070}
+  m_PrefabInstance: {fileID: 419570261}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
@@ -187,15 +187,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e397bc3ae78c466a8d44400f5b68e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!23 &299048072 stripped
+--- !u!23 &419570263 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 8281490669948920936, guid: 7c4dd0e29d3be7a419e1d623737be9ff, type: 3}
-  m_PrefabInstance: {fileID: 299048070}
+  m_PrefabInstance: {fileID: 419570261}
   m_PrefabAsset: {fileID: 0}
---- !u!23 &299048073 stripped
+--- !u!23 &419570264 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 953078517960767694, guid: 7c4dd0e29d3be7a419e1d623737be9ff, type: 3}
-  m_PrefabInstance: {fileID: 299048070}
+  m_PrefabInstance: {fileID: 419570261}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &715445462
 GameObject:
@@ -229,7 +229,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae38a4855dfe8314c95c76f50717c182, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Soccer.Runtime::MachineLearning.Soccer.SoccerPlayerCamera
-  environment: {fileID: 299048071}
+  environment: {fileID: 419570262}
   followDistance: 7.5
   followHeight: 3.4
   lookAhead: 2.6
@@ -247,11 +247,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fee7cbfbbbc43474695aa0b954a8e00e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Soccer.Runtime::MachineLearning.Soccer.SoccerGoalOcclusionFader
-  environment: {fileID: 299048071}
+  environment: {fileID: 419570262}
   redGoalRendererOverrides:
-  - {fileID: 299048072}
+  - {fileID: 419570263}
   navyGoalRendererOverrides:
-  - {fileID: 299048073}
+  - {fileID: 419570264}
   occludedAlpha: 0.25
   fadeSpeed: 8
   boundsPadding: 0.4
@@ -360,7 +360,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e648877619931941aac61c392529e2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Soccer.Runtime::MachineLearning.Soccer.SoccerHudController
-  environment: {fileID: 299048071}
+  environment: {fileID: 419570262}
   rewardPanelBottomRight: 1
 --- !u!114 &1017392500
 MonoBehaviour:
@@ -459,4 +459,4 @@ SceneRoots:
   - {fileID: 1638229704}
   - {fileID: 715445467}
   - {fileID: 1017392501}
-  - {fileID: 299048070}
+  - {fileID: 419570261}

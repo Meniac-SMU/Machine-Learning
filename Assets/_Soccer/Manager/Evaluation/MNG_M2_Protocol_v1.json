@@ -1,0 +1,29 @@
+{
+  "protocolVersion": "MNG_M2_v1",
+  "stage": "M2_DefenseChoice",
+  "generatorVersion": 1,
+  "validationSeed": 22001,
+  "scenarioCount": 100,
+  "mirrorPairs": 50,
+  "episodeSeconds": 20,
+  "recoveryDefinition": {
+    "opponentPossessionSeconds": 0.30,
+    "redPossessionSeconds": 0.20,
+    "deadlineSeconds": 10,
+    "neutralFirstTouchIsRecovery": false
+  },
+  "randomBaseline": {
+    "runKind": "uniform-valid-command",
+    "seed": 22001,
+    "recoveriesWithinDeadline": 66,
+    "allRecoveries": 77,
+    "concededGoals": 55,
+    "redGoals": 0,
+    "timeouts": 45
+  },
+  "promotion": {
+    "minimumRecoveriesWithinDeadline": 60,
+    "maximumConcededGoalsExclusive": 55,
+    "effectiveMaximumConcededGoals": 54
+  }
+}

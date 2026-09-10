@@ -3,6 +3,7 @@
   "rootNamespace": "MachineLearning.Soccer.Editor",
   "references": [
     "Soccer.Runtime",
+    "Soccer.Curriculum",
     "Soccer.Team.Attack",
     "Soccer.Team.Defense",
     "Soccer.Team.Press",

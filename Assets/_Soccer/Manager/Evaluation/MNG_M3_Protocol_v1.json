@@ -1,0 +1,17 @@
+{
+  "protocolVersion": "MNG_M3_v1",
+  "stage": "M3_FallbackMatch",
+  "generatorVersion": 1,
+  "validationSeed": 23001,
+  "matchCount": 40,
+  "matchSeconds": 300,
+  "redController": "frozen-inference-only",
+  "navyController": "MNG_Fallback",
+  "promotion": {
+    "minimumScoreRate": 0.50,
+    "maximumScorelessMatchRate": 0.20,
+    "maximumScorelessMatches": 8,
+    "requireRedGoalSample": true,
+    "requireNavyGoalSample": true
+  }
+}

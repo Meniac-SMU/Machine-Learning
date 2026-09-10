@@ -1,0 +1,33 @@
+{
+  "protocolVersion": "MNG_M3_v3",
+  "stage": "M3_FallbackMatch",
+  "generatorVersion": 2,
+  "plannerVersion": 2,
+  "validationSeed": 23001,
+  "matchCount": 40,
+  "matchSeconds": 300,
+  "redController": "frozen-inference-only",
+  "navyController": "MNG_Fallback",
+  "spawnJitter": {
+    "maximumAxisOffsetMeters": 0.75,
+    "deterministicFromSeed": true,
+    "mirrorPaired": true,
+    "confirmedCarrierKickPlateAnchorLocked": true,
+    "application": "initial-spawn-and-central-kickoff-only"
+  },
+  "individualMovement": {
+    "roleAnchors": true,
+    "roleSpecificBallFollow": true,
+    "singlePrimaryPresser": true,
+    "presserHoldSeconds": 1.25,
+    "presserSwitchAdvantageMeters": 3.0,
+    "minimumFormationTargetSeparationMeters": 3.0
+  },
+  "promotion": {
+    "minimumScoreRate": 0.50,
+    "maximumScorelessMatchRate": 0.20,
+    "maximumScorelessMatches": 8,
+    "requireRedGoalSample": true,
+    "requireNavyGoalSample": true
+  }
+}

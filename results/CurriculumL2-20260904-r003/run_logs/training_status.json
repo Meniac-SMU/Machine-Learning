@@ -1,0 +1,80 @@
+{
+    "soccer_l2_spawn_difficulty": {
+        "lesson_num": 0
+    },
+    "soccer_l2_waiting_assist": {
+        "lesson_num": 0
+    },
+    "Soccer4v4_Base": {
+        "checkpoints": [
+            {
+                "steps": 49948,
+                "file_path": "results\\CurriculumL2-20260904-r003\\Soccer4v4_Base\\Soccer4v4_Base-49948.onnx",
+                "reward": 0.056383929489779154,
+                "creation_time": 1788514909.4442573,
+                "auxillary_file_paths": [
+                    "results\\CurriculumL2-20260904-r003\\Soccer4v4_Base\\Soccer4v4_Base-49948.pt"
+                ]
+            },
+            {
+                "steps": 99952,
+                "file_path": "results\\CurriculumL2-20260904-r003\\Soccer4v4_Base\\Soccer4v4_Base-99952.onnx",
+                "reward": 0.040000001434236765,
+                "creation_time": 1788514986.280786,
+                "auxillary_file_paths": [
+                    "results\\CurriculumL2-20260904-r003\\Soccer4v4_Base\\Soccer4v4_Base-99952.pt"
+                ]
+            },
+            {
+                "steps": 100336,
+                "file_path": "results\\CurriculumL2-20260904-r003\\Soccer4v4_Base\\Soccer4v4_Base-100336.onnx",
+                "reward": 0.040000001434236765,
+                "creation_time": 1788514986.506967,
+                "auxillary_file_paths": [
+                    "results\\CurriculumL2-20260904-r003\\Soccer4v4_Base\\Soccer4v4_Base-100336.pt"
+                ]
+            },
+            {
+                "steps": 149916,
+                "file_path": "results\\CurriculumL2-20260904-r003\\Soccer4v4_Base\\Soccer4v4_Base-149916.onnx",
+                "reward": 0.060740742108060256,
+                "creation_time": 1788515923.1129065,
+                "auxillary_file_paths": [
+                    "results\\CurriculumL2-20260904-r003\\Soccer4v4_Base\\Soccer4v4_Base-149916.pt"
+                ]
+            },
+            {
+                "steps": 199944,
+                "file_path": "results\\CurriculumL2-20260904-r003\\Soccer4v4_Base\\Soccer4v4_Base-199944.onnx",
+                "reward": 0.08250000079472859,
+                "creation_time": 1788515996.5600636,
+                "auxillary_file_paths": [
+                    "results\\CurriculumL2-20260904-r003\\Soccer4v4_Base\\Soccer4v4_Base-199944.pt"
+                ]
+            },
+            {
+                "steps": 201224,
+                "file_path": "results\\CurriculumL2-20260904-r003\\Soccer4v4_Base\\Soccer4v4_Base-201224.onnx",
+                "reward": 0.08250000079472859,
+                "creation_time": 1788515996.9814036,
+                "auxillary_file_paths": [
+                    "results\\CurriculumL2-20260904-r003\\Soccer4v4_Base\\Soccer4v4_Base-201224.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 201224,
+            "file_path": "results\\CurriculumL2-20260904-r003\\Soccer4v4_Base.onnx",
+            "reward": 0.08250000079472859,
+            "creation_time": 1788515996.9814036,
+            "auxillary_file_paths": [
+                "results\\CurriculumL2-20260904-r003\\Soccer4v4_Base\\Soccer4v4_Base-201224.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.2.0.dev0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

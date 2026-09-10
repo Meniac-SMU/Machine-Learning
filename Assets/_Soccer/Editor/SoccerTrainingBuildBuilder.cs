@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using MachineLearning.Soccer.Curriculum;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -93,17 +94,18 @@ namespace MachineLearning.Soccer.Editor
         static void ValidateCatalog()
         {
             var profiles = SoccerTrainingProfileCatalog.Profiles;
-            Require(profiles.Count == 6, "Training build must expose six profiles including Rule evaluation.");
+            Require(profiles.Count == 12,
+                "Training build must expose six curriculum profiles, five existing training/evaluation profiles and Rule evaluation.");
             Require(profiles.Select(profile => profile.Key).Distinct(StringComparer.OrdinalIgnoreCase).Count() == profiles.Count,
                 "Training profile keys must be unique.");
             Require(profiles.Select(profile => profile.SceneAssetPath).Distinct(StringComparer.Ordinal).Count() == profiles.Count,
                 "Each training profile must map to one explicit scene.");
-            Require(SoccerTrainingProfileCatalog.TrainableProfiles.Count() == 5,
-                "Base fallback, Base self-play, Attack, Defense and Press must be trainable.");
+            Require(SoccerTrainingProfileCatalog.TrainableProfiles.Count() == 11,
+                "All six curricula, Base fallback, Base self-play, Attack, Defense and Press must be trainable.");
             Require(profiles.Where(profile => profile.SupportsTraining)
                     .Select(profile => profile.DefaultBasePort)
                     .Distinct()
-                    .Count() == 5,
+                    .Count() == 11,
                 "Trainable profiles must use distinct default base ports.");
         }
 
@@ -155,6 +157,31 @@ namespace MachineLearning.Soccer.Editor
                 Require(!setup.IsTrainable(Team.Red) && !setup.IsTrainable(Team.Navy),
                     $"Evaluation-only profile '{profile.Key}' must not expose a trainable team.");
             }
+
+            if (profile.Key == SoccerTrainingProfileCatalog.CurriculumL0Key
+                || profile.Key == SoccerTrainingProfileCatalog.CurriculumL1Key
+                || profile.Key == SoccerTrainingProfileCatalog.CurriculumL2Key
+                || profile.Key == SoccerTrainingProfileCatalog.CurriculumL2FindKey
+                || profile.Key == SoccerTrainingProfileCatalog.CurriculumL2ScoreKey
+                || profile.Key == SoccerTrainingProfileCatalog.CurriculumL3Key)
+            {
+                var curricula = scene.GetRootGameObjects()
+                    .SelectMany(root => root.GetComponentsInChildren<SoccerCurriculumController>(true))
+                    .ToArray();
+                var expectedLesson = profile.Key == SoccerTrainingProfileCatalog.CurriculumL0Key
+                    ? SoccerCurriculumLesson.L0BallApproach
+                    : profile.Key == SoccerTrainingProfileCatalog.CurriculumL1Key
+                        ? SoccerCurriculumLesson.L1CarryAndShoot
+                        : profile.Key == SoccerTrainingProfileCatalog.CurriculumL2Key
+                            ? SoccerCurriculumLesson.L2ShortPass
+                            : profile.Key == SoccerTrainingProfileCatalog.CurriculumL2FindKey
+                                ? SoccerCurriculumLesson.L2Find
+                                : profile.Key == SoccerTrainingProfileCatalog.CurriculumL2ScoreKey
+                                    ? SoccerCurriculumLesson.L2Score
+                                    : SoccerCurriculumLesson.L3ProgressivePlay;
+                Require(curricula.Length == 1 && curricula[0].Lesson == expectedLesson,
+                    $"Curriculum profile '{profile.Key}' must contain exactly one matching lesson controller.");
+            }
         }
 
         static void ValidateTrainerConfig(SoccerTrainingProfile profile)
@@ -185,6 +212,18 @@ namespace MachineLearning.Soccer.Editor
 
         static void CreateBootstrapScene()
         {
+            if (AssetDatabase.LoadAssetAtPath<SceneAsset>(BootstrapScenePath) != null)
+            {
+                var existingScene = EditorSceneManager.OpenScene(BootstrapScenePath, OpenSceneMode.Single);
+                var existingBootstraps = existingScene.GetRootGameObjects()
+                    .SelectMany(root => root.GetComponentsInChildren<SoccerTrainingBootstrap>(true))
+                    .ToArray();
+                if (existingBootstraps.Length == 1)
+                {
+                    return;
+                }
+            }
+
             var absoluteScenePath = ToAbsoluteProjectPath(BootstrapScenePath);
             Directory.CreateDirectory(Path.GetDirectoryName(absoluteScenePath));
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);

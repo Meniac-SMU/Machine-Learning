@@ -1,0 +1,29 @@
+{
+    "Soccer4v4_Base": {
+        "checkpoints": [
+            {
+                "steps": 16760,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Score-20260906-r002\\Soccer4v4_Base\\Soccer4v4_Base-16760.onnx",
+                "reward": null,
+                "creation_time": 1788676348.5534394,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Score-20260906-r002\\Soccer4v4_Base\\Soccer4v4_Base-16760.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 16760,
+            "file_path": "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Score-20260906-r002\\Soccer4v4_Base.onnx",
+            "reward": null,
+            "creation_time": 1788676348.5534394,
+            "auxillary_file_paths": [
+                "C:\\GitHub\\Machine-Learning\\results\\CurriculumL2Score-20260906-r002\\Soccer4v4_Base\\Soccer4v4_Base-16760.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.2.0.dev0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

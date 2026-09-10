@@ -1,14 +1,14 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)]
-    [ValidateSet('base-fallback', 'base-selfplay', 'attack', 'defense', 'press')]
+    [ValidateSet('curriculum-l0', 'curriculum-l1', 'curriculum-l2', 'curriculum-l2-find', 'curriculum-l2-score', 'curriculum-l3', 'base-fallback', 'base-selfplay', 'attack', 'defense', 'press')]
     [string]$Profile,
 
     [Parameter(Mandatory = $true)]
     [string]$RunId,
 
-    [ValidateSet(1, 2, 4, 8, 16)]
-    [int]$NumEnvs = 8,
+    [ValidateSet(1, 2, 4, 8, 16, 32)]
+    [int]$NumEnvs = 32,
 
     [int]$Seed = 12345,
 
@@ -27,6 +27,22 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+
+function Get-Sha256Lower([string]$Path) {
+    $stream = [System.IO.File]::OpenRead($Path)
+    try {
+        $sha256 = [System.Security.Cryptography.SHA256]::Create()
+        try {
+            return ([System.BitConverter]::ToString($sha256.ComputeHash($stream))).Replace('-', '').ToLowerInvariant()
+        }
+        finally {
+            $sha256.Dispose()
+        }
+    }
+    finally {
+        $stream.Dispose()
+    }
+}
 
 if ($Resume -and -not [string]::IsNullOrWhiteSpace($InitializeFrom)) {
     throw 'Use either -Resume or -InitializeFrom, not both.'
@@ -76,7 +92,7 @@ if (-not (Test-Path -LiteralPath $configPath -PathType Leaf)) {
     throw "Trainer config is missing: $configPath"
 }
 
-$configHash = (Get-FileHash -LiteralPath $configPath -Algorithm SHA256).Hash.ToLowerInvariant()
+$configHash = Get-Sha256Lower $configPath
 if ($configHash -ne [string]$selectedProfile.trainerConfigSha256) {
     throw 'The YAML changed after the executable manifest was generated. Rebuild so the shared build and config snapshot agree.'
 }
@@ -140,7 +156,7 @@ if (-not [string]::IsNullOrWhiteSpace($InitializeFrom)) {
 }
 
 # Everything after --env-args is forwarded to every Unity worker, so it must stay last.
-$trainerArguments += @('--env-args', '--training-profile', $Profile)
+$trainerArguments += @('--env-args', '--training-profile', $Profile, '-job-worker-count', '1')
 
 Write-Host "Profile: $Profile"
 Write-Host "Run ID: $RunId"

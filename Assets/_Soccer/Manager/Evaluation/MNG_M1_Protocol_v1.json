@@ -1,0 +1,22 @@
+{
+  "protocolVersion": "MNG_M1_v1",
+  "stage": "M1_AttackChoice",
+  "generatorVersion": 1,
+  "validationSeed": 21001,
+  "scenarioCount": 100,
+  "mirrorPairs": 50,
+  "episodeSeconds": 20,
+  "randomBaseline": {
+    "runKind": "uniform-valid-command",
+    "seed": 21001,
+    "goals": 65,
+    "ownGoals": 0,
+    "timeouts": 35
+  },
+  "promotion": {
+    "minimumGoalRate": 0.70,
+    "maximumOwnGoals": 0,
+    "minimumGainOverRandomPercentagePoints": 10,
+    "effectiveRequiredGoals": 75
+  }
+}

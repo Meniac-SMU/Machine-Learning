@@ -1,0 +1,65 @@
+{
+    "MNG_Manager": {
+        "checkpoints": [
+            {
+                "steps": 4988,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\MNG_M1Attack-20260910-r001\\MNG_Manager\\MNG_Manager-4988.onnx",
+                "reward": 0.75,
+                "creation_time": 1788978609.1144404,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\MNG_M1Attack-20260910-r001\\MNG_Manager\\MNG_Manager-4988.pt"
+                ]
+            },
+            {
+                "steps": 9987,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\MNG_M1Attack-20260910-r001\\MNG_Manager\\MNG_Manager-9987.onnx",
+                "reward": 0.7894736842105263,
+                "creation_time": 1788978664.3021605,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\MNG_M1Attack-20260910-r001\\MNG_Manager\\MNG_Manager-9987.pt"
+                ]
+            },
+            {
+                "steps": 14987,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\MNG_M1Attack-20260910-r001\\MNG_Manager\\MNG_Manager-14987.onnx",
+                "reward": 0.84,
+                "creation_time": 1788978717.8336513,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\MNG_M1Attack-20260910-r001\\MNG_Manager\\MNG_Manager-14987.pt"
+                ]
+            },
+            {
+                "steps": 19993,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\MNG_M1Attack-20260910-r001\\MNG_Manager\\MNG_Manager-19993.onnx",
+                "reward": 0.8783783783783784,
+                "creation_time": 1788978773.6542692,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\MNG_M1Attack-20260910-r001\\MNG_Manager\\MNG_Manager-19993.pt"
+                ]
+            },
+            {
+                "steps": 20007,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\MNG_M1Attack-20260910-r001\\MNG_Manager\\MNG_Manager-20007.onnx",
+                "reward": 0.88,
+                "creation_time": 1788978773.6974862,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\MNG_M1Attack-20260910-r001\\MNG_Manager\\MNG_Manager-20007.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 20007,
+            "file_path": "C:\\GitHub\\Machine-Learning\\results\\MNG_M1Attack-20260910-r001\\MNG_Manager.onnx",
+            "reward": 0.88,
+            "creation_time": 1788978773.6974862,
+            "auxillary_file_paths": [
+                "C:\\GitHub\\Machine-Learning\\results\\MNG_M1Attack-20260910-r001\\MNG_Manager\\MNG_Manager-20007.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.2.0.dev0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

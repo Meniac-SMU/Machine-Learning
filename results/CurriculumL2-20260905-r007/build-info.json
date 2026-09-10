@@ -1,0 +1,24 @@
+{
+    "schemaVersion": 1,
+    "generatedUtc": "2026-09-04T16:09:12.9716666Z",
+    "unityVersion": "6000.3.16f1",
+    "buildTarget": "StandaloneWindows64",
+    "result": "Succeeded",
+    "totalBytes": 144685242,
+    "totalWarnings": 485,
+    "totalErrors": 0,
+    "executable": "Builds/SoccerTraining/SoccerTraining.exe",
+    "executableSha256": "d3db57b9b88a2d8fedd1621461ddd7b29ed18001efd29a93ef9f31d4e8a483cd",
+    "scenes": [
+        "Assets/_Soccer/Training/Scenes/SoccerTrainingBootstrap.unity",
+        "Assets/_Soccer/Curriculum/L0_BallApproach/Scenes/Stadium4v4_CurriculumL0.unity",
+        "Assets/_Soccer/Curriculum/L1_CarryAndShoot/Scenes/Stadium4v4_CurriculumL1.unity",
+        "Assets/_Soccer/Curriculum/L2_ShortPass/Scenes/Stadium4v4_CurriculumL2.unity",
+        "Assets/_Soccer/Core/Scenes/Stadium4v4_Base_FallbackTraining.unity",
+        "Assets/_Soccer/Core/Scenes/Stadium4v4_Base.unity",
+        "Assets/_Soccer/Teams/Attack_KMW/Scenes/Stadium4v4_Attack.unity",
+        "Assets/_Soccer/Teams/Defense_PJH/Scenes/Stadium4v4_Defense.unity",
+        "Assets/_Soccer/Teams/Press_KMG/Scenes/Stadium4v4_Press.unity",
+        "Assets/_Soccer/Teams/Rule_PHC/Scenes/Stadium4v4_Rule.unity"
+    ]
+}

@@ -1,0 +1,32 @@
+{
+    "soccer_l1_phase": {
+        "lesson_num": 0
+    },
+    "Soccer4v4_Base": {
+        "checkpoints": [
+            {
+                "steps": 65626,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\CurriculumL1-20260902-r009\\Soccer4v4_Base\\Soccer4v4_Base-65626.onnx",
+                "reward": 0.03944791706938607,
+                "creation_time": 1788356582.2736063,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\CurriculumL1-20260902-r009\\Soccer4v4_Base\\Soccer4v4_Base-65626.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 65626,
+            "file_path": "C:\\GitHub\\Machine-Learning\\results\\CurriculumL1-20260902-r009\\Soccer4v4_Base.onnx",
+            "reward": 0.03944791706938607,
+            "creation_time": 1788356582.2736063,
+            "auxillary_file_paths": [
+                "C:\\GitHub\\Machine-Learning\\results\\CurriculumL1-20260902-r009\\Soccer4v4_Base\\Soccer4v4_Base-65626.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.2.0.dev0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

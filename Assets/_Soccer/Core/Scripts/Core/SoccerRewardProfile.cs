@@ -16,10 +16,36 @@ namespace MachineLearning.Soccer
         CoordinatedPress,
         DribbleSuccess,
         ControlledCarry,
+        CurriculumApproachProgress,
+        CurriculumPossessionEstablished,
+        CurriculumSupportShape,
+        CurriculumDribbleProgress,
+        CurriculumShotAttempt,
+        CurriculumShotOnTarget,
+        CurriculumGoal,
+        CurriculumLessonSuccess,
         FormationChange,
         TeammateCrowding,
         WastefulStrongKick,
-        UnsafeOwnGoalKick
+        UnsafeOwnGoalKick,
+        // Append to preserve existing serialized enum values.
+        CurriculumShotAlignment,
+        CurriculumPassAttempt,
+        CurriculumPassReception,
+        CurriculumPassDelivered,
+        CurriculumPassDirection,
+        CurriculumPassOpportunityLost,
+        CurriculumReceiverProgress,
+        CurriculumStableReceiver,
+        CurriculumFindProgress,
+        CurriculumScoreProgress,
+        CurriculumLongPassGoalBonus,
+        CurriculumOwnGoalPenalty,
+        // Append to preserve all existing serialized enum values.
+        CurriculumFindHeading,
+        CurriculumFastFind,
+        CurriculumFindTimeoutPenalty,
+        CurriculumFindMissPenalty
     }
 
     /// <summary>

@@ -64,6 +64,12 @@ namespace MachineLearning.Soccer
     public static class SoccerTrainingProfileCatalog
     {
         public const int PolicyContractVersion = 2;
+        public const string CurriculumL0Key = "curriculum-l0";
+        public const string CurriculumL1Key = "curriculum-l1";
+        public const string CurriculumL2Key = "curriculum-l2";
+        public const string CurriculumL2FindKey = "curriculum-l2-find";
+        public const string CurriculumL2ScoreKey = "curriculum-l2-score";
+        public const string CurriculumL3Key = "curriculum-l3";
         public const string BaseFallbackKey = "base-fallback";
         public const string BaseSelfPlayKey = "base-selfplay";
         public const string AttackKey = "attack";
@@ -71,10 +77,82 @@ namespace MachineLearning.Soccer
         public const string PressKey = "press";
         public const string RuleEvaluationKey = "rule-eval";
         public const int BaseFallbackMaxSteps = 5_000_000;
+        public const int CurriculumL0MaxSteps = 500_000;
+        public const int CurriculumL1MaxSteps = 1_000_000;
+        public const int CurriculumL2MaxSteps = 100_000;
+        public const int CurriculumL2FindMaxSteps = 500_000;
+        public const int CurriculumL2ScoreMaxSteps = 300_000;
+        public const int CurriculumL3MaxSteps = 200_000;
         public const int DefaultTrainingMaxSteps = 500_000;
 
         static readonly SoccerTrainingProfile[] AllProfiles =
         {
+            new SoccerTrainingProfile(
+                CurriculumL0Key,
+                "Curriculum L0 - Ball Approach",
+                "Assets/_Soccer/Curriculum/L0_BallApproach/Scenes/Stadium4v4_CurriculumL0.unity",
+                "Assets/_Soccer/Curriculum/L0_BallApproach/Training/curriculum_l0_poca.yaml",
+                "Soccer4v4_Base",
+                "Soccer4v4_Base",
+                "CurriculumL0",
+                5505,
+                CurriculumL0MaxSteps,
+                true,
+                false,
+                false,
+                true,
+                false,
+                true,
+                false),
+            new SoccerTrainingProfile(
+                CurriculumL1Key,
+                "Curriculum L1 - Carry And Shoot",
+                "Assets/_Soccer/Curriculum/L1_CarryAndShoot/Scenes/Stadium4v4_CurriculumL1.unity",
+                "Assets/_Soccer/Curriculum/L1_CarryAndShoot/Training/curriculum_l1_poca.yaml",
+                "Soccer4v4_Base",
+                "Soccer4v4_Base",
+                "CurriculumL1",
+                5605,
+                CurriculumL1MaxSteps,
+                true,
+                false,
+                false,
+                true,
+                false,
+                true,
+                false),
+            new SoccerTrainingProfile(
+                CurriculumL2Key,
+                "Curriculum L2 - Short Pass",
+                "Assets/_Soccer/Curriculum/L2_ShortPass/Scenes/Stadium4v4_CurriculumL2.unity",
+                "Assets/_Soccer/Curriculum/L2_ShortPass/Training/curriculum_l2_final_advised_poca.yaml",
+                "Soccer4v4_Base", "Soccer4v4_Base", "CurriculumL2",
+                5705, CurriculumL2MaxSteps,
+                true, false, false, true, false, true, false),
+            new SoccerTrainingProfile(
+                CurriculumL2FindKey,
+                "Curriculum L2-Find - Random Ball Search",
+                "Assets/_Soccer/Curriculum/L2_Find/Scenes/Stadium4v4_CurriculumL2Find.unity",
+                "Assets/_Soccer/Curriculum/L2_Find/Training/curriculum_l2_find_heading_curriculum_15s_poca.yaml",
+                "Soccer4v4_Base", "Soccer4v4_Base", "CurriculumL2Find",
+                5740, CurriculumL2FindMaxSteps,
+                true, false, false, true, false, true, false),
+            new SoccerTrainingProfile(
+                CurriculumL2ScoreKey,
+                "Curriculum L2-Score - Empty Stadium Scoring",
+                "Assets/_Soccer/Curriculum/L2_Score/Scenes/Stadium4v4_CurriculumL2Score.unity",
+                "Assets/_Soccer/Curriculum/L2_Score/Training/curriculum_l2_score_goal_priority_poca.yaml",
+                "Soccer4v4_Base", "Soccer4v4_Base", "CurriculumL2Score",
+                5772, CurriculumL2ScoreMaxSteps,
+                true, false, false, true, false, true, false),
+            new SoccerTrainingProfile(
+                CurriculumL3Key,
+                "Curriculum L3 - Progressive Play",
+                "Assets/_Soccer/Curriculum/L3_ProgressivePlay/Scenes/Stadium4v4_CurriculumL3.unity",
+                "Assets/_Soccer/Curriculum/L3_ProgressivePlay/Training/curriculum_l3_progressive_stable_reward_200k_resume_poca.yaml",
+                "Soccer4v4_Base", "Soccer4v4_Base", "CurriculumL3",
+                5805, CurriculumL3MaxSteps,
+                true, false, false, true, false, true, false),
             new SoccerTrainingProfile(
                 BaseFallbackKey,
                 "Base - Red Training vs Navy Fallback",

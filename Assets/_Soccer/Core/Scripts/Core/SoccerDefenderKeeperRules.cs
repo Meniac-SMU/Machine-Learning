@@ -22,8 +22,8 @@ namespace MachineLearning.Soccer
         public const float DefensiveEngagementDepth = -8f;
         public const float OwnHalfThreatDepth = -6f;
         public const float GoalwardThreatSpeed = 1.5f;
-        public const float HomeTrackingWidth = 14f;
-        public const float EngagementTrackingWidth = 18f;
+        public const float HomeTrackingWidth = 28f;
+        public const float EngagementTrackingWidth = 36f;
         public const float MaximumEngagementTargetDepth = -6f;
 
         const float HomeTrackingRatio = 0.55f;
@@ -244,6 +244,38 @@ namespace MachineLearning.Soccer
                 ? 0f
                 : 1f - Mathf.InverseLerp(SoftHalfLineDepth, HardHalfLineDepth, depth);
             return velocity - attackDirection * attackingSpeed * (1f - retainedFraction);
+        }
+
+        /// <summary>
+        /// 충돌이나 관성으로 골키퍼가 하프라인을 넘어 밀려나는 경우까지 막는 최종 위치 안전층.
+        /// 이동 명령과 속도 제한 다음에 호출되며 Red/Navy에 대칭으로 적용한다.
+        /// </summary>
+        public static bool EnforceHardBoundary(AgentSoccer agent, Rigidbody body)
+        {
+            if (!IsDefenderKeeper(agent) || body == null)
+            {
+                return false;
+            }
+
+            var attackSign = GetAttackSign(agent.Team);
+            var position = body.position;
+            if (GetAttackingDepth(agent.Team, position.x) <= HardHalfLineDepth)
+            {
+                return false;
+            }
+
+            position.x = HardHalfLineDepth * attackSign;
+            body.position = position;
+
+            var velocity = body.linearVelocity;
+            var attackDirection = Vector3.right * attackSign;
+            var attackingSpeed = Vector3.Dot(velocity, attackDirection);
+            if (attackingSpeed > 0f)
+            {
+                body.linearVelocity = velocity - attackDirection * attackingSpeed;
+            }
+
+            return true;
         }
 
         static bool IsDefenderKeeper(AgentSoccer agent)

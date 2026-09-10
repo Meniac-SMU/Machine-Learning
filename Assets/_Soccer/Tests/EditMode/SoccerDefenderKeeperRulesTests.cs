@@ -9,6 +9,13 @@ namespace MachineLearning.Soccer.Tests
     {
         const float Tolerance = 0.0001f;
 
+        [Test]
+        public void SharedKeeperLateralTrackingRangesAreDoubled()
+        {
+            Assert.AreEqual(28f, SoccerDefenderKeeperRules.HomeTrackingWidth, Tolerance);
+            Assert.AreEqual(36f, SoccerDefenderKeeperRules.EngagementTrackingWidth, Tolerance);
+        }
+
         static readonly string[] WorkspacePrefabPaths =
         {
             "Assets/_Soccer/Core/Prefabs/StadiumEnvironment_Base.prefab",
@@ -124,6 +131,35 @@ namespace MachineLearning.Soccer.Tests
         }
 
         [Test]
+        public void HardBoundaryClampsBothKeepersBackIntoTheirDefensiveHalf()
+        {
+            foreach (var team in new[] { Team.Red, Team.Navy })
+            {
+                var context = CreateContext(team, AgentSoccer.Position.DefenderKeeper);
+                try
+                {
+                    var body = context.Agent.GetComponent<Rigidbody>();
+                    var attackSign = SoccerDefenderKeeperRules.GetAttackSign(team);
+                    body.position = new Vector3(attackSign * 3f, 0.5f, 7f);
+                    body.linearVelocity = Vector3.right * (attackSign * 5f) + Vector3.forward * 2f;
+
+                    Assert.IsTrue(SoccerDefenderKeeperRules.EnforceHardBoundary(context.Agent, body));
+                    Assert.That(
+                        SoccerDefenderKeeperRules.GetAttackingDepth(team, body.position.x),
+                        Is.EqualTo(SoccerDefenderKeeperRules.HardHalfLineDepth).Within(Tolerance));
+                    Assert.That(Vector3.Dot(body.linearVelocity, Vector3.right * attackSign),
+                        Is.EqualTo(0f).Within(Tolerance));
+                    Assert.That(body.linearVelocity.z, Is.EqualTo(2f).Within(Tolerance));
+                    Assert.IsFalse(SoccerDefenderKeeperRules.EnforceHardBoundary(context.Agent, body));
+                }
+                finally
+                {
+                    UnityEngine.Object.DestroyImmediate(context.Root);
+                }
+            }
+        }
+
+        [Test]
         public void NonKeeperTargetsMovementAndVelocityRemainUnchanged()
         {
             foreach (var team in new[] { Team.Red, Team.Navy })
@@ -156,6 +192,36 @@ namespace MachineLearning.Soccer.Tests
                             context.Agent,
                             requestedVelocity,
                             SoccerDefenderKeeperRules.DefenderKeeperMode.RecoverGoal));
+                }
+                finally
+                {
+                    UnityEngine.Object.DestroyImmediate(context.Root);
+                }
+            }
+        }
+
+        [Test]
+        public void HardBoundaryCorrectsKeeperPositionAndOutwardVelocityForBothTeams()
+        {
+            foreach (var team in new[] { Team.Red, Team.Navy })
+            {
+                var context = CreateContext(team, AgentSoccer.Position.DefenderKeeper);
+                try
+                {
+                    var body = context.Agent.GetComponent<Rigidbody>();
+                    var attackSign = SoccerDefenderKeeperRules.GetAttackSign(team);
+                    body.position = new Vector3(attackSign * 3f, 0.5f, 7f);
+                    body.linearVelocity = Vector3.right * (attackSign * 6f) + Vector3.forward * 2f;
+
+                    Assert.IsTrue(SoccerDefenderKeeperRules.EnforceHardBoundary(context.Agent, body));
+                    Assert.That(
+                        SoccerDefenderKeeperRules.GetAttackingDepth(team, body.position.x),
+                        Is.EqualTo(SoccerDefenderKeeperRules.HardHalfLineDepth).Within(Tolerance));
+                    Assert.That(
+                        Vector3.Dot(body.linearVelocity, Vector3.right * attackSign),
+                        Is.EqualTo(0f).Within(Tolerance));
+                    Assert.That(body.position.z, Is.EqualTo(7f).Within(Tolerance));
+                    Assert.That(body.linearVelocity.z, Is.EqualTo(2f).Within(Tolerance));
                 }
                 finally
                 {

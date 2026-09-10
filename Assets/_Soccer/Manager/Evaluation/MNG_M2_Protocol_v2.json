@@ -1,0 +1,29 @@
+{
+  "protocolVersion": "MNG_M2_v2",
+  "stage": "M2_DefenseChoice",
+  "generatorVersion": 2,
+  "validationSeed": 22001,
+  "scenarioCount": 100,
+  "mirrorPairs": 50,
+  "episodeSeconds": 20,
+  "spawnJitter": {
+    "maximumAxisOffsetMeters": 0.75,
+    "deterministicFromSeed": true,
+    "mirrorPaired": true,
+    "confirmedCarrierKickPlateAnchorLocked": true
+  },
+  "randomBaseline": {
+    "runKind": "uniform-valid-command",
+    "seed": 22001,
+    "recoveriesWithinDeadline": 66,
+    "allRecoveries": 78,
+    "concededGoals": 50,
+    "redGoals": 0,
+    "timeouts": 50
+  },
+  "promotion": {
+    "minimumRecoveriesWithinDeadline": 60,
+    "maximumConcededGoalsExclusive": 50,
+    "effectiveMaximumConcededGoals": 49
+  }
+}
