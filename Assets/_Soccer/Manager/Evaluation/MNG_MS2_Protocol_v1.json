@@ -1,0 +1,41 @@
+{
+  "protocol": "MNG-MS2-v1",
+  "stage": "MS2",
+  "workers": 32,
+  "trainingSeed": 192001,
+  "aggregateMaximumSteps": 500000,
+  "checkpointInterval": 100000,
+  "trainingMatchSeconds": 120,
+  "trainingOpponent": {
+    "strength": "Full",
+    "movementSpeedMultiplier": 1.0,
+    "decisionIntervalSeconds": 0.5,
+    "mediumSkippedBecausePreflightPassed": true
+  },
+  "initialization": {
+    "candidate": "MNG_MS1-20260920-r007-step7443",
+    "path": "results/MNG_MS1-20260920-r007/MNG_Manager/MNG_Manager-7443.pt",
+    "sha256": "ac8eb65dd7c633a6cb5e4dfa267daa92d63c8df5bfecb4031a4fe28c5cb4d3c3",
+    "mode": "policy-weights-new-optimizer"
+  },
+  "diagnosticEvaluation": {
+    "matchSeconds": 120,
+    "seedsPerTeam": 10,
+    "seedOffset": 491001
+  },
+  "finalEvaluation": {
+    "matchSeconds": 300,
+    "seedsPerTeam": 20,
+    "seedOffset": 491001,
+    "minimumAggregateScoreRate": 0.50,
+    "requireGoalsForAtLeastGoalsAgainst": true,
+    "minimumPerTeamScoreRate": 0.40,
+    "minimumGainOverUniformRandom": 0.20,
+    "requireRawEffectiveEquality": true,
+    "maximumBlockedPassOverrides": 0,
+    "maximumExplicitBlockedPassRewards": 0
+  },
+  "checkpointEvaluation": "Run the complete no-assist final evaluation at every 100k checkpoint.",
+  "reproduction": "A promoted checkpoint must pass one additional independent evaluation seed.",
+  "earlyStop": "Stop at the first 100k checkpoint that passes the complete final gate and the independent-seed reproduction."
+}

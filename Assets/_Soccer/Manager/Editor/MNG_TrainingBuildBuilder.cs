@@ -44,7 +44,7 @@ namespace MachineLearning.Soccer.Manager.Editor
             FallbackMatchOutputDirectory + "/MNG_FallbackMatch_Data/level0";
         public const string EvaluationOutputRoot = "Builds/MNG_M1Evaluation";
         public const string EvaluationProtocolPath =
-            "Assets/_Soccer/Manager/Evaluation/MNG_M1_Protocol_v3.json";
+            "Assets/_Soccer/Manager/Evaluation/MNG_M1_Protocol_v6.json";
         public const string AttackMovingEvaluationOutputRoot = "Builds/MNG_M1MovingEvaluation";
         public const string AttackMovingEvaluationProtocolPath =
             "Assets/_Soccer/Manager/Evaluation/MNG_M1Moving_Protocol_v1.json";
@@ -160,6 +160,17 @@ namespace MachineLearning.Soccer.Manager.Editor
                     && !Regex.IsMatch(runId ?? string.Empty, @"^MNG_M1Attack-\d{8}-r\d{3}$"))
                     throw new InvalidOperationException($"Invalid MNG M1 evaluation run ID: {runId}");
 
+                var candidateId = ReadArgument("-mngCandidateId", runId);
+                var uniformRandom = string.Equals(
+                    ReadArgument("-mngRandomPolicy", "false"), "true",
+                    StringComparison.OrdinalIgnoreCase);
+                var candidatePattern = movingDefense
+                    ? @"^MNG_M1Moving-\d{8}-r\d{3}(-step\d+)?(-diag-r\d{3})?$"
+                    : @"^MNG_M1Attack-\d{8}-r\d{3}(-step\d+)?(-diag-r\d{3})?$";
+                if (!Regex.IsMatch(candidateId ?? string.Empty, candidatePattern))
+                    throw new InvalidOperationException(
+                        $"Invalid MNG M1 evaluation candidate ID: {candidateId}");
+
                 var suppliedModelPath = ReadArgument("-mngModelPath", string.Empty);
                 if (string.IsNullOrWhiteSpace(suppliedModelPath))
                     throw new InvalidOperationException("-mngModelPath is required for MNG M1 evaluation.");
@@ -170,7 +181,7 @@ namespace MachineLearning.Soccer.Manager.Editor
                 var sourceModelSha256 = Sha256(sourceModelPath);
                 var projectRoot = Path.GetDirectoryName(Application.dataPath)
                     ?? throw new InvalidOperationException("Could not resolve the Unity project root.");
-                var modelAssetPath = $"{EvaluationModelDirectory}/{runId}.onnx";
+                var modelAssetPath = $"{EvaluationModelDirectory}/{candidateId}.onnx";
                 var importedModelPath = Path.Combine(
                     projectRoot,
                     modelAssetPath.Replace('/', Path.DirectorySeparatorChar));
@@ -202,7 +213,7 @@ namespace MachineLearning.Soccer.Manager.Editor
                         modelAsset, runId, sourceModelSha256);
                 else
                     MNG_ProjectBuilder.CreateAttackChoiceEvaluationScene(
-                        modelAsset, runId, sourceModelSha256);
+                        modelAsset, runId, sourceModelSha256, uniformRandom);
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
 
@@ -220,7 +231,7 @@ namespace MachineLearning.Soccer.Manager.Editor
                 var evaluationProtocolPath = movingDefense
                     ? AttackMovingEvaluationProtocolPath
                     : EvaluationProtocolPath;
-                var outputDirectory = $"{evaluationOutputRoot}/{runId}";
+                var outputDirectory = $"{evaluationOutputRoot}/{candidateId}";
                 var executableName = movingDefense
                     ? "MNG_M1MovingEvaluation.exe"
                     : "MNG_M1Evaluation.exe";
@@ -253,6 +264,8 @@ namespace MachineLearning.Soccer.Manager.Editor
                     "{\n"
                     + $"  \"stage\": \"{(movingDefense ? "M1-AttackMoving-Evaluation" : "M1-AttackChoice-Evaluation")}\",\n"
                     + $"  \"runId\": \"{runId}\",\n"
+                    + $"  \"candidateId\": \"{candidateId}\",\n"
+                    + $"  \"policyKind\": \"{(uniformRandom ? "uniform-valid-command" : "onnx")}\",\n"
                     + $"  \"scene\": \"{evaluationScenePath}\",\n"
                     + $"  \"modelAsset\": \"{modelAssetPath}\",\n"
                     + $"  \"modelSha256\": \"{sourceModelSha256}\",\n"
@@ -266,7 +279,7 @@ namespace MachineLearning.Soccer.Manager.Editor
                     + $"  \"warnings\": {summary.totalWarnings},\n"
                     + $"  \"bytes\": {executable.Length}\n"
                     + "}\n");
-                Debug.Log($"MNG M1 EVALUATION BUILD PASS run={runId} modelSha256={sourceModelSha256} "
+                Debug.Log($"MNG M1 EVALUATION BUILD PASS run={runId} candidate={candidateId} modelSha256={sourceModelSha256} "
                     + $"bytes={executable.Length} warnings={summary.totalWarnings} output={executablePath}");
                 EditorApplication.Exit(0);
             }

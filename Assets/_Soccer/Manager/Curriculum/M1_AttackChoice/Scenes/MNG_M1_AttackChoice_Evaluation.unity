@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &158764544
+--- !u!1001 &1194826073
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -178,7 +178,7 @@ PrefabInstance:
     - target: {fileID: 4062829363388457278, guid: 43ae8075d69a520418261ff441ff8ca7, type: 3}
       propertyPath: m_Model
       value: 
-      objectReference: {fileID: 5022602860645237092, guid: 44475e8ecb1e9654cb3e7705ea1be351, type: 3}
+      objectReference: {fileID: 5022602860645237092, guid: 221d22fb2b8584140b6953f9031224eb, type: 3}
     - target: {fileID: 4062829363388457278, guid: 43ae8075d69a520418261ff441ff8ca7, type: 3}
       propertyPath: m_BehaviorType
       value: 2
@@ -197,20 +197,20 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 3490418252925469502, guid: 43ae8075d69a520418261ff441ff8ca7, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 158764549}
+      addedObject: {fileID: 1194826078}
     - targetCorrespondingSourceObject: {fileID: 3490418252925469502, guid: 43ae8075d69a520418261ff441ff8ca7, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 158764548}
+      addedObject: {fileID: 1194826077}
   m_SourcePrefab: {fileID: 100100000, guid: 43ae8075d69a520418261ff441ff8ca7, type: 3}
---- !u!1 &158764545 stripped
+--- !u!1 &1194826074 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3490418252925469502, guid: 43ae8075d69a520418261ff441ff8ca7, type: 3}
-  m_PrefabInstance: {fileID: 158764544}
+  m_PrefabInstance: {fileID: 1194826073}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &158764546 stripped
+--- !u!114 &1194826075 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3498306608060785204, guid: 43ae8075d69a520418261ff441ff8ca7, type: 3}
-  m_PrefabInstance: {fileID: 158764544}
+  m_PrefabInstance: {fileID: 1194826073}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
@@ -218,39 +218,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca0d3367be23e3648b852abb97a12432, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MNG.Runtime::MachineLearning.Soccer.Manager.MNG_BallControl
---- !u!114 &158764547 stripped
+--- !u!114 &1194826076 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7406143764812180562, guid: 43ae8075d69a520418261ff441ff8ca7, type: 3}
-  m_PrefabInstance: {fileID: 158764544}
+  m_PrefabInstance: {fileID: 1194826073}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 158764545}
+  m_GameObject: {fileID: 1194826074}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 54780b323c48abf478be2d1a20eaccfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MNG.Runtime::MachineLearning.Soccer.Manager.MNG_MatchController
---- !u!114 &158764548
+--- !u!114 &1194826077
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 158764545}
+  m_GameObject: {fileID: 1194826074}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 256c293ffef437b4c9fba3cc9e60c94d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MNG.Runtime::MachineLearning.Soccer.Manager.MNG_M1EvaluationController
-  curriculum: {fileID: 158764549}
-  runId: MNG_M1Attack-20260910-r001
-  modelSha256: 3b1d69bbe79e6e458d4f2117b0d51e20d6d38ffcc2c519c0314e70580685dccb
---- !u!114 &158764549
+  curriculum: {fileID: 1194826078}
+  runId: MNG_M1Attack-20260917-r003
+  modelSha256: 7dacbc70acf5c13d69924398297c560aa3b45025a712b0ca355d0664eedfe36f
+  policyKind: onnx
+--- !u!114 &1194826078
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 158764545}
+  m_GameObject: {fileID: 1194826074}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bcffdce85acd799458a6bf1c229c6755, type: 3}
@@ -258,12 +259,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: MNG.Runtime::MachineLearning.Soccer.Manager.MNG_CurriculumController
   catalog: {fileID: 11400000, guid: a6e537792ba93614db447f76f2a57a16, type: 2}
   stage: 1
-  matchController: {fileID: 158764547}
-  ballControl: {fileID: 158764546}
+  matchController: {fileID: 1194826076}
+  ballControl: {fileID: 1194826075}
   rewardEngine: {fileID: 0}
   useValidationScenarios: 1
+  movingNavyDefense: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 158764544}
+  - {fileID: 1194826073}

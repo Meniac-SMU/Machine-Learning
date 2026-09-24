@@ -25,6 +25,8 @@ namespace MachineLearning.Soccer.Manager.Editor
             "Assets/_Soccer/Manager/Scenes/MNG_Stadium4v4.unity";
         public const string ConnectionSmokeScenePath =
             "Assets/_Soccer/Manager/Scenes/MNG_M1_ConnectionSmoke.unity";
+        public const string RuleVsRuleScenePath =
+            "Assets/_Soccer/Manager/Curriculum/R0_RuleBaseline/Scenes/MNG_R0_RuleVsRule.unity";
         public const string AttackChoiceScenePath =
             "Assets/_Soccer/Manager/Curriculum/M1_AttackChoice/Scenes/MNG_M1_AttackChoice.unity";
         public const string AttackChoiceEvaluationScenePath =
@@ -89,6 +91,7 @@ namespace MachineLearning.Soccer.Manager.Editor
             }
 
             CreateScene();
+            CreateRuleVsRuleScene();
             CreateConnectionSmokeScene();
             CreateAttackChoiceScene();
             CreateAttackMovingScene();
@@ -162,6 +165,16 @@ namespace MachineLearning.Soccer.Manager.Editor
                     "MNG policy endpoints must contain exactly one MNG_ManagerAgent each and no plain Agent.");
                 Require(prefab.GetComponentsInChildren<MNG_FallbackManager>(true).Length == 2,
                     "MNG M0 prefab must contain two explicit fallback managers.");
+                var ruleManagers = prefab.GetComponentsInChildren<MNG_RuleBasedManager>(true);
+                Require(ruleManagers.Length == 2,
+                    "MNG prefab must contain exactly two R0 rule managers.");
+                Require(ruleManagers.All(manager => !manager.enabled)
+                    && ruleManagers.Select(manager => manager.Team).Distinct().Count() == 2,
+                    "MNG prefab R0 rule managers must be one disabled endpoint per team.");
+                Require(ruleManagers.All(manager => manager.GetComponent<Agent>() == null
+                    && manager.GetComponent<BehaviorParameters>() == null
+                    && manager.GetComponent<DecisionRequester>() == null),
+                    "MNG R0 rule managers must never contain ML-Agents policy components.");
                 Require(prefab.GetComponentsInChildren<MNG_HumanInput>(true).Length == 1,
                     "MNG prefab must contain one Red Striker human adapter.");
                 var cameras = prefab.GetComponentsInChildren<Camera>(true);
@@ -185,6 +198,8 @@ namespace MachineLearning.Soccer.Manager.Editor
 
                 var ballControl = prefab.GetComponentInChildren<MNG_BallControl>(true);
                 Require(ballControl != null, "MNG prefab is missing MNG_BallControl.");
+                Require(prefab.GetComponentsInChildren<MNG_TacticalRewardTracker>(true).Length == 1,
+                    "MNG prefab must contain exactly one tactical reward tracker.");
                 var body = ballControl.GetComponent<Rigidbody>();
                 Require(Mathf.Abs(body.mass - MNG_PhysicsProfile.RequiredBallMass) < 0.0001f,
                     $"MNG ball mass mismatch: {body.mass}");
@@ -199,6 +214,21 @@ namespace MachineLearning.Soccer.Manager.Editor
                 var profile = AssetDatabase.LoadAssetAtPath<MNG_PhysicsProfile>(PhysicsProfilePath);
                 Require(profile != null, "MNG physics profile is missing.");
                 profile.ValidateOrThrow();
+                var ballMaterial = AssetDatabase.LoadAssetAtPath<PhysicsMaterial>(BallPhysicsMaterialPath);
+                Require(ballMaterial != null, "MNG ball physics material is missing.");
+                Require(Mathf.Abs(ballMaterial.dynamicFriction
+                    - MNG_PhysicsProfile.RequiredBallDynamicFriction) < 0.0001f,
+                    $"MNG ball dynamic friction mismatch: {ballMaterial.dynamicFriction}");
+                Require(Mathf.Abs(ballMaterial.staticFriction
+                    - MNG_PhysicsProfile.RequiredBallStaticFriction) < 0.0001f,
+                    $"MNG ball static friction mismatch: {ballMaterial.staticFriction}");
+                Require(Mathf.Abs(ballMaterial.bounciness
+                    - MNG_PhysicsProfile.RequiredBallRestitution) < 0.0001f,
+                    $"MNG ball restitution mismatch: {ballMaterial.bounciness}");
+                Require(ballMaterial.frictionCombine == PhysicsMaterialCombine.Minimum,
+                    "MNG ball friction combine must prefer the low-friction ball setting.");
+                Require(ballMaterial.bounceCombine == PhysicsMaterialCombine.Maximum,
+                    "MNG ball bounce combine must preserve modest ball restitution.");
 
                 ValidateRoster(prefab.GetComponentsInChildren<MNG_PlayerAvatar>(true));
                 ValidateManagers(prefab.GetComponentsInChildren<MNG_ManagerAgent>(true));
@@ -217,6 +247,8 @@ namespace MachineLearning.Soccer.Manager.Editor
             Require(scene != null, $"Missing MNG Scene: {ManagerScenePath}");
             var smokeScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(ConnectionSmokeScenePath);
             Require(smokeScene != null, $"Missing MNG smoke Scene: {ConnectionSmokeScenePath}");
+            Require(AssetDatabase.LoadAssetAtPath<SceneAsset>(RuleVsRuleScenePath) != null,
+                $"Missing MNG R0 Rule-vs-Rule Scene: {RuleVsRuleScenePath}");
             var attackScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(AttackChoiceScenePath);
             Require(attackScene != null, $"Missing MNG M1 attack Scene: {AttackChoiceScenePath}");
             var movingAttackScene = AssetDatabase.LoadAssetAtPath<SceneAsset>(AttackMovingScenePath);
@@ -316,6 +348,8 @@ namespace MachineLearning.Soccer.Manager.Editor
             hud.Configure(match, rewardEngine);
             var ballControl = ballObject.AddComponent<MNG_BallControl>();
             ballControl.Configure(physics, match);
+            var tacticalRewards = root.AddComponent<MNG_TacticalRewardTracker>();
+            tacticalRewards.Configure(match, ballControl, rewardEngine);
 
             for (var i = 0; i < avatars.Length; i++)
                 avatars[i].GetComponent<MNG_PlayerSkillExecutor>().Configure(match, ballControl);
@@ -329,6 +363,8 @@ namespace MachineLearning.Soccer.Manager.Editor
             CreatePolicyEndpoint(root.transform, match, Team.Navy);
             CreateFallback(root.transform, match, Team.Red);
             CreateFallback(root.transform, match, Team.Navy);
+            CreateRuleManager(root.transform, match, Team.Red);
+            CreateRuleManager(root.transform, match, Team.Navy);
         }
 
         static GameObject CreateHudObject(Transform parent)
@@ -458,6 +494,19 @@ namespace MachineLearning.Soccer.Manager.Editor
             fallback.Configure(team, match);
         }
 
+        static MNG_RuleBasedManager CreateRuleManager(
+            Transform parent,
+            MNG_MatchController match,
+            Team team)
+        {
+            var gameObject = new GameObject($"MNG_Rule_{team}");
+            gameObject.transform.SetParent(parent, false);
+            var manager = gameObject.AddComponent<MNG_RuleBasedManager>();
+            manager.Configure(team, match);
+            manager.enabled = false;
+            return manager;
+        }
+
         static void CreateScene()
         {
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
@@ -465,6 +514,76 @@ namespace MachineLearning.Soccer.Manager.Editor
             Require(prefab != null, $"Failed to save {ManagerPrefabPath}");
             PrefabUtility.InstantiatePrefab(prefab, scene);
             Require(EditorSceneManager.SaveScene(scene, ManagerScenePath), $"Failed to save {ManagerScenePath}");
+        }
+
+        static void CreateRuleVsRuleScene()
+        {
+            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ManagerPrefabPath);
+            Require(prefab != null, $"Failed to load {ManagerPrefabPath}");
+            var instance = PrefabUtility.InstantiatePrefab(prefab, scene) as GameObject;
+            Require(instance != null, "Failed to instantiate the MNG Stadium for R0 Rule-vs-Rule.");
+
+            foreach (var policy in instance.GetComponentsInChildren<MNG_ManagerAgent>(true))
+                policy.gameObject.SetActive(false);
+            foreach (var fallback in instance.GetComponentsInChildren<MNG_FallbackManager>(true))
+                fallback.enabled = false;
+            foreach (var human in instance.GetComponentsInChildren<MNG_HumanInput>(true))
+                human.enabled = false;
+
+            var ruleManagers = instance.GetComponentsInChildren<MNG_RuleBasedManager>(true);
+            Require(ruleManagers.Length == 2, "R0 requires exactly two rule managers.");
+            foreach (var ruleManager in ruleManagers) ruleManager.enabled = true;
+            var red = ruleManagers.Single(manager => manager.Team == Team.Red);
+            var navy = ruleManagers.Single(manager => manager.Team == Team.Navy);
+            var match = instance.GetComponent<MNG_MatchController>();
+            match.ConfigureMatchDuration(
+                MNG_MatchController.MatchDurationSeconds,
+                true,
+                MNG_MatchFinishMode.TerminalResult);
+            instance.AddComponent<MNG_R0RuleMatchMonitor>().Configure(match, red, navy, 1f);
+
+            Require(EditorSceneManager.SaveScene(scene, RuleVsRuleScenePath),
+                $"Failed to save {RuleVsRuleScenePath}");
+        }
+
+        [MenuItem("Tools/Soccer Manager/Build MNG R0 Rule Baseline")]
+        public static void BuildR0RuleBaseline()
+        {
+            EnsureFolders();
+            var prefab = PrefabUtility.LoadPrefabContents(ManagerPrefabPath);
+            try
+            {
+                var match = prefab.GetComponent<MNG_MatchController>();
+                Require(match != null, "MNG prefab is missing its match controller.");
+                var existing = prefab.GetComponentsInChildren<MNG_RuleBasedManager>(true);
+                if (existing.Length == 0)
+                {
+                    CreateRuleManager(prefab.transform, match, Team.Red);
+                    CreateRuleManager(prefab.transform, match, Team.Navy);
+                }
+                else
+                {
+                    Require(existing.Length == 2, "MNG prefab has an invalid R0 rule manager count.");
+                    foreach (var manager in existing)
+                    {
+                        manager.Configure(manager.Team, match);
+                        manager.enabled = false;
+                        EditorUtility.SetDirty(manager);
+                    }
+                }
+                PrefabUtility.SaveAsPrefabAsset(prefab, ManagerPrefabPath);
+            }
+            finally
+            {
+                PrefabUtility.UnloadPrefabContents(prefab);
+            }
+
+            CreateRuleVsRuleScene();
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            ValidateM0Assets();
+            Debug.Log("MNG R0 RULE BASELINE BUILD PASS");
         }
 
         static void CreateConnectionSmokeScene()
@@ -582,7 +701,8 @@ namespace MachineLearning.Soccer.Manager.Editor
         public static void CreateAttackChoiceEvaluationScene(
             ModelAsset model,
             string runId,
-            string modelSha256)
+            string modelSha256,
+            bool uniformRandom = false)
         {
             Require(model != null, "MNG M1 evaluation model is missing.");
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
@@ -597,8 +717,10 @@ namespace MachineLearning.Soccer.Manager.Editor
             redManager.enabled = true;
             redManager.GetComponent<DecisionRequester>().enabled = true;
             var behavior = redManager.GetComponent<BehaviorParameters>();
-            behavior.Model = model;
-            behavior.BehaviorType = BehaviorType.InferenceOnly;
+            behavior.Model = uniformRandom ? null : model;
+            behavior.BehaviorType = uniformRandom ? BehaviorType.HeuristicOnly : BehaviorType.InferenceOnly;
+            if (uniformRandom)
+                redManager.ConfigureUniformRandomHeuristic(MNG_CurriculumCatalog.M1ValidationSeed);
             foreach (var fallback in instance.GetComponentsInChildren<MNG_FallbackManager>(true))
                 fallback.enabled = false;
 
@@ -609,7 +731,8 @@ namespace MachineLearning.Soccer.Manager.Editor
             var curriculum = instance.AddComponent<MNG_CurriculumController>();
             curriculum.Configure(catalog, match, ball, true);
             var evaluation = instance.AddComponent<MNG_M1EvaluationController>();
-            evaluation.Configure(curriculum, runId, modelSha256);
+            evaluation.Configure(curriculum, runId, modelSha256,
+                uniformRandom ? "uniform-valid-command" : "onnx");
 
             Require(EditorSceneManager.SaveScene(scene, AttackChoiceEvaluationScenePath),
                 $"Failed to save {AttackChoiceEvaluationScenePath}");
@@ -746,7 +869,7 @@ namespace MachineLearning.Soccer.Manager.Editor
                 profile = ScriptableObject.CreateInstance<MNG_PhysicsProfile>();
                 AssetDatabase.CreateAsset(profile, PhysicsProfilePath);
             }
-            profile.ApplyKickPlateTuning();
+            profile.ApplyRuntimeTuning();
             profile.ValidateOrThrow();
             EditorUtility.SetDirty(profile);
             return profile;
@@ -775,8 +898,11 @@ namespace MachineLearning.Soccer.Manager.Editor
                 material = new PhysicsMaterial("MNG_BallPhysics");
                 AssetDatabase.CreateAsset(material, BallPhysicsMaterialPath);
             }
-            material.bounciness = MNG_PhysicsProfile.InitialBallRestitution;
-            material.bounceCombine = PhysicsMaterialCombine.Minimum;
+            material.dynamicFriction = MNG_PhysicsProfile.RequiredBallDynamicFriction;
+            material.staticFriction = MNG_PhysicsProfile.RequiredBallStaticFriction;
+            material.frictionCombine = PhysicsMaterialCombine.Minimum;
+            material.bounciness = MNG_PhysicsProfile.RequiredBallRestitution;
+            material.bounceCombine = PhysicsMaterialCombine.Maximum;
             EditorUtility.SetDirty(material);
             return material;
         }
@@ -845,6 +971,8 @@ namespace MachineLearning.Soccer.Manager.Editor
             EnsureFolder("Assets/_Soccer/Manager", "Prefabs");
             EnsureFolder("Assets/_Soccer/Manager", "Scenes");
             EnsureFolder("Assets/_Soccer/Manager", "Curriculum");
+            EnsureFolder("Assets/_Soccer/Manager/Curriculum", "R0_RuleBaseline");
+            EnsureFolder("Assets/_Soccer/Manager/Curriculum/R0_RuleBaseline", "Scenes");
             EnsureFolder("Assets/_Soccer/Manager/Curriculum", "M1_AttackChoice");
             EnsureFolder("Assets/_Soccer/Manager/Curriculum/M1_AttackChoice", "Scenes");
             EnsureFolder("Assets/_Soccer/Manager/Curriculum", "M1_AttackMoving");

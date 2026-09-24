@@ -62,5 +62,73 @@ namespace MachineLearning.Soccer.Manager
             destination[(int)MNG_Command.Balanced] = true;
             destination[(int)MNG_Command.ProtectBack] = true;
         }
+
+        public static void ApplyPassRepairPriority(
+            MNG_MatchSnapshot snapshot,
+            Team team,
+            MNG_TeamDecisionState decision,
+            bool[] mask)
+        {
+            if (snapshot == null) throw new ArgumentNullException(nameof(snapshot));
+            if (decision == null) throw new ArgumentNullException(nameof(decision));
+            if (mask == null || mask.Length != CommandCount)
+                throw new ArgumentException("Pass-repair mask must contain six commands.", nameof(mask));
+            if (!mask[(int)MNG_Command.PassBuild]
+                || !snapshot.Carrier.IsValid
+                || snapshot.Carrier.Team != team
+                || !MNG_TacticalTargetResolver.IsForwardDribbleBlocked(
+                    snapshot,
+                    team,
+                    snapshot.Carrier.Slot))
+                return;
+
+            mask[(int)MNG_Command.AdvanceCarry] = false;
+            mask[(int)MNG_Command.AttemptShot] = false;
+            mask[(int)MNG_Command.ActiveRecover] = false;
+            mask[(int)MNG_Command.ProtectBack] = false;
+            mask[(int)MNG_Command.PassBuild] = true;
+            mask[(int)MNG_Command.Balanced] = true;
+        }
+
+        public static MNG_Command ApplyBlockedForwardPassPriority(
+            MNG_MatchSnapshot snapshot,
+            Team team,
+            MNG_TeamDecisionState decision,
+            MNG_Command requested)
+        {
+            if (snapshot == null) throw new ArgumentNullException(nameof(snapshot));
+            if (decision == null) throw new ArgumentNullException(nameof(decision));
+            if (requested == MNG_Command.PassBuild
+                || requested == MNG_Command.AttemptShot
+                || !IsBlockedForwardPassRecommended(snapshot, team, decision))
+                return requested;
+
+            return MNG_Command.PassBuild;
+        }
+
+        public static bool IsBlockedForwardPassRecommended(
+            MNG_MatchSnapshot snapshot,
+            Team team,
+            MNG_TeamDecisionState decision)
+        {
+            if (snapshot == null) throw new ArgumentNullException(nameof(snapshot));
+            if (decision == null) throw new ArgumentNullException(nameof(decision));
+            if (!snapshot.Carrier.IsValid
+                || snapshot.Carrier.Team != team
+                || !decision.HasPassTarget)
+                return false;
+
+            var carrier = snapshot.GetPlayer(team, snapshot.Carrier.Slot);
+            if (!carrier.Active
+                || carrier.IsHuman
+                || !decision.ControlMask[snapshot.Carrier.Slot]
+                || carrier.KickCooldownSeconds > 0f)
+                return false;
+
+            return MNG_TacticalTargetResolver.IsForwardDribbleBlocked(
+                snapshot,
+                team,
+                snapshot.Carrier.Slot);
+        }
     }
 }

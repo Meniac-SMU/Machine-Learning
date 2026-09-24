@@ -34,6 +34,33 @@ namespace MachineLearning.Soccer.Manager.Tests
         }
 
         [Test]
+        public void GlobalBallStallTrackerTriggersWithoutPossessionAndRetargetsUntilReleased()
+        {
+            var tracker = new MNG_GlobalBallStallTracker();
+            for (var step = 0; step < 59; step++)
+                tracker.Update(Vector2.zero, Vector2.zero, 0.02f);
+
+            Assert.That(tracker.IsActive, Is.False);
+            tracker.Update(Vector2.zero, Vector2.zero, 0.02f);
+            tracker.Update(Vector2.zero, Vector2.zero, 0.02f);
+            Assert.That(tracker.IsActive, Is.True);
+            Assert.That(tracker.ActivationCount, Is.EqualTo(1));
+            var firstSequence = tracker.Sequence;
+
+            for (var step = 0; step < 51; step++)
+                tracker.Update(Vector2.zero, Vector2.zero, 0.02f);
+            Assert.That(tracker.Sequence, Is.GreaterThan(firstSequence),
+                "A continuing global stall must force a new set of approach directions.");
+
+            tracker.Update(
+                Vector2.zero,
+                Vector2.right * MNG_GlobalBallStallTracker.ReleaseSpeed,
+                0.02f);
+            Assert.That(tracker.IsActive, Is.False,
+                "A real clearance must immediately release the common recovery override.");
+        }
+
+        [Test]
         public void HudPresenter_FormatsCeilingMatchTime()
         {
             Assert.That(MNG_HudPresenter.FormatTime(300f), Is.EqualTo("05:00"));
@@ -44,6 +71,8 @@ namespace MachineLearning.Soccer.Manager.Tests
         [Test]
         public void ObservationWriter_WritesExactly133FiniteValues()
         {
+            Assert.That(MNG_ObservationWriter.BallSpeedScale,
+                Is.EqualTo(MNG_KickSolver.MaximumBallSpeed));
             var observations = new float[MNG_ObservationWriter.ObservationSize];
             Assert.That(MNG_ObservationWriter.Write(CreateSnapshot(), Team.Red, CreateDecision(), observations), Is.EqualTo(133));
             Assert.That(observations, Has.Length.EqualTo(133));
@@ -123,6 +152,113 @@ namespace MachineLearning.Soccer.Manager.Tests
         }
 
         [Test]
+        public void R0RuleManager_SelectsAllSixCommandsFromSimpleMatchSituations()
+        {
+            var snapshot = CreateSnapshot();
+            var decision = CreateDecision();
+            decision.CommandAgeSeconds = 2f;
+            decision.SecondsSincePossessionLoss = -1f;
+
+            SetCarrier(snapshot, Team.Red, 3, Vector2.zero);
+            MoveTeamFarFromPoint(snapshot, Team.Navy, new Vector2(35f, 20f));
+            Assert.That(MNG_RuleBasedManager.Decide(snapshot, Team.Red, decision).Command,
+                Is.EqualTo(MNG_Command.AdvanceCarry));
+
+            var openReceiver = snapshot.GetPlayer(Team.Red, 1);
+            openReceiver.Position = new Vector2(8f, 12f);
+            snapshot.SetPlayer(Team.Red, 1, openReceiver);
+            var pressingOpponent = snapshot.GetPlayer(Team.Navy, 3);
+            pressingOpponent.Position = new Vector2(3f, 0f);
+            snapshot.SetPlayer(Team.Navy, 3, pressingOpponent);
+            Assert.That(MNG_RuleBasedManager.Decide(snapshot, Team.Red, decision).Command,
+                Is.EqualTo(MNG_Command.PassBuild));
+
+            SetCarrier(snapshot, Team.Red, 3, new Vector2(snapshot.FieldHalfLength - 18f, 0f));
+            Assert.That(MNG_RuleBasedManager.Decide(snapshot, Team.Red, decision).Command,
+                Is.EqualTo(MNG_Command.AttemptShot));
+
+            SetCarrier(snapshot, Team.Navy, 3, Vector2.zero);
+            Assert.That(MNG_RuleBasedManager.Decide(snapshot, Team.Red, decision).Command,
+                Is.EqualTo(MNG_Command.ActiveRecover));
+
+            SetCarrier(snapshot, Team.Navy, 3, new Vector2(-snapshot.FieldHalfLength * 0.7f, 0f));
+            Assert.That(MNG_RuleBasedManager.Decide(snapshot, Team.Red, decision).Command,
+                Is.EqualTo(MNG_Command.ProtectBack));
+
+            SetCarrier(snapshot, Team.Navy, 3, new Vector2(snapshot.FieldHalfLength * 0.7f, 0f));
+            MoveTeamFarFromPoint(snapshot, Team.Red, new Vector2(-35f, -20f));
+            Assert.That(MNG_RuleBasedManager.Decide(snapshot, Team.Red, decision).Command,
+                Is.EqualTo(MNG_Command.Balanced));
+
+            snapshot.Possession = MNG_Possession.Neutral;
+            snapshot.Carrier = MNG_CarrierRef.None;
+            Assert.That(MNG_RuleBasedManager.Decide(snapshot, Team.Red, decision).Command,
+                Is.EqualTo(MNG_Command.ActiveRecover),
+                "R0 must not deadlock on a distant neutral ball.");
+        }
+
+        [Test]
+        public void R0RuleManager_IsSymmetricForMirroredTeams()
+        {
+            var redSnapshot = CreateSnapshot();
+            SetCarrier(redSnapshot, Team.Red, 3, Vector2.zero);
+            MoveTeamFarFromPoint(redSnapshot, Team.Navy, new Vector2(35f, 20f));
+            var navySnapshot = CreateMirroredAndTeamSwappedSnapshot(redSnapshot);
+            var decision = CreateDecision();
+            decision.CommandAgeSeconds = 2f;
+
+            var red = MNG_RuleBasedManager.Decide(redSnapshot, Team.Red, decision);
+            var navy = MNG_RuleBasedManager.Decide(navySnapshot, Team.Navy, decision);
+
+            Assert.That(navy.Command, Is.EqualTo(red.Command));
+            Assert.That(navy.Reason, Is.EqualTo(red.Reason));
+        }
+
+        [Test]
+        public void R0RuleManager_KeeperChoosesSafePassOrLongClearance()
+        {
+            var snapshot = CreateSnapshot();
+            SetCarrier(snapshot, Team.Red, 0, new Vector2(-50f, 0f));
+            var teammatePositions = new[]
+            {
+                new Vector2(-50f, 0f),
+                new Vector2(-31f, -10f),
+                new Vector2(-29f, 9f),
+                new Vector2(-24f, 0f)
+            };
+            for (var slot = 1; slot < MNG_MatchSnapshot.PlayersPerTeam; slot++)
+            {
+                var teammate = snapshot.GetPlayer(Team.Red, slot);
+                teammate.Position = teammatePositions[slot];
+                teammate.Velocity = Vector2.zero;
+                snapshot.SetPlayer(Team.Red, slot, teammate);
+            }
+            MoveTeamFarFromPoint(snapshot, Team.Navy, new Vector2(25f, -20f));
+            var decision = CreateDecision();
+            decision.CommandAgeSeconds = 2f;
+
+            var safeTargets = MNG_TacticalTargetResolver.Resolve(snapshot, Team.Red, decision);
+            Assert.That(safeTargets.HasPassTarget, Is.True);
+            Assert.That(safeTargets.HasShotTarget, Is.True,
+                "A keeper clearance toward the opponent goal must be available at any field depth.");
+            Assert.That(MNG_RuleBasedManager.Decide(snapshot, Team.Red, decision).Command,
+                Is.EqualTo(MNG_Command.PassBuild));
+
+            for (var slot = 0; slot < MNG_MatchSnapshot.PlayersPerTeam; slot++)
+            {
+                var opponent = snapshot.GetPlayer(Team.Navy, slot);
+                opponent.Position = (snapshot.BallPosition + MNG_TeamPlanner.SelectPassTarget(snapshot, Team.Red, Mathf.Max(1, slot))) * 0.5f;
+                opponent.Velocity = Vector2.zero;
+                snapshot.SetPlayer(Team.Navy, slot, opponent);
+            }
+            var pressuredTargets = MNG_TacticalTargetResolver.Resolve(snapshot, Team.Red, decision);
+            Assert.That(pressuredTargets.HasPassTarget, Is.False);
+            Assert.That(pressuredTargets.HasShotTarget, Is.True);
+            Assert.That(MNG_RuleBasedManager.Decide(snapshot, Team.Red, decision).Command,
+                Is.EqualTo(MNG_Command.AttemptShot));
+        }
+
+        [Test]
         public void TacticalTargetResolver_UsesOpenPredictedReceiverAndRealGoalWidth()
         {
             var snapshot = CreateSnapshot();
@@ -144,28 +280,162 @@ namespace MachineLearning.Soccer.Manager.Tests
             }
 
             var open = MNG_TacticalTargetResolver.Resolve(snapshot, Team.Red);
-            Assert.That(open.PassReceiverSlot, Is.EqualTo(1));
+            Assert.That(open.HasPassTarget, Is.False, "Near-goal choices prefer shooting");
             Assert.That(open.HasShotTarget, Is.True);
 
             snapshot.BallPosition = new Vector2(42f, snapshot.GoalHalfWidth + 0.1f);
+            var angledShot = MNG_TacticalTargetResolver.Resolve(snapshot, Team.Red);
+            Assert.That(angledShot.HasShotTarget, Is.True);
+
+            snapshot.BallPosition = new Vector2(
+                42f,
+                snapshot.GoalHalfWidth + MNG_TacticalTargetResolver.ShotLateralMargin + 0.1f);
             var outsideOpening = MNG_TacticalTargetResolver.Resolve(snapshot, Team.Red);
             Assert.That(outsideOpening.HasShotTarget, Is.False);
         }
 
         [Test]
+        public void TeamPlanner_ShootsInsideFarPostAwayFromKeeper()
+        {
+            var snapshot = CreateSnapshot();
+            var navyKeeper = snapshot.GetPlayer(Team.Navy, 0);
+            navyKeeper.Position = new Vector2(snapshot.FieldHalfLength - 3f, 6f);
+            snapshot.SetPlayer(Team.Navy, 0, navyKeeper);
+
+            var target = MNG_TeamPlanner.SelectShotTarget(snapshot, Team.Red, 3);
+
+            Assert.That(target.x, Is.EqualTo(snapshot.FieldHalfLength));
+            Assert.That(target.y, Is.LessThan(0f));
+            Assert.That(Mathf.Abs(target.y), Is.LessThan(snapshot.GoalHalfWidth));
+            Assert.That(
+                snapshot.GoalHalfWidth - Mathf.Abs(target.y),
+                Is.EqualTo(MNG_TeamPlanner.ShotTargetPostMargin).Within(0.0001f));
+        }
+
+        [Test]
+        public void TacticalTargetResolver_RejectsBackwardBlockedPass()
+        {
+            var snapshot = CreateSnapshot();
+            var carrier = snapshot.GetPlayer(Team.Red, 3);
+            carrier.Position = Vector2.zero;
+            snapshot.SetPlayer(Team.Red, 3, carrier);
+            snapshot.BallPosition = Vector2.zero;
+            for (var slot = 0; slot < 3; slot++)
+            {
+                var teammate = snapshot.GetPlayer(Team.Red, slot);
+                teammate.Active = slot == 1;
+                teammate.Position = new Vector2(-10f, 0f);
+                teammate.Velocity = Vector2.zero;
+                snapshot.SetPlayer(Team.Red, slot, teammate);
+            }
+            var blocker = snapshot.GetPlayer(Team.Navy, 0);
+            blocker.Position = new Vector2(-5f, 0f);
+            snapshot.SetPlayer(Team.Navy, 0, blocker);
+
+            var targets = MNG_TacticalTargetResolver.Resolve(snapshot, Team.Red);
+
+            Assert.That(targets.HasPassTarget, Is.False, "Backward and blocked passes are not a PassBuild option.");
+        }
+
+        [Test]
+        public void R0RuleManager_ConsidersPassBeforeEscapingBlockedForwardLane()
+        {
+            var snapshot = CreateSnapshot();
+            SetCarrier(snapshot, Team.Red, 3, Vector2.zero);
+            var receiver = snapshot.GetPlayer(Team.Red, 1);
+            receiver.Position = new Vector2(6f, 8f);
+            receiver.Velocity = Vector2.zero;
+            snapshot.SetPlayer(Team.Red, 1, receiver);
+            MoveTeamFarFromPoint(snapshot, Team.Navy, new Vector2(35f, 20f));
+            var blocker = snapshot.GetPlayer(Team.Navy, 3);
+            blocker.Position = new Vector2(6f, 0f);
+            snapshot.SetPlayer(Team.Navy, 3, blocker);
+            var decision = CreateDecision();
+            decision.PreviousCommand = MNG_Command.AdvanceCarry;
+            decision.CommandAgeSeconds = 2f;
+
+            Assert.That(MNG_TacticalTargetResolver.IsForwardDribbleBlocked(
+                snapshot, Team.Red, 3), Is.True);
+            var rule = MNG_RuleBasedManager.Decide(snapshot, Team.Red, decision);
+            Assert.That(rule.Command, Is.EqualTo(MNG_Command.PassBuild));
+            Assert.That(rule.Reason, Is.EqualTo("blocked-forward-pass"));
+
+            blocker.Position = new Vector2(6f,
+                MNG_TacticalTargetResolver.ForwardDribbleLaneHalfWidth + 1f);
+            snapshot.SetPlayer(Team.Navy, 3, blocker);
+            Assert.That(MNG_TacticalTargetResolver.IsForwardDribbleBlocked(
+                snapshot, Team.Red, 3), Is.False);
+        }
+
+        [Test]
+        public void TeamPlanner_PassTargetLeadsForwardAndTowardFieldCenter()
+        {
+            var snapshot = CreateSnapshot();
+            var receiver = snapshot.GetPlayer(Team.Red, 1);
+            receiver.Position = new Vector2(10f, 9f);
+            receiver.Velocity = Vector2.zero;
+            snapshot.SetPlayer(Team.Red, 1, receiver);
+
+            var redTarget = MNG_TeamPlanner.SelectPassTarget(snapshot, Team.Red, 1);
+            Assert.That(redTarget.x, Is.EqualTo(
+                receiver.Position.x + MNG_TeamPlanner.PassTargetForwardLead).Within(0.0001f));
+            Assert.That(redTarget.y, Is.EqualTo(
+                receiver.Position.y - MNG_TeamPlanner.PassTargetCenterBias).Within(0.0001f));
+            Assert.That(Mathf.Abs(redTarget.y), Is.LessThan(Mathf.Abs(receiver.Position.y)));
+
+            receiver.Position = new Vector2(-10f, -9f);
+            snapshot.SetPlayer(Team.Navy, 1, receiver);
+            var navyTarget = MNG_TeamPlanner.SelectPassTarget(snapshot, Team.Navy, 1);
+            Assert.That(navyTarget.x, Is.EqualTo(
+                receiver.Position.x - MNG_TeamPlanner.PassTargetForwardLead).Within(0.0001f));
+            Assert.That(navyTarget.y, Is.EqualTo(
+                receiver.Position.y + MNG_TeamPlanner.PassTargetCenterBias).Within(0.0001f));
+            Assert.That(Mathf.Abs(navyTarget.y), Is.LessThan(Mathf.Abs(receiver.Position.y)));
+        }
+
+        [Test]
+        public void TacticalRewardTracker_ValidShotRequiresOpponentGoalOpeningTrajectory()
+        {
+            var snapshot = CreateSnapshot();
+            var origin = new Vector2(40f, 2f);
+
+            Assert.That(MNG_TacticalRewardTracker.IsGoalOpeningTrajectory(
+                snapshot, Team.Red, origin, new Vector2(snapshot.FieldHalfLength, 0f)), Is.True);
+            Assert.That(MNG_TacticalRewardTracker.IsGoalOpeningTrajectory(
+                snapshot, Team.Red, origin,
+                new Vector2(snapshot.FieldHalfLength, snapshot.GoalHalfWidth + 2f)), Is.False);
+            Assert.That(MNG_TacticalRewardTracker.IsGoalOpeningTrajectory(
+                snapshot, Team.Red, origin, new Vector2(-20f, 0f)), Is.False);
+        }
+
+        [Test]
         public void KickSolver_UsesMassTimesVelocityDeltaAndClampsSpeed()
         {
-            Assert.That(MNG_KickSolver.StrongExitSpeed, Is.EqualTo(28f));
+            Assert.That(MNG_KickSolver.RequestedKickStrengthIncrease, Is.EqualTo(1000f));
+            Assert.That(MNG_KickSolver.PassStrengthEquivalent, Is.EqualTo(3000f));
+            Assert.That(MNG_KickSolver.ShotStrengthEquivalent, Is.EqualTo(6000f));
+            Assert.That(MNG_KickSolver.KickStrengthExitSpeedIncrease,
+                Is.EqualTo(1000f * 0.02f / 3f).Within(0.0001f));
+            Assert.That(MNG_KickSolver.ControlledExitSpeed,
+                Is.EqualTo(14f + MNG_KickSolver.KickStrengthExitSpeedIncrease).Within(0.0001f));
+            Assert.That(MNG_KickSolver.StrongExitSpeed,
+                Is.EqualTo(28f + MNG_KickSolver.KickStrengthExitSpeedIncrease).Within(0.0001f));
             Assert.That(MNG_KickSolver.StrongExitSpeed, Is.LessThanOrEqualTo(MNG_KickSolver.MaximumBallSpeed));
-            Assert.That(MNG_KickSolver.PassExitSpeedForDistance(5f), Is.EqualTo(14f));
-            Assert.That(MNG_KickSolver.PassExitSpeedForDistance(10f), Is.EqualTo(14f));
-            Assert.That(MNG_KickSolver.PassExitSpeedForDistance(15f), Is.EqualTo(21f));
-            Assert.That(MNG_KickSolver.PassExitSpeedForDistance(20f), Is.EqualTo(28f));
-            Assert.That(MNG_KickSolver.PassExitSpeedForDistance(28f), Is.EqualTo(28f));
+            Assert.That(MNG_KickSolver.PassExitSpeedForDistance(5f),
+                Is.EqualTo(MNG_KickSolver.ControlledExitSpeed));
+            Assert.That(MNG_KickSolver.PassExitSpeedForDistance(10f),
+                Is.EqualTo(MNG_KickSolver.ControlledExitSpeed));
+            Assert.That(MNG_KickSolver.PassExitSpeedForDistance(15f),
+                Is.EqualTo(21f + MNG_KickSolver.KickStrengthExitSpeedIncrease).Within(0.0001f));
+            Assert.That(MNG_KickSolver.PassExitSpeedForDistance(20f),
+                Is.EqualTo(MNG_KickSolver.StrongExitSpeed));
+            Assert.That(MNG_KickSolver.PassExitSpeedForDistance(28f),
+                Is.EqualTo(MNG_KickSolver.StrongExitSpeed));
             Assert.That(MNG_KickSolver.TrySolvePlanarImpulse(
                 new Vector3(2f, 0f, 0f), Vector3.right, 40f, 4.5f, out var impulse), Is.True);
 
-            Assert.That(impulse.x, Is.EqualTo(126f).Within(0.0001f));
+            Assert.That(impulse.x,
+                Is.EqualTo(4.5f * (MNG_KickSolver.MaximumBallSpeed - 2f)).Within(0.0001f));
             Assert.That(impulse.y, Is.Zero);
             Assert.That(impulse.z, Is.Zero);
             Assert.That((new Vector3(2f, 0f, 0f) + impulse / 4.5f).magnitude,
@@ -227,9 +497,13 @@ namespace MachineLearning.Soccer.Manager.Tests
             MNG_TeamPlanner.Plan(snapshot, Team.Red, MNG_Command.Balanced, decision, 2, 0.5f, balanced);
             MNG_TeamPlanner.Plan(snapshot, Team.Red, MNG_Command.ProtectBack, decision, 3, 0.5f, protect);
 
-            Assert.That(recover[3].Skill, Is.EqualTo(MNG_PlayerSkill.Press));
-            Assert.That(balanced[3].Skill, Is.EqualTo(MNG_PlayerSkill.Press));
-            Assert.That(protect[3].Skill, Is.EqualTo(MNG_PlayerSkill.Cover));
+            Assert.That(Array.FindAll(recover,
+                task => task.Skill == MNG_PlayerSkill.Press).Length, Is.EqualTo(2));
+            Assert.That(Array.FindAll(balanced,
+                task => task.Skill == MNG_PlayerSkill.Press).Length, Is.EqualTo(2));
+            Assert.That(Array.FindAll(protect,
+                task => task.Skill == MNG_PlayerSkill.Press).Length, Is.EqualTo(2),
+                "ProtectBack must not leave a single defender fighting alone.");
             Assert.That(recover[1].Target, Is.Not.EqualTo(balanced[1].Target));
             Assert.That(protect[1].Target, Is.Not.EqualTo(balanced[1].Target));
         }
@@ -277,8 +551,10 @@ namespace MachineLearning.Soccer.Manager.Tests
             MNG_TeamPlanner.Plan(snapshot, Team.Red, MNG_Command.ActiveRecover, decision, 1, 0.5f, tasks);
             Assert.That(decision.PrimaryPresserSlot, Is.EqualTo(1));
             Assert.That(tasks[1].Skill, Is.EqualTo(MNG_PlayerSkill.Press));
+            Assert.That(tasks[2].Skill, Is.EqualTo(MNG_PlayerSkill.Press));
+            Assert.That(tasks[1].Target, Is.Not.EqualTo(tasks[2].Target));
 
-            left.Position = new Vector2(-4f, 0f);
+            left.Position = new Vector2(-2.5f, 0f);
             snapshot.SetPlayer(Team.Red, 1, left);
             right.Position = new Vector2(-2f, 0f);
             snapshot.SetPlayer(Team.Red, 2, right);
@@ -288,11 +564,385 @@ namespace MachineLearning.Soccer.Manager.Tests
 
             left.Position = new Vector2(-8f, 0f);
             snapshot.SetPlayer(Team.Red, 1, left);
-            snapshot.EpisodeElapsedSeconds = 3f;
+            snapshot.EpisodeElapsedSeconds = 1.6f;
             MNG_TeamPlanner.Plan(snapshot, Team.Red, MNG_Command.ActiveRecover, decision, 3, 0.5f, tasks);
             Assert.That(decision.PrimaryPresserSlot, Is.EqualTo(2));
             Assert.That(tasks[2].Skill, Is.EqualTo(MNG_PlayerSkill.Press));
-            Assert.That(tasks[1].Skill, Is.Not.EqualTo(MNG_PlayerSkill.Press));
+            Assert.That(tasks[1].Skill, Is.EqualTo(MNG_PlayerSkill.Press),
+                "The previous primary becomes the supporting presser instead of watching.");
+            Assert.That(MNG_TeamPlanner.LocalBallAwarenessRadius, Is.EqualTo(16f));
+            Assert.That(MNG_TeamPlanner.KickExecutionSeconds, Is.EqualTo(2f));
+        }
+
+        [Test]
+        public void TeamPlanner_OpponentPossessionAlwaysAssignsTwoDistinctPressers()
+        {
+            var snapshot = CreateSnapshot();
+            snapshot.Possession = MNG_Possession.Navy;
+            snapshot.Carrier = MNG_CarrierRef.For(Team.Navy, 3);
+            snapshot.BallPosition = new Vector2(15f, 3f);
+            var tasks = new MNG_PlayerTask[MNG_MatchSnapshot.PlayersPerTeam];
+
+            foreach (var command in new[]
+                     {
+                         MNG_Command.ActiveRecover,
+                         MNG_Command.Balanced,
+                         MNG_Command.ProtectBack
+                     })
+            {
+                MNG_TeamPlanner.Plan(
+                    snapshot, Team.Red, command, CreateDecision(), 20, 1f, tasks);
+                var pressers = new System.Collections.Generic.List<int>();
+                for (var slot = 1; slot < MNG_MatchSnapshot.PlayersPerTeam; slot++)
+                    if (tasks[slot].Skill == MNG_PlayerSkill.Press) pressers.Add(slot);
+
+                Assert.That(pressers.Count, Is.EqualTo(MNG_TeamPlanner.MinimumDefensivePressers),
+                    $"{command} must preserve the two-player defensive press.");
+                Assert.That(tasks[pressers[0]].Target, Is.Not.EqualTo(tasks[pressers[1]].Target),
+                    "The primary ball challenger and secondary lane blocker need distinct targets.");
+            }
+        }
+
+        [TestCase(Team.Red, 1f)]
+        [TestCase(Team.Navy, -1f)]
+        public void TeamPlanner_OpponentGoalPossessionAddsDistinctSecondAttacker(
+            Team team,
+            float attackSign)
+        {
+            var snapshot = CreateSnapshot();
+            var ball = new Vector2(
+                attackSign * (snapshot.FieldHalfLength - 16f),
+                7f);
+            SetCarrier(snapshot, team, 3, ball);
+            var decision = CreateDecision();
+            for (var slot = 1; slot <= 2; slot++)
+            {
+                var midfielder = snapshot.GetPlayer(team, slot);
+                midfielder.Position = new Vector2(
+                    -attackSign * (20f + slot * 5f),
+                    slot == 1 ? -12f : 12f);
+                snapshot.SetPlayer(team, slot, midfielder);
+            }
+            var supportSlot = MNG_TeamPlanner.SelectAttackingSupport(
+                snapshot, team, decision, 3);
+            var tasks = new MNG_PlayerTask[MNG_MatchSnapshot.PlayersPerTeam];
+
+            MNG_TeamPlanner.Plan(
+                snapshot, team, MNG_Command.AdvanceCarry, decision, 22, 1f, tasks);
+
+            Assert.That(MNG_TeamPlanner.RequiresAttackingSupport(snapshot, team), Is.True);
+            Assert.That(supportSlot, Is.GreaterThanOrEqualTo(1).And.Not.EqualTo(3));
+            Assert.That(tasks[3].Skill, Is.EqualTo(MNG_PlayerSkill.Carry));
+            Assert.That(tasks[supportSlot].Skill, Is.EqualTo(MNG_PlayerSkill.SupportRun));
+            Assert.That(Vector2.Distance(tasks[supportSlot].Target, ball),
+                Is.InRange(3f, 8f),
+                "The second attacker must join the ball without occupying the carrier's point.");
+            Assert.That((tasks[supportSlot].Target.x - ball.x) * attackSign,
+                Is.GreaterThan(0f),
+                "The helper joins from the attacking side instead of pulling play backward.");
+        }
+
+        [TestCase(Team.Red)]
+        [TestCase(Team.Navy)]
+        public void TeamPlanner_OwnGoalThreatForcesBothMidfieldersHome(Team team)
+        {
+            var snapshot = CreateSnapshot();
+            var sign = team == Team.Red ? 1f : -1f;
+            var opponent = team == Team.Red ? Team.Navy : Team.Red;
+            snapshot.BallPosition = new Vector2(
+                -sign * snapshot.FieldHalfLength + sign * 12f,
+                2f);
+            snapshot.BallVelocity = new Vector2(-sign * 2f, 0f);
+            snapshot.Possession = opponent == Team.Red
+                ? MNG_Possession.Red
+                : MNG_Possession.Navy;
+            snapshot.Carrier = MNG_CarrierRef.For(opponent, 3);
+            for (var slot = 1; slot <= 2; slot++)
+            {
+                var midfielder = snapshot.GetPlayer(team, slot);
+                midfielder.Position = new Vector2(sign * 40f, midfielder.Position.y);
+                snapshot.SetPlayer(team, slot, midfielder);
+            }
+            var tasks = new MNG_PlayerTask[MNG_MatchSnapshot.PlayersPerTeam];
+
+            MNG_TeamPlanner.Plan(
+                snapshot, team, MNG_Command.AttemptShot, CreateDecision(), 21, 1f, tasks);
+
+            Assert.That(MNG_TeamPlanner.IsOwnGoalThreat(snapshot, team), Is.True);
+            for (var slot = 1; slot <= 2; slot++)
+            {
+                var targetDepth = (tasks[slot].Target.x
+                    - (-sign * snapshot.FieldHalfLength)) * sign;
+                Assert.That(targetDepth, Is.LessThanOrEqualTo(MNG_TeamPlanner.OwnGoalThreatDepth),
+                    $"Midfielder {slot} must return from the attacking half to the own-goal defense.");
+                Assert.That(tasks[slot].Skill,
+                    Is.EqualTo(MNG_PlayerSkill.Press).Or.EqualTo(MNG_PlayerSkill.Cover));
+            }
+        }
+
+        [TestCase(Team.Red, 1f)]
+        [TestCase(Team.Navy, -1f)]
+        public void TeamPlanner_GlobalStallTriesSafeShotBeforeRepositioning(
+            Team team,
+            float expectedDirection)
+        {
+            var snapshot = CreateSnapshot();
+            snapshot.BallPosition = Vector2.zero;
+            snapshot.BallVelocity = Vector2.zero;
+            snapshot.Possession = MNG_Possession.Neutral;
+            snapshot.Carrier = MNG_CarrierRef.None;
+            snapshot.BallStallRecoveryActive = true;
+            snapshot.BallStallRecoverySequence = 1;
+            snapshot.BallStationarySeconds = MNG_GlobalBallStallTracker.TriggerSeconds + 0.1f;
+            for (var slot = 1; slot < MNG_MatchSnapshot.PlayersPerTeam; slot++)
+            {
+                var player = snapshot.GetPlayer(team, slot);
+                player.Position = new Vector2(expectedDirection * (slot + 1f), slot - 2f);
+                player.KickCooldownSeconds = 0f;
+                snapshot.SetPlayer(team, slot, player);
+            }
+            var tasks = new MNG_PlayerTask[MNG_MatchSnapshot.PlayersPerTeam];
+
+            MNG_TeamPlanner.Plan(
+                snapshot, team, MNG_Command.ProtectBack, CreateDecision(), 22, 1f, tasks);
+
+            var shooters = Array.FindAll(tasks,
+                task => task.Skill == MNG_PlayerSkill.AimShot);
+            Assert.That(shooters.Length, Is.EqualTo(1));
+            Assert.That(Mathf.Sign(shooters[0].Target.x), Is.EqualTo(expectedDirection));
+            Assert.That(MNG_TeamPlanner.IsSafeStallShotDirection(
+                snapshot, team, shooters[0].Target), Is.True);
+            Assert.That(MNG_TeamPlanner.IsSafeStallShotDirection(
+                snapshot,
+                team,
+                new Vector2(-expectedDirection * snapshot.FieldHalfLength, 0f)), Is.False,
+                "A stalled-ball recovery kick toward the own goal must be rejected.");
+
+            snapshot.BallStationarySeconds = MNG_GlobalBallStallTracker.TriggerSeconds
+                + MNG_TeamPlanner.StallShotAttemptSeconds + 0.1f;
+            MNG_TeamPlanner.Plan(
+                snapshot, team, MNG_Command.ProtectBack, CreateDecision(), 23, 1f, tasks);
+            Assert.That(Array.FindAll(tasks,
+                task => task.Skill == MNG_PlayerSkill.AimShot).Length, Is.Zero,
+                "After the first safe-shot window, the planner must continue with repositioning.");
+            Assert.That(tasks[1].Skill, Is.Not.EqualTo(MNG_PlayerSkill.None));
+            Assert.That(tasks[2].Skill, Is.Not.EqualTo(MNG_PlayerSkill.None));
+            Assert.That(tasks[3].Skill, Is.Not.EqualTo(MNG_PlayerSkill.None));
+        }
+
+        [Test]
+        public void TeamPlanner_GlobalStallMobilizesEveryFieldPlayerAcrossPossessionStates()
+        {
+            var snapshot = CreateSnapshot();
+            snapshot.BallPosition = Vector2.zero;
+            snapshot.BallVelocity = Vector2.zero;
+            snapshot.Possession = MNG_Possession.Neutral;
+            snapshot.Carrier = MNG_CarrierRef.None;
+            snapshot.BallStallRecoveryActive = true;
+            snapshot.BallStallRecoverySequence = 1;
+            snapshot.BallStationarySeconds = MNG_GlobalBallStallTracker.TriggerSeconds
+                + MNG_TeamPlanner.StallShotAttemptSeconds + 0.1f;
+            var decision = CreateDecision();
+            var tasks = new MNG_PlayerTask[MNG_MatchSnapshot.PlayersPerTeam];
+
+            MNG_TeamPlanner.Plan(
+                snapshot, Team.Red, MNG_Command.ProtectBack, decision, 30, 0.75f, tasks);
+
+            var pressCount = 0;
+            for (var slot = 1; slot < MNG_MatchSnapshot.PlayersPerTeam; slot++)
+            {
+                Assert.That(tasks[slot].Skill, Is.Not.EqualTo(MNG_PlayerSkill.None));
+                if (tasks[slot].Skill == MNG_PlayerSkill.Press) pressCount++;
+            }
+            Assert.That(pressCount, Is.EqualTo(1),
+                "One player challenges the ball while the others take active recovery lanes.");
+            Assert.That(tasks[1].Target, Is.Not.EqualTo(tasks[2].Target));
+            Assert.That(tasks[2].Target, Is.Not.EqualTo(tasks[3].Target));
+            var firstTargets = new[] { tasks[1].Target, tasks[2].Target, tasks[3].Target };
+
+            snapshot.BallStallRecoverySequence++;
+            MNG_TeamPlanner.Plan(
+                snapshot, Team.Red, MNG_Command.ProtectBack, decision, 31, 0.75f, tasks);
+            Assert.That(
+                tasks[1].Target != firstTargets[0]
+                || tasks[2].Target != firstTargets[1]
+                || tasks[3].Target != firstTargets[2],
+                Is.True,
+                "A continuing stall must retarget at least one supporting player.");
+
+            SetCarrier(snapshot, Team.Red, 3, Vector2.zero);
+            snapshot.BallStallRecoveryActive = true;
+            snapshot.BallStallRecoverySequence++;
+            MNG_TeamPlanner.Plan(
+                snapshot, Team.Red, MNG_Command.Balanced, decision, 32, 0.75f, tasks);
+            Assert.That(tasks[3].Skill, Is.EqualTo(MNG_PlayerSkill.Carry));
+            Assert.That(tasks[1].Skill, Is.Not.EqualTo(MNG_PlayerSkill.None));
+            Assert.That(tasks[2].Skill, Is.Not.EqualTo(MNG_PlayerSkill.None));
+
+            MNG_TeamPlanner.Plan(
+                snapshot, Team.Navy, MNG_Command.ProtectBack, CreateDecision(), 33, 0.75f, tasks);
+            Assert.That(tasks[1].Skill, Is.Not.EqualTo(MNG_PlayerSkill.None));
+            Assert.That(tasks[2].Skill, Is.Not.EqualTo(MNG_PlayerSkill.None));
+            Assert.That(tasks[3].Skill, Is.Not.EqualTo(MNG_PlayerSkill.None));
+            Assert.That(Array.FindAll(tasks,
+                task => task.Skill == MNG_PlayerSkill.Press).Length, Is.EqualTo(2),
+                "An opponent-owned stalled ball still requires two coordinated defenders.");
+        }
+
+        [Test]
+        public void BallControl_DribbleAssistWobblesAndAvoidsAnAdvancingDefender()
+        {
+            var snapshot = CreateSnapshot();
+            SetCarrier(snapshot, Team.Red, 3, Vector2.zero);
+            MoveTeamFarFromPoint(snapshot, Team.Navy, new Vector2(30f, 20f));
+            var defender = snapshot.GetPlayer(Team.Navy, 1);
+            defender.Active = true;
+            defender.Position = new Vector2(2f, 1f);
+            snapshot.SetPlayer(Team.Navy, 1, defender);
+
+            var avoidance = MNG_BallControl.CalculateCarrierAvoidance(
+                snapshot, Team.Red, 3, Vector2.right * 4f);
+            Assert.That(avoidance.sqrMagnitude, Is.GreaterThan(0f));
+            Assert.That(avoidance.y, Is.LessThan(0f),
+                "A defender on the carrier's left must steer the dribble to the right.");
+            Assert.That(MNG_BallControl.CalculateCarrierAvoidance(
+                snapshot, Team.Red, 3, Vector2.left * 4f), Is.EqualTo(Vector2.zero),
+                "Avoidance is only added while advancing toward the opposing half.");
+
+            var wobbleA = MNG_BallControl.CalculateDribbleWobble(0.25f, 4f, 3);
+            var wobbleB = MNG_BallControl.CalculateDribbleWobble(0.55f, 4f, 3);
+            Assert.That(wobbleA.sqrMagnitude, Is.GreaterThan(0f));
+            Assert.That(wobbleB, Is.Not.EqualTo(wobbleA));
+            Assert.That(MNG_BallControl.StealReacquireLockSeconds, Is.GreaterThanOrEqualTo(0.20f));
+        }
+
+        [Test]
+        public void TeamPlanner_LocalPressureProducesDifferentSupportRoutes()
+        {
+            var snapshot = CreateSnapshot();
+            snapshot.BallPosition = Vector2.zero;
+            snapshot.BallVelocity = new Vector2(4f, 2f);
+            snapshot.Possession = MNG_Possession.Red;
+            snapshot.Carrier = MNG_CarrierRef.For(Team.Red, 3);
+            var left = snapshot.GetPlayer(Team.Red, 1);
+            left.Position = new Vector2(-6f, -3f);
+            snapshot.SetPlayer(Team.Red, 1, left);
+            var right = snapshot.GetPlayer(Team.Red, 2);
+            right.Position = new Vector2(-6f, 3f);
+            snapshot.SetPlayer(Team.Red, 2, right);
+            var navyLeft = snapshot.GetPlayer(Team.Navy, 1);
+            navyLeft.Position = new Vector2(5f, -9f);
+            snapshot.SetPlayer(Team.Navy, 1, navyLeft);
+            var navyRight = snapshot.GetPlayer(Team.Navy, 2);
+            navyRight.Position = new Vector2(5f, 9f);
+            snapshot.SetPlayer(Team.Navy, 2, navyRight);
+            var tasks = new MNG_PlayerTask[MNG_MatchSnapshot.PlayersPerTeam];
+
+            MNG_TeamPlanner.Plan(
+                snapshot, Team.Red, MNG_Command.AdvanceCarry, CreateDecision(), 10, 0.75f, tasks);
+
+            Assert.That(tasks[1].Skill, Is.EqualTo(MNG_PlayerSkill.SupportRun));
+            Assert.That(tasks[2].Skill, Is.EqualTo(MNG_PlayerSkill.SupportRun));
+            Assert.That(tasks[1].Target, Is.Not.EqualTo(tasks[2].Target));
+            Assert.That(Mathf.Sign(tasks[1].Target.y), Is.Not.EqualTo(Mathf.Sign(tasks[2].Target.y)),
+                "The two midfielders should preserve different local lanes instead of tracing one ball path.");
+        }
+
+        [Test]
+        public void TeamPlanner_KeeperClaimsLooseThreatChallengesCloseCarrierAndBlocksAtRange()
+        {
+            var snapshot = CreateSnapshot();
+            var keeper = snapshot.GetPlayer(Team.Red, 0);
+            var ownGoalX = -snapshot.FieldHalfLength;
+            keeper.Position = new Vector2(ownGoalX + 4f, 0f);
+            snapshot.SetPlayer(Team.Red, 0, keeper);
+            for (var slot = 1; slot < MNG_MatchSnapshot.PlayersPerTeam; slot++)
+            {
+                var fieldPlayer = snapshot.GetPlayer(Team.Red, slot);
+                fieldPlayer.Position = new Vector2(5f + slot, slot * 8f);
+                snapshot.SetPlayer(Team.Red, slot, fieldPlayer);
+            }
+            snapshot.BallPosition = new Vector2(ownGoalX + 9f, 3f);
+            snapshot.BallVelocity = new Vector2(-3f, 0f);
+            snapshot.Possession = MNG_Possession.Neutral;
+            snapshot.Carrier = MNG_CarrierRef.None;
+            var tasks = new MNG_PlayerTask[MNG_MatchSnapshot.PlayersPerTeam];
+
+            MNG_TeamPlanner.Plan(
+                snapshot, Team.Red, MNG_Command.Balanced, CreateDecision(), 11, 0.75f, tasks);
+
+            Assert.That(tasks[0].Skill, Is.EqualTo(MNG_PlayerSkill.KeeperClaim));
+            Assert.That(tasks[0].Target.x, Is.GreaterThan(ownGoalX + 2f));
+
+            snapshot.Possession = MNG_Possession.Navy;
+            snapshot.Carrier = MNG_CarrierRef.For(Team.Navy, 3);
+            MNG_TeamPlanner.Plan(
+                snapshot, Team.Red, MNG_Command.ActiveRecover, CreateDecision(), 12, 0.75f, tasks);
+
+            Assert.That(tasks[0].Skill, Is.EqualTo(MNG_PlayerSkill.KeeperClaim),
+                "The keeper must actively challenge an opponent carrying the ball nearby.");
+
+            snapshot.BallPosition = new Vector2(ownGoalX + 20f, 3f);
+            var opponentCarrier = snapshot.GetPlayer(Team.Navy, 3);
+            opponentCarrier.Position = snapshot.BallPosition;
+            snapshot.SetPlayer(Team.Navy, 3, opponentCarrier);
+            MNG_TeamPlanner.Plan(
+                snapshot, Team.Red, MNG_Command.ActiveRecover, CreateDecision(), 13, 0.75f, tasks);
+
+            Assert.That(tasks[0].Skill, Is.EqualTo(MNG_PlayerSkill.KeeperBlock));
+            Assert.That(tasks[0].Target.x, Is.GreaterThan(ownGoalX + 2f));
+            Assert.That(tasks[0].Target.x, Is.LessThan(ownGoalX + 14f),
+                "The keeper may narrow the angle but must not abandon the defensive zone.");
+        }
+
+        [Test]
+        public void TeamPlanner_KeeperPassesWhenSafeAndClearsWhenReceiversArePressed()
+        {
+            var snapshot = CreateSnapshot();
+            SetCarrier(snapshot, Team.Red, 0, new Vector2(-50f, 0f));
+            var teammatePositions = new[]
+            {
+                new Vector2(-50f, 0f),
+                new Vector2(-30f, -10f),
+                new Vector2(-28f, 8f),
+                new Vector2(-20f, 0f)
+            };
+            for (var slot = 1; slot < MNG_MatchSnapshot.PlayersPerTeam; slot++)
+            {
+                var teammate = snapshot.GetPlayer(Team.Red, slot);
+                teammate.Position = teammatePositions[slot];
+                teammate.Velocity = Vector2.zero;
+                snapshot.SetPlayer(Team.Red, slot, teammate);
+            }
+            MoveTeamFarFromPoint(snapshot, Team.Navy, new Vector2(20f, -18f));
+            var tasks = new MNG_PlayerTask[MNG_MatchSnapshot.PlayersPerTeam];
+
+            MNG_TeamPlanner.Plan(
+                snapshot, Team.Red, MNG_Command.Balanced, CreateDecision(), 20, 0.75f, tasks);
+
+            Assert.That(tasks[0].Skill, Is.EqualTo(MNG_PlayerSkill.AimPass));
+            Assert.That(tasks[0].ReceiverSlot, Is.InRange(1, 3));
+            var receiverSlot = tasks[0].ReceiverSlot;
+            Assert.That(tasks[receiverSlot].Skill, Is.EqualTo(MNG_PlayerSkill.ReceivePass));
+            Assert.That(tasks[receiverSlot].Target.x,
+                Is.EqualTo(tasks[0].Target.x).Within(0.0001f));
+            Assert.That(tasks[receiverSlot].Target.y,
+                Is.EqualTo(tasks[0].Target.y).Within(0.0001f));
+
+            for (var slot = 1; slot < MNG_MatchSnapshot.PlayersPerTeam; slot++)
+            {
+                var opponent = snapshot.GetPlayer(Team.Navy, slot);
+                opponent.Position = teammatePositions[slot];
+                opponent.Velocity = Vector2.zero;
+                snapshot.SetPlayer(Team.Navy, slot, opponent);
+            }
+            MNG_TeamPlanner.Plan(
+                snapshot, Team.Red, MNG_Command.Balanced, CreateDecision(), 21, 0.75f, tasks);
+
+            Assert.That(tasks[0].Skill, Is.EqualTo(MNG_PlayerSkill.AimShot));
+            Assert.That(tasks[0].ReceiverSlot, Is.EqualTo(-1));
+            Assert.That(tasks[0].Target.x,
+                Is.EqualTo(snapshot.FieldHalfLength).Within(0.0001f));
         }
 
         [Test]
@@ -381,8 +1031,12 @@ namespace MachineLearning.Soccer.Manager.Tests
             {
                 Assert.DoesNotThrow(profile.ValidateOrThrow);
                 Assert.That(profile.BallScaleMultiplier, Is.EqualTo(1.10f));
-                Assert.That(profile.BallMass, Is.EqualTo(4.5f));
-                Assert.That(profile.BallRestitution, Is.EqualTo(0.05f));
+                Assert.That(profile.BallMass, Is.EqualTo(3f));
+                Assert.That(profile.BallRestitution, Is.EqualTo(0.15f));
+                Assert.That(profile.MaximumBallSpeed,
+                    Is.EqualTo(MNG_KickSolver.MaximumBallSpeed));
+                Assert.That(profile.DribbleAcceleration, Is.EqualTo(24f));
+                Assert.That(profile.DribbleDampingPerSecond, Is.EqualTo(5.5f));
                 Assert.That(profile.ReleasePadding,
                     Is.EqualTo(MNG_PhysicsProfile.KickPlateReleasePadding));
                 Assert.That(profile.ReleaseDelaySeconds,
@@ -445,6 +1099,7 @@ namespace MachineLearning.Soccer.Manager.Tests
                 Assert.That(plate.TryConsumeStrike(collider, out var request), Is.True);
                 Assert.That(request.Target, Is.EqualTo(Vector3.right * 10f));
                 Assert.That(request.ExitSpeed, Is.EqualTo(14f));
+                Assert.That(request.Intent, Is.EqualTo(MNG_KickIntent.Unspecified));
                 Assert.That(plate.TryConsumeStrike(collider, out _), Is.False);
             }
             finally
@@ -506,6 +1161,9 @@ namespace MachineLearning.Soccer.Manager.Tests
         public void TeamPlanner_PassTaskTargetsChosenReceiver()
         {
             var snapshot = CreateSnapshot();
+            SetCarrier(snapshot, Team.Red, 3, Vector2.zero);
+            var receiver = snapshot.GetPlayer(Team.Red, 1);receiver.Position=new Vector2(10,10);receiver.Velocity=Vector2.zero;snapshot.SetPlayer(Team.Red,1,receiver);
+            MoveTeamFarFromPoint(snapshot, Team.Navy, new Vector2(35,20));
             var decision = CreateDecision();
             decision.PendingPassReceiverSlot = 1;
             var tasks = new MNG_PlayerTask[MNG_MatchSnapshot.PlayersPerTeam];
@@ -514,8 +1172,12 @@ namespace MachineLearning.Soccer.Manager.Tests
 
             Assert.That(tasks[3].Skill, Is.EqualTo(MNG_PlayerSkill.AimPass));
             Assert.That(tasks[3].ReceiverSlot, Is.EqualTo(1));
-            Assert.That(tasks[3].Target, Is.EqualTo(snapshot.GetPlayer(Team.Red, 1).Position));
             Assert.That(tasks[1].Skill, Is.EqualTo(MNG_PlayerSkill.ReceivePass));
+            Assert.That(tasks[3].Target, Is.EqualTo(tasks[1].Target));
+            Assert.That(tasks[3].Target.x,
+                Is.GreaterThan(snapshot.GetPlayer(Team.Red, 1).Position.x));
+            Assert.That(tasks[1].ExpirySeconds,
+                Is.EqualTo(snapshot.EpisodeElapsedSeconds + MNG_TeamPlanner.KickExecutionSeconds));
         }
 
         [Test]
@@ -667,6 +1329,44 @@ namespace MachineLearning.Soccer.Manager.Tests
         }
 
         [Test]
+        public void MatchController_CommandAgeResetsOnlyWhenCommandChanges()
+        {
+            var root = new GameObject("MNG_TestCommandAge");
+            try
+            {
+                var geometry = root.AddComponent<SoccerArenaGeometry>();
+                var ball = new GameObject("MNG_Ball");
+                ball.transform.SetParent(root.transform);
+                var ballBody = ball.AddComponent<Rigidbody>();
+                var avatars = new MNG_PlayerAvatar[8];
+                for (var i = 0; i < avatars.Length; i++)
+                {
+                    var player = new GameObject($"MNG_Player_{i}");
+                    player.transform.SetParent(root.transform);
+                    player.AddComponent<Rigidbody>();
+                    avatars[i] = player.AddComponent<MNG_PlayerAvatar>();
+                    avatars[i].Configure(i < 4 ? Team.Red : Team.Navy, i % 4, (MNG_PlayerRole)(i % 4));
+                }
+
+                var match = root.AddComponent<MNG_MatchController>();
+                match.Configure(geometry, ballBody, avatars);
+                var decision = match.GetDecisionState(Team.Red);
+                decision.PreviousCommand = MNG_Command.Balanced;
+                decision.CommandAgeSeconds = 0.75f;
+
+                Assert.That(match.AcceptCommand(Team.Red, MNG_Command.Balanced), Is.True);
+                Assert.That(decision.CommandAgeSeconds, Is.EqualTo(0.75f).Within(0.0001f));
+
+                Assert.That(match.AcceptCommand(Team.Red, MNG_Command.ActiveRecover), Is.True);
+                Assert.That(decision.CommandAgeSeconds, Is.Zero);
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(root);
+            }
+        }
+
+        [Test]
         public void FallbackDecision_UsesShotPressurePassAndRecoveryPriorities()
         {
             var snapshot = CreateSnapshot();
@@ -678,6 +1378,7 @@ namespace MachineLearning.Soccer.Manager.Tests
             var opponent = snapshot.GetPlayer(Team.Navy, 0);
             opponent.Position = snapshot.GetPlayer(Team.Red, 3).Position + Vector2.right * 2f;
             snapshot.SetPlayer(Team.Navy, 0, opponent);
+            var receiver=snapshot.GetPlayer(Team.Red,1);receiver.Position=snapshot.BallPosition+new Vector2(5,12);snapshot.SetPlayer(Team.Red,1,receiver);
             var pressure = MNG_FallbackManager.Decide(snapshot, Team.Red);
             Assert.That(pressure.Command, Is.EqualTo(MNG_Command.PassBuild));
             Assert.That(pressure.PassReceiverSlot, Is.GreaterThanOrEqualTo(0));
@@ -766,8 +1467,9 @@ namespace MachineLearning.Soccer.Manager.Tests
         }
 
         [Test]
-        public void SpawnJitter_IsSmallDeterministicMirroredAndCanLockCarrier()
+        public void SpawnJitter_IsExpandedDeterministicMirroredAndCanLockCarrier()
         {
+            Assert.That(MNG_SpawnJitter.MaximumAxisOffset, Is.EqualTo(3.00f));
             var original = new[]
             {
                 new Vector2(-20f, 0f),
@@ -808,15 +1510,17 @@ namespace MachineLearning.Soccer.Manager.Tests
         }
 
         [Test]
-        public void M1EvaluationRules_RequireV3PlannerBaselineGainAndZeroOwnGoals()
+        public void M1EvaluationRules_V6RequiresBaselineGainZeroOwnGoalsAndRealPasses()
         {
-            Assert.That(MNG_M1EvaluationRules.RandomBaselineGoals, Is.EqualTo(66));
-            Assert.That(MNG_M1EvaluationRules.RequiredGoals, Is.EqualTo(76));
-            Assert.That(MNG_M1EvaluationRules.Passes(100, 76, 0, 24), Is.True);
-            Assert.That(MNG_M1EvaluationRules.Passes(100, 75, 0, 25), Is.False);
-            Assert.That(MNG_M1EvaluationRules.Passes(100, 99, 1, 0), Is.False);
-            Assert.That(MNG_M1EvaluationRules.Passes(99, 99, 0, 0), Is.False);
-            Assert.That(MNG_M1EvaluationRules.Passes(100, 76, 0, 23), Is.False);
+            Assert.That(MNG_M1EvaluationRules.RandomBaselineGoals, Is.EqualTo(72));
+            Assert.That(MNG_M1EvaluationRules.RequiredGoals, Is.EqualTo(82));
+            Assert.That(MNG_M1EvaluationRules.Passes(100, 82, 0, 18, 12, 8), Is.True);
+            Assert.That(MNG_M1EvaluationRules.Passes(100, 81, 0, 19, 12, 8), Is.False);
+            Assert.That(MNG_M1EvaluationRules.Passes(100, 99, 1, 0, 12, 8), Is.False);
+            Assert.That(MNG_M1EvaluationRules.Passes(99, 99, 0, 0, 12, 8), Is.False);
+            Assert.That(MNG_M1EvaluationRules.Passes(100, 82, 0, 17, 12, 8), Is.False);
+            Assert.That(MNG_M1EvaluationRules.Passes(100, 82, 0, 18, 11, 8), Is.False);
+            Assert.That(MNG_M1EvaluationRules.Passes(100, 82, 0, 18, 12, 7), Is.False);
         }
 
         [Test]
@@ -955,6 +1659,36 @@ namespace MachineLearning.Soccer.Manager.Tests
             return snapshot;
         }
 
+        static void SetCarrier(
+            MNG_MatchSnapshot snapshot,
+            Team team,
+            int slot,
+            Vector2 position)
+        {
+            var carrier = snapshot.GetPlayer(team, slot);
+            carrier.Active = true;
+            carrier.IsHuman = false;
+            carrier.Position = position;
+            carrier.Velocity = Vector2.zero;
+            carrier.KickCooldownSeconds = 0f;
+            snapshot.SetPlayer(team, slot, carrier);
+            snapshot.BallPosition = position;
+            snapshot.BallVelocity = Vector2.zero;
+            snapshot.Possession = team == Team.Red ? MNG_Possession.Red : MNG_Possession.Navy;
+            snapshot.Carrier = MNG_CarrierRef.For(team, slot);
+        }
+
+        static void MoveTeamFarFromPoint(MNG_MatchSnapshot snapshot, Team team, Vector2 origin)
+        {
+            for (var slot = 0; slot < MNG_MatchSnapshot.PlayersPerTeam; slot++)
+            {
+                var player = snapshot.GetPlayer(team, slot);
+                player.Position = origin + new Vector2(slot * 3f, slot * 2f);
+                player.Velocity = Vector2.zero;
+                snapshot.SetPlayer(team, slot, player);
+            }
+        }
+
         static MNG_PossessionCandidate Candidate(
             Team team,
             int slot,
@@ -994,6 +1728,9 @@ namespace MachineLearning.Soccer.Manager.Tests
                 EpisodeId = source.EpisodeId,
                 BallPosition = -source.BallPosition,
                 BallVelocity = -source.BallVelocity,
+                BallStallRecoveryActive = source.BallStallRecoveryActive,
+                BallStallRecoverySequence = source.BallStallRecoverySequence,
+                BallStationarySeconds = source.BallStationarySeconds,
                 Possession = source.Possession == MNG_Possession.Red ? MNG_Possession.Navy : MNG_Possession.Red,
                 Carrier = MNG_CarrierRef.For(Team.Navy, source.Carrier.Slot),
                 EpisodeElapsedSeconds = source.EpisodeElapsedSeconds,

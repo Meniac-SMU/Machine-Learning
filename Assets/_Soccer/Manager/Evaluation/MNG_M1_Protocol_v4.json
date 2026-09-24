@@ -1,0 +1,53 @@
+{
+  "protocolVersion": "MNG_M1_v4",
+  "stage": "M1_AttackChoice",
+  "generatorVersion": 2,
+  "plannerVersion": 3,
+  "validationSeed": 21001,
+  "scenarioCount": 100,
+  "mirrorPairs": 50,
+  "episodeSeconds": 20,
+  "spawnJitter": {
+    "maximumAxisOffsetMeters": 0.75,
+    "deterministicFromSeed": true,
+    "mirrorPaired": true,
+    "carrierKickPlateAnchorLocked": true,
+    "application": "initial-spawn-and-central-kickoff-only"
+  },
+  "individualMovement": {
+    "roleAnchors": true,
+    "roleSpecificBallFollow": true,
+    "singlePrimaryPresser": true,
+    "localOpenRouteSelection": true,
+    "opponentMarking": true,
+    "activeKeeperClaimAndBlock": true,
+    "presserHoldSeconds": 1.25,
+    "presserSwitchAdvantageMeters": 3.0,
+    "minimumFormationTargetSeparationMeters": 3.0
+  },
+  "randomBaseline": {
+    "runKind": "uniform-valid-command",
+    "seed": 21001,
+    "goals": 28,
+    "ownGoals": 0,
+    "timeouts": 72
+  },
+  "promotion": {
+    "minimumGoalRate": 0.76,
+    "maximumOwnGoals": 0,
+    "minimumGainOverRandomPercentagePoints": 48,
+    "effectiveRequiredGoals": 76
+  },
+  "diagnostics": {
+    "perScenarioOutcome": true,
+    "perScenarioElapsedSeconds": true,
+    "perScenarioCommandCounts": [
+      "AdvanceCarry",
+      "PassBuild",
+      "AttemptShot",
+      "ActiveRecover",
+      "Balanced",
+      "ProtectBack"
+    ]
+  }
+}

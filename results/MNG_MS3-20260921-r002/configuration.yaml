@@ -1,0 +1,89 @@
+default_settings: null
+behaviors:
+  MNG_Manager:
+    trainer_type: ppo
+    hyperparameters:
+      batch_size: 256
+      buffer_size: 4096
+      learning_rate: 5.0e-05
+      beta: 0.003
+      epsilon: 0.15
+      lambd: 0.95
+      num_epoch: 3
+      shared_critic: false
+      learning_rate_schedule: linear
+      beta_schedule: linear
+      epsilon_schedule: linear
+    checkpoint_interval: 50000
+    network_settings:
+      normalize: false
+      hidden_units: 128
+      num_layers: 2
+      vis_encode_type: simple
+      memory: null
+      goal_conditioning_type: hyper
+      deterministic: false
+    reward_signals:
+      extrinsic:
+        gamma: 0.995
+        strength: 1.0
+        network_settings:
+          normalize: false
+          hidden_units: 128
+          num_layers: 2
+          vis_encode_type: simple
+          memory: null
+          goal_conditioning_type: hyper
+          deterministic: false
+    init_path: results/MNG_MS2-20260921-r005/MNG_Manager/MNG_Manager-99968.pt
+    keep_checkpoints: 21
+    even_checkpoints: false
+    max_steps: 300000
+    time_horizon: 128
+    summary_freq: 1000
+    threaded: false
+    self_play:
+      save_steps: 25000
+      team_change: 100000
+      swap_steps: 25000
+      window: 10
+      play_against_latest_model_ratio: 0.5
+      initial_elo: 1200.0
+    behavioral_cloning: null
+env_settings:
+  env_path: C:\GitHub\Machine-Learning\Builds\MNG_MS\MS3\MNG_MS3.exe
+  env_args:
+  - -mngEvidenceDir
+  - C:\GitHub\Machine-Learning\Logs\MNG-MS\MNG_MS3-20260921-r002\workers
+  - -mngPolicyAssistMode
+  - none
+  base_port: 6200
+  num_envs: 32
+  num_areas: 1
+  timeout_wait: 120
+  seed: 193001
+  max_lifetime_restarts: 10
+  restarts_rate_limit_n: 1
+  restarts_rate_limit_period_s: 60
+engine_settings:
+  width: 84
+  height: 84
+  quality_level: 5
+  time_scale: 20
+  target_frame_rate: -1
+  capture_frame_rate: 60
+  no_graphics: true
+  no_graphics_monitor: false
+environment_parameters: null
+checkpoint_settings:
+  run_id: MNG_MS3-20260921-r002
+  initialize_from: null
+  load_model: false
+  resume: false
+  force: false
+  train_model: false
+  inference: false
+  results_dir: C:\GitHub\Machine-Learning\results
+torch_settings:
+  device: cuda
+debug: true

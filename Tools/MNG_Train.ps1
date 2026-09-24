@@ -172,10 +172,15 @@ elseif (Test-Path -LiteralPath $runDirectory) {
 if ($Resume -and -not [string]::IsNullOrWhiteSpace($InitializeFrom)) {
     throw 'Use either -Resume or -InitializeFrom, not both.'
 }
+if ($Stage -eq 'M1-AttackChoice' -and -not [string]::IsNullOrWhiteSpace($InitializeFrom)) {
+    throw 'M1-AttackChoice must start a fresh policy after the v6 curriculum change; do not use -InitializeFrom.'
+}
 if ($Stage -eq 'M1-AttackMoving' -or $Stage -eq 'M2-DefenseChoice' -or $Stage -eq 'M3-FallbackMatch') {
     if ([string]::IsNullOrWhiteSpace($InitializeFrom)) {
         throw "$Stage requires -InitializeFrom with its approved predecessor Run ID."
     }
+}
+if (-not [string]::IsNullOrWhiteSpace($InitializeFrom)) {
     $initializationPattern = if ($Stage -eq 'M1-AttackMoving' -or $Stage -eq 'M2-DefenseChoice') {
         '^MNG_M1Attack-\d{8}-r\d{3}$'
     }
@@ -193,11 +198,8 @@ if ($Stage -eq 'M1-AttackMoving' -or $Stage -eq 'M2-DefenseChoice' -or $Stage -e
     }
     $initializeDirectory = Join-Path $resultsDirectory $InitializeFrom
     if (-not (Test-Path -LiteralPath $initializeDirectory -PathType Container)) {
-        throw "M2 initialization Run does not exist: $initializeDirectory"
+        throw "$Stage initialization Run does not exist: $initializeDirectory"
     }
-}
-elseif (-not [string]::IsNullOrWhiteSpace($InitializeFrom)) {
-    throw '-InitializeFrom is currently supported only for M1-AttackMoving, M2-DefenseChoice and M3-FallbackMatch.'
 }
 
 $usedPort = Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue |
@@ -241,10 +243,10 @@ Write-Host "Workers: $NumEnvs"
 Write-Host "Seed: $Seed"
 Write-Host "Config: $configPath"
 $targetDescription = if ($Stage -eq 'M3-FallbackMatch') {
-    '100000 aggregate manager decisions or the externally enforced 180-minute wall limit'
+    'up to 300000 aggregate manager decisions, with checkpoint early-stop when fixed evaluation stagnates'
 }
 elseif ($Stage -eq 'M1-AttackChoice' -or $Stage -eq 'M1-AttackMoving' -or $Stage -eq 'M2-DefenseChoice') {
-    '20000 aggregate manager decisions or the externally enforced 60-minute wall limit'
+    'target 100000+ aggregate manager decisions only while fixed evaluation improves; hard cap 300000'
 }
 else {
     '1000 aggregate manager decisions (connection smoke only)'

@@ -1,0 +1,44 @@
+{
+  "protocol": "MNG-MS1-v7",
+  "stage": "MS1",
+  "revisionReason": "Untouched final holdout for the r007 7443-step candidate. By user decision, only the low-priority pass gate is reduced by one completion and one baseline-gain episode; all physical pass, attack, and defense semantics remain unchanged.",
+  "workers": 16,
+  "aggregateTargetSteps": 100000,
+  "aggregateHardMaxSteps": 120000,
+  "conditionalExtension": {
+    "maximumAdditionalSteps": 20000,
+    "requiredConsecutiveImprovingDiagnostics": 2,
+    "requiresRewardTrend": true,
+    "requiresFixedEvaluationTrend": true,
+    "requiresRealEventTrend": true,
+    "forbidRewardExploitation": true,
+    "stopWhenGatePasses": true
+  },
+  "checkpointInterval": 20000,
+  "episodeSeconds": 30,
+  "trainingSeed": 191001,
+  "opponent": {
+    "default": "Easy",
+    "movementSpeedMultiplier": 0.35,
+    "decisionIntervalSeconds": 1.5,
+    "rescueMaximumStep": 20000
+  },
+  "mixture": {
+    "attack": 0.5,
+    "defenseTransition": 0.5,
+    "defenseNeutralFraction": 0.5
+  },
+  "finalEvaluation": {
+    "totalEpisodesPerPolicy": 120,
+    "attackSeedBase": 403001,
+    "defenseSeedBase": 404001,
+    "episodesPerGroup": 40,
+    "requiredAttackSuccesses": 24,
+    "requiredDefenseSuccesses": 20,
+    "maximumAttackDeficitEpisodes": 2,
+    "maximumDefenseDeficitEpisodes": 2,
+    "passSubsetEpisodes": 20,
+    "requiredCompletedPasses": 2,
+    "requiredPassImprovementCompletions": 1
+  }
+}

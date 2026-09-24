@@ -5,6 +5,12 @@ param(
 
     [string]$EvidenceId,
 
+    [string]$CandidateId,
+
+    [string]$ModelPath,
+
+    [switch]$RandomPolicy,
+
     [string]$UnityPath = 'C:\Program Files\Unity\Hub\Editor\6000.3.16f1\Editor\Unity.exe'
 )
 
@@ -36,11 +42,22 @@ if ([string]::IsNullOrWhiteSpace($EvidenceId)) {
 if ($EvidenceId -notmatch '^MNG_M1Attack-\d{8}-r\d{3}-eval-r\d{3}$') {
     throw "Evidence ID must match MNG_M1Attack-YYYYMMDD-rNNN-eval-rNNN. Received: $EvidenceId"
 }
+if ([string]::IsNullOrWhiteSpace($CandidateId)) {
+    $CandidateId = $RunId
+}
+if ($CandidateId -notmatch '^MNG_M1Attack-\d{8}-r\d{3}(-step\d+)?(-diag-r\d{3})?$') {
+    throw "Candidate ID must be a run ID with optional -stepNNN and -diag-rNNN suffixes. Received: $CandidateId"
+}
 
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $resolvedUnity = (Resolve-Path -LiteralPath $UnityPath).Path
-$modelPath = Join-Path $projectRoot "results\$RunId\MNG_Manager.onnx"
-$buildDirectory = Join-Path $projectRoot "Builds\MNG_M1Evaluation\$RunId"
+if ([string]::IsNullOrWhiteSpace($ModelPath)) {
+    $ModelPath = Join-Path $projectRoot "results\$RunId\MNG_Manager.onnx"
+}
+else {
+    $ModelPath = (Resolve-Path -LiteralPath $ModelPath).Path
+}
+$buildDirectory = Join-Path $projectRoot "Builds\MNG_M1Evaluation\$CandidateId"
 $executablePath = Join-Path $buildDirectory 'MNG_M1Evaluation.exe'
 $levelDataPath = Join-Path $buildDirectory 'MNG_M1Evaluation_Data\level0'
 $buildInfoPath = Join-Path $buildDirectory 'evaluation-build-info.json'
@@ -49,8 +66,8 @@ $buildLogPath = Join-Path $evidenceDirectory 'Evaluation-Build.log'
 $playerLogPath = Join-Path $evidenceDirectory 'Player.log'
 $resultPath = Join-Path $evidenceDirectory 'model-evaluation.json'
 
-if (-not (Test-Path -LiteralPath $modelPath -PathType Leaf)) {
-    throw "Frozen ONNX model is missing: $modelPath"
+if (-not (Test-Path -LiteralPath $ModelPath -PathType Leaf)) {
+    throw "Frozen ONNX model is missing: $ModelPath"
 }
 if (Test-Path -LiteralPath $evidenceDirectory) {
     throw "Evaluation evidence directory already exists; use a new evidence revision: $evidenceDirectory"
@@ -65,7 +82,9 @@ $unityArguments = @(
     '-nographics',
     '-projectPath', $projectRoot,
     '-mngRunId', $RunId,
-    '-mngModelPath', $modelPath,
+    '-mngCandidateId', $CandidateId,
+    '-mngModelPath', $ModelPath,
+    '-mngRandomPolicy', $(if ($RandomPolicy) { 'true' } else { 'false' }),
     '-executeMethod', 'MachineLearning.Soccer.Manager.Editor.MNG_TrainingBuildBuilder.BuildM1EvaluationBatch',
     '-logFile', $buildLogPath
 )
@@ -85,9 +104,16 @@ foreach ($requiredPath in @($executablePath, $levelDataPath, $buildInfoPath)) {
     }
 }
 $buildInfo = Get-Content -Raw -Encoding UTF8 -LiteralPath $buildInfoPath | ConvertFrom-Json
-$sourceHash = Get-Sha256Lower $modelPath
+$sourceHash = Get-Sha256Lower $ModelPath
+if ([string]$buildInfo.runId -ne $RunId -or [string]$buildInfo.candidateId -ne $CandidateId) {
+    throw 'Evaluation build manifest identity does not match the requested candidate.'
+}
 if ($sourceHash -ne [string]$buildInfo.modelSha256) {
     throw 'Frozen ONNX hash does not match the evaluation build manifest.'
+}
+$expectedPolicyKind = if ($RandomPolicy) { 'uniform-valid-command' } else { 'onnx' }
+if ([string]$buildInfo.policyKind -ne $expectedPolicyKind) {
+    throw 'Evaluation build policy kind does not match the requested policy.'
 }
 if ((Get-Sha256Lower $executablePath) -ne [string]$buildInfo.executableSha256) {
     throw 'Evaluation executable hash does not match its build manifest.'
@@ -126,7 +152,10 @@ if ([string]$result.runId -ne $RunId -or [string]$result.modelSha256 -ne $source
 
 [PSCustomObject]@{
     RunId = [string]$result.runId
+    CandidateId = $CandidateId
+    ModelPath = $ModelPath
     ModelSha256 = [string]$result.modelSha256
+    PolicyKind = [string]$result.policyKind
     Scenarios = [int]$result.scenarios
     Goals = [int]$result.goals
     OwnGoals = [int]$result.ownGoals

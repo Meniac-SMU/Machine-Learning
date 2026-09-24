@@ -1,0 +1,83 @@
+default_settings: null
+behaviors:
+  MNG_Manager:
+    trainer_type: ppo
+    hyperparameters:
+      batch_size: 256
+      buffer_size: 4096
+      learning_rate: 0.0001
+      beta: 0.003
+      epsilon: 0.15
+      lambd: 0.95
+      num_epoch: 3
+      shared_critic: false
+      learning_rate_schedule: linear
+      beta_schedule: linear
+      epsilon_schedule: linear
+    checkpoint_interval: 100000
+    network_settings:
+      normalize: false
+      hidden_units: 128
+      num_layers: 2
+      vis_encode_type: simple
+      memory: null
+      goal_conditioning_type: hyper
+      deterministic: false
+    reward_signals:
+      extrinsic:
+        gamma: 0.995
+        strength: 1.0
+        network_settings:
+          normalize: false
+          hidden_units: 128
+          num_layers: 2
+          vis_encode_type: simple
+          memory: null
+          goal_conditioning_type: hyper
+          deterministic: false
+    init_path: results/MNG_MS1-20260920-r007/MNG_Manager/MNG_Manager-7443.pt
+    keep_checkpoints: 6
+    even_checkpoints: false
+    max_steps: 500000
+    time_horizon: 128
+    summary_freq: 1000
+    threaded: false
+    self_play: null
+    behavioral_cloning: null
+env_settings:
+  env_path: C:\GitHub\Machine-Learning\Builds\MNG_MS\MS2\MNG_MS2.exe
+  env_args:
+  - -mngEvidenceDir
+  - C:\GitHub\Machine-Learning\Logs\MNG-MS\MNG_MS2-20260921-r004\workers
+  - -mngPolicyAssistMode
+  - none
+  base_port: 5940
+  num_envs: 32
+  num_areas: 1
+  timeout_wait: 120
+  seed: 192001
+  max_lifetime_restarts: 10
+  restarts_rate_limit_n: 1
+  restarts_rate_limit_period_s: 60
+engine_settings:
+  width: 84
+  height: 84
+  quality_level: 5
+  time_scale: 20
+  target_frame_rate: -1
+  capture_frame_rate: 60
+  no_graphics: true
+  no_graphics_monitor: false
+environment_parameters: null
+checkpoint_settings:
+  run_id: MNG_MS2-20260921-r004
+  initialize_from: null
+  load_model: false
+  resume: false
+  force: false
+  train_model: false
+  inference: false
+  results_dir: C:\GitHub\Machine-Learning\results
+torch_settings:
+  device: cuda
+debug: false

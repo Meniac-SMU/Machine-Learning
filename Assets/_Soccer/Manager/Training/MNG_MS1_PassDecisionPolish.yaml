@@ -1,0 +1,30 @@
+# Bounded decision-credit repair from the better r007 diagnostic checkpoint.
+# All six commands remain available; a capped reward now distinguishes an
+# explicit blocked-lane PassBuild choice from a code-assisted override.
+behaviors:
+  MNG_Manager:
+    trainer_type: ppo
+    init_path: results/MNG_MS1-20260920-r007/MNG_Manager/MNG_Manager-7443.pt
+    hyperparameters:
+      batch_size: 256
+      buffer_size: 4096
+      learning_rate: 0.00003
+      beta: 0.003
+      epsilon: 0.12
+      lambd: 0.95
+      num_epoch: 3
+      learning_rate_schedule: linear
+    network_settings:
+      normalize: false
+      hidden_units: 128
+      num_layers: 2
+    reward_signals:
+      extrinsic:
+        gamma: 0.995
+        strength: 1.0
+    max_steps: 20000
+    time_horizon: 128
+    summary_freq: 1000
+    checkpoint_interval: 10000
+    keep_checkpoints: 3
+    threaded: false

@@ -1,0 +1,29 @@
+# Short final pass polish from r005 step 60012. All six commands remain open;
+# Pass fixtures are oversampled through the PassRepair scenario schedule only.
+behaviors:
+  MNG_Manager:
+    trainer_type: ppo
+    init_path: results/MNG_MS1-20260920-r005/MNG_Manager/MNG_Manager-60012.pt
+    hyperparameters:
+      batch_size: 256
+      buffer_size: 4096
+      learning_rate: 0.00005
+      beta: 0.005
+      epsilon: 0.15
+      lambd: 0.95
+      num_epoch: 3
+      learning_rate_schedule: linear
+    network_settings:
+      normalize: false
+      hidden_units: 128
+      num_layers: 2
+    reward_signals:
+      extrinsic:
+        gamma: 0.995
+        strength: 1.0
+    max_steps: 30000
+    time_horizon: 128
+    summary_freq: 1000
+    checkpoint_interval: 15000
+    keep_checkpoints: 3
+    threaded: false

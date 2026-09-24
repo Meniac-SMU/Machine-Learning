@@ -30,6 +30,13 @@ namespace MachineLearning.Soccer.Manager
         public bool IsHuman;
         public float KickCooldownSeconds;
         public float MaximumKickCooldownSeconds;
+        public MNG_PlayerSkill ExecutingSkill;
+        public MNG_TaskPhase ExecutingPhase;
+        public float TaskRemainingSeconds;
+        public float CommitmentRemainingSeconds;
+        // Zero is None, 1..4 are own-team slots 0..3.
+        public int ExecutingReceiverIndex;
+        public Vector2 ExecutingTarget;
     }
 
     [Serializable]
@@ -64,6 +71,10 @@ namespace MachineLearning.Soccer.Manager
         public long EpisodeId { get; set; }
         public Vector2 BallPosition { get; set; }
         public Vector2 BallVelocity { get; set; }
+        public bool BallStallRecoveryActive { get; set; }
+        public bool GoalPauseActive { get; set; }
+        public int BallStallRecoverySequence { get; set; }
+        public float BallStationarySeconds { get; set; }
         public MNG_Possession Possession { get; set; }
         public MNG_CarrierRef Carrier { get; set; } = MNG_CarrierRef.None;
         public float EpisodeElapsedSeconds { get; set; }
@@ -99,6 +110,11 @@ namespace MachineLearning.Soccer.Manager
             RequireFinite(MatchRemainingSeconds, nameof(MatchRemainingSeconds));
             RequireFinite(BallPosition, nameof(BallPosition));
             RequireFinite(BallVelocity, nameof(BallVelocity));
+            RequireFinite(BallStationarySeconds, nameof(BallStationarySeconds));
+            if (BallStationarySeconds < 0f)
+                throw new InvalidOperationException("Ball stationary time cannot be negative.");
+            if (BallStallRecoverySequence < 0)
+                throw new InvalidOperationException("Ball stall recovery sequence cannot be negative.");
 
             if (Carrier.IsValid && (Carrier.Slot < 0 || Carrier.Slot >= PlayersPerTeam))
                 throw new InvalidOperationException("Carrier slot is outside the fixed four-player roster.");
@@ -111,6 +127,14 @@ namespace MachineLearning.Soccer.Manager
                 RequireFinite(player.Forward, $"Player[{i}].Forward");
                 RequireFinite(player.KickCooldownSeconds, $"Player[{i}].KickCooldownSeconds");
                 RequireFinite(player.MaximumKickCooldownSeconds, $"Player[{i}].MaximumKickCooldownSeconds");
+                RequireFinite(player.TaskRemainingSeconds, $"Player[{i}].TaskRemainingSeconds");
+                RequireFinite(player.CommitmentRemainingSeconds, $"Player[{i}].CommitmentRemainingSeconds");
+                RequireFinite(player.ExecutingTarget, $"Player[{i}].ExecutingTarget");
+                if ((int)player.ExecutingSkill < 0 || (int)player.ExecutingSkill > 12
+                    || (int)player.ExecutingPhase < 0 || (int)player.ExecutingPhase > 4
+                    || player.ExecutingReceiverIndex < 0 || player.ExecutingReceiverIndex > 4
+                    || player.TaskRemainingSeconds < 0 || player.CommitmentRemainingSeconds < 0)
+                    throw new InvalidOperationException("Invalid execution observation state.");
                 if (player.KickCooldownSeconds < 0f || player.MaximumKickCooldownSeconds < 0f)
                     throw new InvalidOperationException($"Player[{i}] has a negative kick cooldown.");
             }

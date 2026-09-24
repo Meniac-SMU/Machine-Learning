@@ -1,0 +1,44 @@
+{
+  "protocol": "MNG-MS1-v3",
+  "stage": "MS1",
+  "revisionReason": "The v2 holdout showed the code-assisted random defense baseline saturating at 38/40, making a four-episode defense gain impossible. Keep absolute attack and defense quality, require non-regression within two episodes, and require policy-specific completed-pass improvement before MS2 performs the strong-R0 comparison.",
+  "workers": 16,
+  "aggregateTargetSteps": 100000,
+  "aggregateHardMaxSteps": 120000,
+  "conditionalExtension": {
+    "maximumAdditionalSteps": 20000,
+    "requiredConsecutiveImprovingDiagnostics": 2,
+    "requiresRewardTrend": true,
+    "requiresFixedEvaluationTrend": true,
+    "requiresRealEventTrend": true,
+    "forbidRewardExploitation": true,
+    "stopWhenGatePasses": true
+  },
+  "checkpointInterval": 20000,
+  "episodeSeconds": 30,
+  "trainingSeed": 191001,
+  "opponent": {
+    "default": "Easy",
+    "movementSpeedMultiplier": 0.35,
+    "decisionIntervalSeconds": 1.5,
+    "rescueMaximumStep": 20000
+  },
+  "mixture": {
+    "attack": 0.5,
+    "defenseTransition": 0.5,
+    "defenseNeutralFraction": 0.5
+  },
+  "finalEvaluation": {
+    "totalEpisodesPerPolicy": 120,
+    "attackSeedBase": 395001,
+    "defenseSeedBase": 396001,
+    "episodesPerGroup": 40,
+    "requiredAttackSuccesses": 24,
+    "requiredDefenseSuccesses": 20,
+    "maximumAttackDeficitEpisodes": 2,
+    "maximumDefenseDeficitEpisodes": 2,
+    "passSubsetEpisodes": 20,
+    "requiredCompletedPasses": 3,
+    "requiredPassImprovementCompletions": 2
+  }
+}

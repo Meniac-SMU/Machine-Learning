@@ -1,0 +1,42 @@
+{
+  "protocol": "MNG-MS1-v1",
+  "stage": "MS1",
+  "workers": 16,
+  "aggregateTargetSteps": 100000,
+  "aggregateHardMaxSteps": 120000,
+  "conditionalExtension": {
+    "maximumAdditionalSteps": 20000,
+    "requiredConsecutiveImprovingDiagnostics": 2,
+    "requiresRewardTrend": true,
+    "requiresFixedEvaluationTrend": true,
+    "requiresRealEventTrend": true,
+    "forbidRewardExploitation": true,
+    "stopWhenGatePasses": true
+  },
+  "checkpointInterval": 20000,
+  "episodeSeconds": 30,
+  "trainingSeed": 191001,
+  "opponent": {
+    "default": "Easy",
+    "movementSpeedMultiplier": 0.35,
+    "decisionIntervalSeconds": 1.5,
+    "rescueMaximumStep": 20000
+  },
+  "mixture": {
+    "attack": 0.5,
+    "defenseTransition": 0.5,
+    "defenseNeutralFraction": 0.5
+  },
+  "finalEvaluation": {
+    "totalEpisodesPerPolicy": 120,
+    "attackSeeds": [391001, 391002, 391003, 391004, 391005, 391006, 391007, 391008, 391009, 391010, 391011, 391012, 391013, 391014, 391015, 391016, 391017, 391018, 391019, 391020],
+    "defenseSeeds": [392001, 392002, 392003, 392004, 392005, 392006, 392007, 392008, 392009, 392010, 392011, 392012, 392013, 392014, 392015, 392016, 392017, 392018, 392019, 392020],
+    "episodesPerGroup": 40,
+    "requiredAttackSuccesses": 40,
+    "requiredDefenseSuccesses": 20,
+    "requiredAttackImprovementEpisodes": 3,
+    "requiredDefenseImprovementEpisodes": 4,
+    "passSubsetEpisodes": 20,
+    "requiredCompletedPasses": 3
+  }
+}

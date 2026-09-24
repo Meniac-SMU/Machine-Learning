@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: MNG_Physics
   m_EditorClassIdentifier: MNG.Runtime::MachineLearning.Soccer.Manager.MNG_PhysicsProfile
   ballScaleMultiplier: 1.1
-  ballMass: 4.5
-  ballRestitution: 0.05
+  ballMass: 3
+  ballRestitution: 0.15
   maximumBallSpeed: 30
   maximumPlayerSpeed: 9
   acceleration: 30
@@ -26,6 +26,6 @@ MonoBehaviour:
   releaseDelaySeconds: 0.08
   possessionConfirmationSeconds: 0.02
   previousOwnerLockSeconds: 0.12
-  dribbleAcceleration: 30
-  dribbleDampingPerSecond: 8
+  dribbleAcceleration: 24
+  dribbleDampingPerSecond: 5.5
   dribbleForwardOffset: 0.35

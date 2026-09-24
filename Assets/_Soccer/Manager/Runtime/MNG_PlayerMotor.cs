@@ -12,9 +12,13 @@ namespace MachineLearning.Soccer.Manager
         MNG_PlayerAvatar m_Avatar;
         Rigidbody m_Body;
         Vector2 m_LastDesiredVelocity;
+        float m_SpeedMultiplier = 1f;
 
         public MNG_PhysicsProfile Profile => profile;
         public Vector2 LastDesiredVelocity => m_LastDesiredVelocity;
+        public float SpeedMultiplier => m_SpeedMultiplier;
+        // Tactical requested pace; the physical speed/acceleration profile remains unchanged.
+        public float ManagerPace { get; set; } = 1f;
 
         void Awake()
         {
@@ -22,6 +26,7 @@ namespace MachineLearning.Soccer.Manager
             m_Body = GetComponent<Rigidbody>();
             if (profile == null) throw new InvalidOperationException("MNG player motor requires a physics profile.");
             profile.ValidateOrThrow();
+            MNG_PhysicsProfile.ConfigureContactSolver(m_Body);
         }
 
         public void Configure(MNG_PhysicsProfile configuredProfile)
@@ -32,6 +37,7 @@ namespace MachineLearning.Soccer.Manager
             profile.ValidateOrThrow();
             m_Avatar = GetComponent<MNG_PlayerAvatar>();
             m_Body = GetComponent<Rigidbody>();
+            MNG_PhysicsProfile.ConfigureContactSolver(m_Body);
         }
 
         public bool ApplyMoveTarget(
@@ -57,7 +63,8 @@ namespace MachineLearning.Soccer.Manager
             var position = new Vector2(m_Body.position.x, m_Body.position.z);
             var offset = target - position;
             var distance = offset.magnitude;
-            var speed = profile.MaximumPlayerSpeed
+            var speed = profile.MaximumPlayerSpeed * m_SpeedMultiplier
+                * (requester == MNG_InputOwner.Manager ? Mathf.Clamp01(ManagerPace) : 1f)
                 * Mathf.Clamp01(distance / profile.ArrivalSlowRadius);
             var desired = distance > 0.0001f ? offset / distance * speed : Vector2.zero;
             return ApplyDesiredVelocity(
@@ -98,7 +105,9 @@ namespace MachineLearning.Soccer.Manager
                 || deltaTime <= 0f)
                 throw new ArgumentOutOfRangeException(nameof(desiredVelocity));
 
-            desiredVelocity = Vector2.ClampMagnitude(desiredVelocity, profile.MaximumPlayerSpeed);
+            desiredVelocity = Vector2.ClampMagnitude(
+                desiredVelocity,
+                profile.MaximumPlayerSpeed * m_SpeedMultiplier);
             m_LastDesiredVelocity = desiredVelocity;
             var current = new Vector2(m_Body.linearVelocity.x, m_Body.linearVelocity.z);
             var decelerating = desiredVelocity.sqrMagnitude < current.sqrMagnitude
@@ -124,6 +133,13 @@ namespace MachineLearning.Soccer.Manager
             => ApplyDesiredVelocity(Vector2.zero, requester, ownershipRevision, deltaTime);
 
         public void ResetDriveCommand() => m_LastDesiredVelocity = Vector2.zero;
+
+        public void ConfigureSpeedMultiplier(float multiplier)
+        {
+            if (!MNG_MatchSnapshot.IsFinite(multiplier) || multiplier <= 0f || multiplier > 1f)
+                throw new ArgumentOutOfRangeException(nameof(multiplier));
+            m_SpeedMultiplier = multiplier;
+        }
 
         public static Vector2 CalculateNextVelocity(
             Vector2 current,

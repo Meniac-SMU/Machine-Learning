@@ -1,0 +1,42 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1790047639",
+        "python_version": "3.10.12 | packaged by Anaconda, Inc. | (main, Jul  5 2023, 19:01:18) [MSC v.1916 64 bit (AMD64)]",
+        "command_line_arguments": "C:\\GitHub\\Machine-Learning\\Tools\\mng_v2_learn.py C:\\GitHub\\Machine-Learning\\Logs\\MNG-Rebuild\\MNG_MS3V2-20260922-r001\\smoke.yaml --run-id MNG_MS3V2-20260922-r001 --results-dir C:\\GitHub\\Machine-Learning\\results --env C:\\GitHub\\Machine-Learning\\Builds\\MNG_V2\\MS3V2\\MNG_MS3V2.exe --num-envs 32 --base-port 6400 --seed 20260922 --torch-device cuda --timeout-wait 120 --no-graphics --debug --env-args -mngEvidenceDir C:\\GitHub\\Machine-Learning\\Logs\\MNG-Rebuild\\MNG_MS3V2-20260922-r001\\workers -mngRunId MNG_MS3V2-20260922-r001 -mngBuildSha d0253a7c29b55397f12a8342e1507839f8b9af9141c38dcc1e669cd7febaa582 -mngPolicyAssistMode none -mngFullTrace true",
+        "mlagents_version": "1.2.0.dev0",
+        "mlagents_envs_version": "1.2.0.dev0",
+        "communication_protocol_version": "1.5.0",
+        "pytorch_version": "2.2.2+cu121",
+        "numpy_version": "1.23.5",
+        "end_time_seconds": "1790047655"
+    },
+    "total": 16.016704100000425,
+    "count": 1,
+    "self": 3.0669398000009096,
+    "children": {
+        "run_training.setup": {
+            "total": 3.0976561999996193,
+            "count": 1,
+            "self": 3.0976561999996193
+        },
+        "TrainerController.start_learning": {
+            "total": 9.852108099999896,
+            "count": 1,
+            "self": 0.00016309999864461133,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 9.851899900000717,
+                    "count": 1,
+                    "self": 9.851899900000717
+                },
+                "TrainerController._save_models": {
+                    "total": 4.510000053414842e-05,
+                    "count": 1,
+                    "self": 4.510000053414842e-05
+                }
+            }
+        }
+    }
+}

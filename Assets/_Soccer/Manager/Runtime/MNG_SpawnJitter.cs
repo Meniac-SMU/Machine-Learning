@@ -9,7 +9,7 @@ namespace MachineLearning.Soccer.Manager
     /// </summary>
     public static class MNG_SpawnJitter
     {
-        public const float MaximumAxisOffset = 0.75f;
+        public const float MaximumAxisOffset = 3.00f;
 
         public static Vector2 Sample(System.Random random, float mirror = 1f)
         {

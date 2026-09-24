@@ -1,0 +1,62 @@
+{
+  "protocolVersion": "MNG_M1_v6",
+  "stage": "M1_AttackChoice",
+  "generatorVersion": 2,
+  "plannerVersion": 4,
+  "validationSeed": 21001,
+  "scenarioCount": 100,
+  "mirrorPairs": 50,
+  "episodeSeconds": 20,
+  "spawnJitter": {
+    "maximumAxisOffsetMeters": 0.75,
+    "deterministicFromSeed": true,
+    "mirrorPaired": true,
+    "carrierKickPlateAnchorLocked": true,
+    "application": "initial-spawn-and-central-kickoff-only"
+  },
+  "codeOwnedFootball": {
+    "exactBallStateWithoutRay": true,
+    "localBallAwarenessRadiusMeters": 16.0,
+    "localPresserSwitchAdvantageMeters": 1.0,
+    "physicalPassRangeMeters": [5.0, 28.0],
+    "riskyPassesRemainSelectable": true,
+    "kickIntentTelemetry": ["Pass", "Shot"],
+    "outcomeRewards": ["ValidShot", "CompletedPass", "AdvancedFiveMeters"],
+    "completedPassReward": 0.04
+  },
+  "randomBaseline": {
+    "runKind": "uniform-valid-command",
+    "seed": 21001,
+    "status": "frozen-compatible",
+    "evidence": "Logs/MNG_M1Attack-20260911-r001-eval-r011",
+    "goals": 72,
+    "ownGoals": 0,
+    "timeouts": 28,
+    "passPlateStrikes": 12,
+    "completedPasses": 7
+  },
+  "promotion": {
+    "minimumGoalRate": 0.76,
+    "maximumOwnGoals": 0,
+    "minimumGainOverCompatibleRandomPercentagePoints": 10,
+    "effectiveRequiredGoals": 82,
+    "minimumPassPlateStrikes": 12,
+    "minimumCompletedPasses": 8,
+    "allConditionsRequired": true
+  },
+  "training": {
+    "freshPolicyRequired": true,
+    "ppoEntropyBeta": 0.01,
+    "checkpointInterval": 20000,
+    "earlyStopAfterConsecutiveStagnantEvaluations": 2,
+    "hardMaximumSteps": 300000
+  },
+  "diagnostics": {
+    "perScenarioOutcome": true,
+    "perScenarioElapsedSeconds": true,
+    "perScenarioCommandCounts": true,
+    "perScenarioPassAndShotAvailability": true,
+    "perScenarioPlateStrikeCounts": true,
+    "perScenarioCompletedPassValidShotAndAdvanceCounts": true
+  }
+}

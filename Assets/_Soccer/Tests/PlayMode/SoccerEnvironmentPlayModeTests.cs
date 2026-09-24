@@ -11,6 +11,34 @@ namespace MachineLearning.Soccer.Tests
 {
     public sealed class SoccerEnvironmentPlayModeTests
     {
+        float previousTimeScale;
+        [SetUp] public void ResetTestTimeScale() { previousTimeScale=Time.timeScale;Time.timeScale=1f; }
+        [TearDown] public void RestoreTestTimeScale() { Time.timeScale=previousTimeScale; }
+        [UnityTest]
+        public IEnumerator ClearanceOverridesIdleButStagnationDoesNotForAllRolesAndTeams()
+        {
+            yield return SceneManager.LoadSceneAsync("Stadium4v4_Base", LoadSceneMode.Single);
+            yield return null;
+            var environment=Object.FindFirstObjectByType<SoccerEnvController>();
+            var flags=System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic;
+            var engine=typeof(SoccerEnvController).GetField("m_RewardEngine",flags).GetValue(environment);
+            var carrier=engine.GetType().GetField("m_BallCarrier",flags);
+            foreach(var item in environment.AgentsList)
+            {
+                var actor=item.Agent;actor.OnEpisodeBegin();
+                var sign=SoccerDefensiveClearanceRules.GetAttackSign(actor.Team);
+                var teammate=environment.AgentsList.Select(x=>x.Agent).First(x=>x.Team==actor.Team&&x!=actor);
+                actor.transform.position=new Vector3(0,.52f,0);teammate.transform.position=new Vector3(sign*10,.52f,0);
+                environment.ball.transform.position=new Vector3(sign, .58f,0);carrier.SetValue(engine,actor);
+                actor.OnActionReceived(new Unity.MLAgents.Actuators.ActionBuffers(Unity.MLAgents.Actuators.ActionSegment<float>.Empty,new Unity.MLAgents.Actuators.ActionSegment<int>(new int[4])));
+                Assert.AreEqual(0,actor.CommonRuleAttempts,$"No idle override {actor.Team}/{actor.PositionRole}");
+                actor.OnEpisodeBegin();actor.transform.position=new Vector3(-sign*56,.52f,0);
+                environment.ball.transform.position=new Vector3(-sign*55,.58f,0);teammate.transform.position=new Vector3(-sign*45,.52f,0);
+                Assert.IsTrue(environment.TryGetCommonPossessionKick(actor,out var target,out var kick));
+                Assert.Greater((target.x-environment.ball.transform.position.x)*sign,0,"Defensive kick must move away from own goal");
+                Assert.That(kick,Is.InRange(1,2));
+            }
+        }
         [UnityTest]
         public IEnumerator GeneratedSceneStartsAsDeterministicAIControlledFourVersusFourMatch()
         {

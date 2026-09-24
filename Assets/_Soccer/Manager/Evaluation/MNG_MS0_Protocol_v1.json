@@ -1,0 +1,22 @@
+{
+  "protocol": "MNG-MS0-v1",
+  "stage": "MS0",
+  "smokeStepBudget": 5000,
+  "requiredParallelWorkers": 2,
+  "workerCandidates": [1, 2, 8, 16],
+  "requiredModes": ["R0Opponent", "SelfPlay"],
+  "r0Full": {
+    "movementSpeedMultiplier": 1.0,
+    "decisionIntervalSeconds": 0.5
+  },
+  "evidence": [
+    "ppo-update",
+    "pt-checkpoint",
+    "onnx-export",
+    "resume-step-increase",
+    "independent-worker-identities",
+    "self-play-snapshots",
+    "self-play-team-switch",
+    "terminal-reward-sign"
+  ]
+}

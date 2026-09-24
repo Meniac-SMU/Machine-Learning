@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &82986480
+--- !u!1001 &1841390643
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -185,20 +185,20 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 3490418252925469502, guid: 43ae8075d69a520418261ff441ff8ca7, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 82986485}
+      addedObject: {fileID: 1841390648}
     - targetCorrespondingSourceObject: {fileID: 3490418252925469502, guid: 43ae8075d69a520418261ff441ff8ca7, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 82986484}
+      addedObject: {fileID: 1841390647}
   m_SourcePrefab: {fileID: 100100000, guid: 43ae8075d69a520418261ff441ff8ca7, type: 3}
---- !u!1 &82986481 stripped
+--- !u!1 &1841390644 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3490418252925469502, guid: 43ae8075d69a520418261ff441ff8ca7, type: 3}
-  m_PrefabInstance: {fileID: 82986480}
+  m_PrefabInstance: {fileID: 1841390643}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &82986482 stripped
+--- !u!114 &1841390645 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3498306608060785204, guid: 43ae8075d69a520418261ff441ff8ca7, type: 3}
-  m_PrefabInstance: {fileID: 82986480}
+  m_PrefabInstance: {fileID: 1841390643}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
@@ -206,49 +206,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca0d3367be23e3648b852abb97a12432, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MNG.Runtime::MachineLearning.Soccer.Manager.MNG_BallControl
---- !u!114 &82986483 stripped
+--- !u!114 &1841390646 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7406143764812180562, guid: 43ae8075d69a520418261ff441ff8ca7, type: 3}
-  m_PrefabInstance: {fileID: 82986480}
+  m_PrefabInstance: {fileID: 1841390643}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 82986481}
+  m_GameObject: {fileID: 1841390644}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 54780b323c48abf478be2d1a20eaccfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MNG.Runtime::MachineLearning.Soccer.Manager.MNG_MatchController
---- !u!114 &82986484
+--- !u!114 &1841390647
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 82986481}
+  m_GameObject: {fileID: 1841390644}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 07fdffc8b8da41a4c82aadb8352c4f38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MNG.Runtime::MachineLearning.Soccer.Manager.MNG_TrainingBootstrap
   timeScale: 20
---- !u!114 &82986485
+--- !u!114 &1841390648
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 82986481}
+  m_GameObject: {fileID: 1841390644}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: beb53ad8af366ba4ab2daf7ee21245bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MNG.Runtime::MachineLearning.Soccer.Manager.MNG_FallbackMatchController
   catalog: {fileID: 11400000, guid: a6e537792ba93614db447f76f2a57a16, type: 2}
-  matchController: {fileID: 82986483}
-  ballControl: {fileID: 82986482}
+  matchController: {fileID: 1841390646}
+  ballControl: {fileID: 1841390645}
   fullMatch: 1
   useValidationScenarios: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 82986480}
+  - {fileID: 1841390643}

@@ -99,8 +99,10 @@ namespace MachineLearning.Soccer.Manager
             var passReceiver = targets.PassReceiverSlot;
             var attackingDepth = snapshot.BallPosition.x * attackSign;
             var ownGoalDanger = attackingDepth <= -48f;
-            var underPressure = NearestOpponentDistance(snapshot, team, carrier.Position) <= 7f;
-            if ((ownGoalDanger || underPressure)
+            var underPressure = NearestOpponentDistance(snapshot, team, carrier.Position) <= 6f;
+            var forwardDribbleBlocked = MNG_TacticalTargetResolver.IsForwardDribbleBlocked(
+                snapshot, team, snapshot.Carrier.Slot);
+            if ((ownGoalDanger || forwardDribbleBlocked || underPressure)
                 && passReceiver >= 0
                 && carrier.KickCooldownSeconds <= 0f)
             {
@@ -108,7 +110,9 @@ namespace MachineLearning.Soccer.Manager
                     MNG_Command.PassBuild,
                     passReceiver,
                     false,
-                    ownGoalDanger ? "danger-pass" : "pressure-pass");
+                    ownGoalDanger ? "danger-pass"
+                        : forwardDribbleBlocked ? "blocked-forward-pass"
+                        : "pressure-pass");
             }
 
             return new MNG_FallbackDecision(MNG_Command.AdvanceCarry, -1, false, "advance-carry");

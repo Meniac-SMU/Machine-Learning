@@ -18,10 +18,10 @@ behaviors:
       extrinsic:
         gamma: 0.995
         strength: 1.0
-    keep_checkpoints: 5
-    checkpoint_interval: 5000
-    max_steps: 20000
-    time_horizon: 64
-    summary_freq: 500
+    keep_checkpoints: 16
+    checkpoint_interval: 20000
+    max_steps: 300000
+    time_horizon: 128
+    summary_freq: 1000
     threaded: false
 default_settings: null

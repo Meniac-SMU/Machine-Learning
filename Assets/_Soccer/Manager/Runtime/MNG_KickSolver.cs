@@ -6,9 +6,26 @@ namespace MachineLearning.Soccer.Manager
     {
         public const float MinimumPassDistance = 5f;
         public const float MaximumPassDistance = 28f;
-        public const float ControlledExitSpeed = 14f;
-        public const float StrongExitSpeed = 28f;
-        public const float MaximumBallSpeed = 30f;
+        public const float PreviousControlledExitSpeed = 14f;
+        public const float PreviousStrongExitSpeed = 28f;
+        public const float PreviousMaximumBallSpeed = 30f;
+        public const float RequestedKickStrengthIncrease = 1000f;
+        public const float PreviousPassStrengthEquivalent = 2000f;
+        public const float PreviousShotStrengthEquivalent = 5000f;
+        public const float PassStrengthEquivalent =
+            PreviousPassStrengthEquivalent + RequestedKickStrengthIncrease;
+        public const float ShotStrengthEquivalent =
+            PreviousShotStrengthEquivalent + RequestedKickStrengthIncrease;
+        public const float ReferenceFixedDeltaTime = 0.02f;
+        public const float ReferenceBallMass = 3f;
+        public const float KickStrengthExitSpeedIncrease =
+            RequestedKickStrengthIncrease * ReferenceFixedDeltaTime / ReferenceBallMass;
+        public const float ControlledExitSpeed =
+            PreviousControlledExitSpeed + KickStrengthExitSpeedIncrease;
+        public const float StrongExitSpeed =
+            PreviousStrongExitSpeed + KickStrengthExitSpeedIncrease;
+        public const float MaximumBallSpeed =
+            PreviousMaximumBallSpeed + KickStrengthExitSpeedIncrease;
         public const float FullStrengthPassDistance = 20f;
 
         public static float PassExitSpeedForDistance(float distance)
