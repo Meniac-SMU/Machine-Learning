@@ -1,0 +1,73 @@
+{
+  "protocol": "MNG-MS3-v1",
+  "stage": "MS3",
+  "trainingMode": "PPO self-play",
+  "workers": 32,
+  "trainingSeed": 193001,
+  "minimumAggregateSteps": 300000,
+  "maximumAggregateSteps": 1000000,
+  "monitorInterval": 50000,
+  "detailedEvaluationInterval": 100000,
+  "trainingMatchSeconds": 300,
+  "timeScale": 10,
+  "initialization": {
+    "candidate": "MNG_MS2-20260921-r005-step99968",
+    "path": "results/MNG_MS2-20260921-r005/MNG_Manager/MNG_Manager-99968.pt",
+    "sha256": "9ab8536762c0838960ec807fc943cc6e1cb4d166c4324db2d0406bb88ee3c0ca",
+    "mode": "policy-weights-new-optimizer",
+    "ms2Status": "provisional-pass"
+  },
+  "selfPlay": {
+    "saveSteps": 25000,
+    "teamChange": 100000,
+    "swapSteps": 25000,
+    "window": 10,
+    "playAgainstLatestModelRatio": 0.5,
+    "initialElo": 1200.0
+  },
+  "actionIntegrity": {
+    "policyAssistMode": "None",
+    "requireRawEffectiveEqualityForBothTeams": true,
+    "maximumBlockedPassOverridesPerTeam": 0,
+    "maximumExplicitBlockedPassRewardsPerTeam": 0
+  },
+  "monitoring50k": [
+    "checkpoint PT and ONNX exist and have nonzero size",
+    "reward and ELO are finite",
+    "both team IDs remain connected",
+    "worker count is 32",
+    "raw and effective actions remain equal for both teams",
+    "snapshot swaps and team changes continue on schedule",
+    "command selection is not collapsed to one command"
+  ],
+  "evaluation100k": {
+    "opponent": "R0-Full",
+    "matchSecondsBeforeMinimum": 120,
+    "matchesPerTeamBeforeMinimum": 10,
+    "matchSecondsAtOrAfterMinimum": 300,
+    "matchesPerTeamAtOrAfterMinimum": 20,
+    "compareAgainst": "MS2 P0 step99968 on the same seed family",
+    "metrics": [
+      "aggregate and per-team score rate",
+      "goals for and against",
+      "valid shots per match",
+      "five-meter advances per match",
+      "completed passes per match",
+      "six-command distribution",
+      "action integrity"
+    ]
+  },
+  "minimumCompletionGateAt300k": {
+    "minimumAggregateR0ScoreRate": 0.65,
+    "minimumPerTeamR0ScoreRate": 0.55,
+    "requireGoalsForAtLeastGoalsAgainst": true,
+    "maximumRegressionFromP0Aggregate": 0.10,
+    "requireAtLeastOneTacticalRateImprovement": true,
+    "minimumRelativeTacticalRateImprovement": 0.05,
+    "requireBothLearningTeamsObserved": true,
+    "requireSnapshotSwapEvidence": true,
+    "requireActionIntegrity": true
+  },
+  "extensionRule": "After 300k, continue by 100k only while at least one frozen evaluation or tactical event rate improves without action-integrity failure or R0 regression. Stop no later than 1M.",
+  "failureRule": "Two consecutive 100k evaluations without progress require stopping at the saved checkpoint and diagnosing observations, masks, rewards, skill execution, self-play sampling, and evaluation before changing reward values."
+}

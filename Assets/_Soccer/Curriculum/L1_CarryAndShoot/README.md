@@ -16,7 +16,7 @@ r012는 `curriculum_l1_straight_poca.yaml`로 정면 공 준비 단계를 학습
 
 r011 실험은 `curriculum_l1_alignment_poca.yaml`을 사용한다. r010의 불변 750k 체크포인트에서 초기화하며, 첫 슛 전 골문 방향 조준이 개선될 때만 작은 보상을 지급한다. 환경 매개변수 `soccer_l1_alignment=1`로 명시적으로 켜고 기본값은 0이다. 최종 운반 단계에는 지급하지 않는다. 물리·스폰·입력·행동·득점 성공 판정은 r010과 같다. 수치는 [보상 기준표](../../../../docs/soccer/rewards.md)를 따른다. r010은 별도 보존한다.
 
-현재 실행 설계는 [단계별 보상 계획](../../../../docs/soccer/training/staged-reward-plan.md), 수치 변경표는 [보상 기준표](../../../../docs/soccer/rewards.md)를 따른다. r010부터 일반 전술 보상을 전부 차단하고 소유·슛·득점 위주로 학습한다. 근거리 phase는 골문 20~24m 앞이며 4m 조기 실패선은 사용하지 않는다. 소유된 공 1.8m 안에서만 킥을 선택한다. `curriculum_l1_poca.yaml`은 고정 phase 1, `curriculum_l1_carry_poca.yaml`은 고정 phase 2다. 32 worker를 시험하고 과부하/처리량에 따라 16으로 내린다. 50k마다 체크포인트를 저장한다. 승급은 개인 reward가 아닌 실제 성공률로 판단하며, 근거리 75%, 최종 65%로 완화한다.
+현재 실행 설계는 [단계별 보상 계획](../../../../docs/archive/player-curriculum/staged-reward-plan.md), 수치 변경표는 [보상 기준표](../../../../docs/soccer/rewards.md)를 따른다. r010부터 일반 전술 보상을 전부 차단하고 소유·슛·득점 위주로 학습한다. 근거리 phase는 골문 20~24m 앞이며 4m 조기 실패선은 사용하지 않는다. 소유된 공 1.8m 안에서만 킥을 선택한다. `curriculum_l1_poca.yaml`은 고정 phase 1, `curriculum_l1_carry_poca.yaml`은 고정 phase 2다. 32 worker를 시험하고 과부하/처리량에 따라 16으로 내린다. 50k마다 체크포인트를 저장한다. 승급은 개인 reward가 아닌 실제 성공률로 판단하며, 근거리 75%, 최종 65%로 완화한다.
 
 완료된 L0 및 짧은 드리블 체크포인트를 보존한다. Navy는 비활성 상태이고 Red 네 명의 관측·행동 계약은 Base와 같다. phase별로 새 Run을 사용하며 실제 성공 지표로 승급한다.
 

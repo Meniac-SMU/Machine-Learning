@@ -1,0 +1,16 @@
+{
+  "protocol": "MNG-MS2-PREFLIGHT-v1",
+  "purpose": "Measure whether the frozen MS1 PPO separates from a uniform-valid-command baseline before MS2 training.",
+  "candidate": "MNG_MS1-20260920-r007-step7443",
+  "opponents": ["Medium", "Full"],
+  "policyTeams": ["Red", "Navy"],
+  "matchesPerTeamAndStrength": 10,
+  "matchSeconds": 120,
+  "spawnSeedOffset": 491001,
+  "goodResult": {
+    "fullMinimumScoreRateGain": 0.10,
+    "maximumPerTeamScoreRateDeficit": 0.10,
+    "requiresFiniteCompleteResults": true
+  },
+  "decision": "Proceed to the original 16-environment MS2 development and training only when the Full result passes goodResult. Do not tune rewards after a failed preflight."
+}

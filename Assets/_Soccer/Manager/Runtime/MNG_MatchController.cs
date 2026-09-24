@@ -14,12 +14,13 @@ namespace MachineLearning.Soccer.Manager
     public enum MNG_MatchFinishMode
     {
         TerminalResult = 0,
-        InterruptedCollection = 1
+        InterruptedCollection = 1,
+        SelfPlayTerminalResult = 2
     }
 
     [DefaultExecutionOrder(-200)]
     [DisallowMultipleComponent]
-    public sealed class MNG_MatchController : MonoBehaviour
+    public sealed partial class MNG_MatchController : MonoBehaviour
     {
         public const float MatchDurationSeconds = 300f;
 
@@ -28,6 +29,18 @@ namespace MachineLearning.Soccer.Manager
         [SerializeField] MNG_PlayerAvatar[] players = Array.Empty<MNG_PlayerAvatar>();
         [SerializeField] MNG_RewardEngine rewardEngine;
         [SerializeField] bool restartOnFinish = true;
+        [SerializeField] bool useRuntimeV2;
+        public bool UseRuntimeV2 => useRuntimeV2;
+        public void ConfigureRuntimeV2(bool value) => useRuntimeV2 = value;
+        public event Action<Team, int, MNG_TaskResult> TaskProcessed;
+        public long GetCommandId(Team team) => m_TaskRevisions[(int)team] * 2 + (int)team;
+        readonly long[] m_TaskResultCounts = new long[9];
+        public long GetTaskResultCount(MNG_TaskResultKind kind) => m_TaskResultCounts[(int)kind];
+        public void RecordTaskResult(Team team, int slot, MNG_TaskResult result)
+        {
+            m_TaskResultCounts[(int)result.Kind]++;
+            TaskProcessed?.Invoke(team, slot, result);
+        }
         [SerializeField, Min(1f)] float matchDurationSeconds = MatchDurationSeconds;
         [SerializeField] MNG_MatchFinishMode finishMode = MNG_MatchFinishMode.TerminalResult;
 
@@ -50,6 +63,7 @@ namespace MachineLearning.Soccer.Manager
             new Vector3[MNG_MatchSnapshot.PlayersPerTeam * MNG_MatchSnapshot.TeamCount];
         readonly Quaternion[] m_PlayerStartingRotations =
             new Quaternion[MNG_MatchSnapshot.PlayersPerTeam * MNG_MatchSnapshot.TeamCount];
+        readonly MNG_GlobalBallStallTracker m_GlobalBallStall = new();
 
         long m_TickId;
         long m_EpisodeId;
@@ -58,6 +72,7 @@ namespace MachineLearning.Soccer.Manager
         long m_SpawnPlacementRevision;
         bool m_HasSnapshot;
         bool m_RestartPending;
+        int m_SpawnSeedOffset;
         Vector3 m_BallStartingPosition;
         Quaternion m_BallStartingRotation;
 
@@ -72,6 +87,14 @@ namespace MachineLearning.Soccer.Manager
         public MNG_MatchState State { get; private set; } = MNG_MatchState.Playing;
         public bool IsPlayActive => State == MNG_MatchState.Playing && MatchRemainingSeconds > 0f;
         public long SpawnPlacementRevision => m_SpawnPlacementRevision;
+        public int SpawnSeedOffset => m_SpawnSeedOffset;
+        public bool IsGlobalBallStallRecoveryActive => m_GlobalBallStall.IsActive;
+        public int GlobalBallStallRecoveryActivations => m_GlobalBallStall.ActivationCount;
+        public int EpisodeStallActivations => m_GlobalBallStall.EpisodeActivationCount;
+        public float EpisodeStallActiveSeconds => m_GlobalBallStall.EpisodeActiveSeconds;
+        public bool EvaluationMirror { get; private set; }
+        public void ConfigureEvaluationMirror(bool mirror) => EvaluationMirror = mirror;
+        public Team EpisodeNeutralFirstTeam => ((CalculateSpawnSeed(m_EpisodeId, 0, m_SpawnSeedOffset) & 1) ^ (EvaluationMirror ? 1 : 0)) == 0 ? Team.Red : Team.Navy;
         public event Action<Team, MNG_Command, long> CommandAccepted;
         public event Action<Team, long> GoalScored;
 
@@ -79,6 +102,7 @@ namespace MachineLearning.Soccer.Manager
         {
             ValidateBindingsOrThrow();
             CaptureStartingState();
+            m_GlobalBallStall.Reset();
             ApplyRegularMatchSpawnJitter(0, 0);
             CaptureSnapshot();
         }
@@ -123,7 +147,10 @@ namespace MachineLearning.Soccer.Manager
             if (m_Decisions[1].SecondsSincePossessionLoss >= 0f)
                 m_Decisions[1].SecondsSincePossessionLoss += deltaTime;
             for (var i = 0; i < players.Length; i++) players[i]?.AdvanceCooldown(deltaTime);
+            UpdateGlobalBallStall(deltaTime);
             CaptureSnapshot();
+            UpdatePassBuildRules();
+            UpdateCommonRules();
         }
 
         public void Configure(
@@ -136,6 +163,7 @@ namespace MachineLearning.Soccer.Manager
             players = configuredPlayers ?? Array.Empty<MNG_PlayerAvatar>();
             ValidateBindingsOrThrow();
             CaptureStartingState();
+            m_GlobalBallStall.Reset();
             CaptureSnapshot();
         }
 
@@ -176,6 +204,16 @@ namespace MachineLearning.Soccer.Manager
                 : throw new ArgumentNullException(nameof(configuredRewardEngine));
         }
 
+        public float AwardBlockedForwardPassDecision(Team team, long decisionId)
+        {
+            return rewardEngine != null
+                ? rewardEngine.Award(
+                    team,
+                    MNG_RewardEventKind.BlockedForwardPassDecision,
+                    decisionId)
+                : 0f;
+        }
+
         public void ConfigureMatchDuration(
             float seconds,
             bool restartWhenFinished,
@@ -186,6 +224,12 @@ namespace MachineLearning.Soccer.Manager
             matchDurationSeconds = seconds;
             restartOnFinish = restartWhenFinished;
             finishMode = configuredFinishMode;
+        }
+
+        public void ConfigureSpawnSeedOffset(int offset)
+        {
+            if (offset < 0) throw new ArgumentOutOfRangeException(nameof(offset));
+            m_SpawnSeedOffset = offset;
         }
 
         public void EndActivePolicyEpisodes()
@@ -236,9 +280,9 @@ namespace MachineLearning.Soccer.Manager
 
         void ApplyAcceptedCommand(Team team, MNG_Command command, MNG_TeamDecisionState decision)
         {
-
+            var changed = decision.PreviousCommand != command;
             decision.PreviousCommand = command;
-            decision.CommandAgeSeconds = 0f;
+            if (changed) decision.CommandAgeSeconds = 0f;
             DispatchTeamPlan(team, command, decision);
             CommandAccepted?.Invoke(team, command, m_TickId);
         }
@@ -283,6 +327,7 @@ namespace MachineLearning.Soccer.Manager
 
         public void ResetMatch()
         {
+            ResetCommonRules(true);
             m_EpisodeId++;
             MatchRemainingSeconds = matchDurationSeconds;
             EpisodeElapsedSeconds = 0f;
@@ -295,6 +340,8 @@ namespace MachineLearning.Soccer.Manager
             ResetDecisionState(m_Decisions[1]);
             m_Snapshot.Possession = MNG_Possession.Neutral;
             m_Snapshot.Carrier = MNG_CarrierRef.None;
+            m_GlobalBallStall.ResetEpisode();
+            GetComponentInChildren<MNG_BallControl>()?.ConfigureNeutralPriority(EpisodeNeutralFirstTeam);
             rewardEngine?.ResetEpisode();
             ResetRound();
             CaptureSnapshot();
@@ -302,13 +349,12 @@ namespace MachineLearning.Soccer.Manager
 
         void ApplyRegularMatchSpawnJitter(long episodeId, int kickoffIndex)
         {
-            var random = new System.Random(unchecked(
-                91073 + (int)episodeId * 486187739 + kickoffIndex * 16777619));
+            var offsets = CreateSpawnOffsets(episodeId, kickoffIndex, m_SpawnSeedOffset, EvaluationMirror);
             for (var index = 0; index < m_AvatarsByIndex.Length; index++)
             {
                 var avatar = m_AvatarsByIndex[index];
                 if (avatar == null) continue;
-                var offset = MNG_SpawnJitter.Sample(random);
+                var offset = offsets[index];
                 var position = avatar.Body.position;
                 position.x = Mathf.Clamp(
                     position.x + offset.x,
@@ -328,11 +374,13 @@ namespace MachineLearning.Soccer.Manager
         public bool GoalTouched(Team scoringTeam)
         {
             if (!IsPlayActive) return false;
+            ResetCommonRules(false);
             if (scoringTeam == Team.Red) RedScore++;
             else NavyScore++;
             State = MNG_MatchState.GoalPause;
             GoalPauseRemainingSeconds = 3f;
             m_GoalId++;
+            m_GlobalBallStall.Reset();
             rewardEngine?.AwardGoal(scoringTeam, m_GoalId);
             GoalScored?.Invoke(scoringTeam, m_GoalId);
             GetComponentInChildren<MNG_BallControl>()?.ResetLedger();
@@ -348,6 +396,10 @@ namespace MachineLearning.Soccer.Manager
             m_Snapshot.EpisodeId = m_EpisodeId;
             m_Snapshot.BallPosition = new Vector2(ballBody.position.x, ballBody.position.z);
             m_Snapshot.BallVelocity = new Vector2(ballBody.linearVelocity.x, ballBody.linearVelocity.z);
+            m_Snapshot.BallStallRecoveryActive = m_GlobalBallStall.IsActive;
+            m_Snapshot.BallStallRecoverySequence = m_GlobalBallStall.Sequence;
+            m_Snapshot.BallStationarySeconds = m_GlobalBallStall.StationarySeconds;
+            m_Snapshot.GoalPauseActive = State == MNG_MatchState.GoalPause;
             m_Snapshot.EpisodeElapsedSeconds = EpisodeElapsedSeconds;
             m_Snapshot.EpisodeDurationSeconds = matchDurationSeconds;
             m_Snapshot.MatchRemainingSeconds = MatchRemainingSeconds;
@@ -359,7 +411,13 @@ namespace MachineLearning.Soccer.Manager
             for (var i = 0; i < players.Length; i++)
             {
                 var player = players[i];
-                if (player != null) m_Snapshot.SetPlayer(player.Team, player.Slot, player.CaptureState());
+                if (player != null)
+                {
+                    var state = player.CaptureState();
+                    if (useRuntimeV2)
+                        m_ExecutorsByIndex[GetIndex(player.Team, player.Slot)]?.CaptureExecution(ref state);
+                    m_Snapshot.SetPlayer(player.Team, player.Slot, state);
+                }
             }
             m_Snapshot.ValidateOrThrow();
             RefreshDecisionTargets(Team.Red);
@@ -369,8 +427,8 @@ namespace MachineLearning.Soccer.Manager
 
         void RefreshDecisionTargets(Team team)
         {
-            var targets = MNG_TacticalTargetResolver.Resolve(m_Snapshot, team);
             var decision = GetDecisionState(team);
+            var targets = MNG_TacticalTargetResolver.Resolve(m_Snapshot, team, decision);
             decision.HasPassTarget = targets.HasPassTarget;
             decision.HasShotTarget = targets.HasShotTarget;
             decision.PendingPassReceiverSlot = targets.PassReceiverSlot;
@@ -393,7 +451,9 @@ namespace MachineLearning.Soccer.Manager
         void ResetRound()
         {
             GetComponentInChildren<MNG_BallControl>()?.ResetLedger();
+            m_GlobalBallStall.Reset();
             ballBody.isKinematic = false;
+            ballBody.transform.SetPositionAndRotation(m_BallStartingPosition, m_BallStartingRotation);
             ballBody.position = m_BallStartingPosition;
             ballBody.rotation = m_BallStartingRotation;
             ballBody.linearVelocity = Vector3.zero;
@@ -402,6 +462,10 @@ namespace MachineLearning.Soccer.Manager
             {
                 var avatar = m_AvatarsByIndex[i];
                 if (avatar == null) continue;
+                // Spawn jitter writes Transform.position and SyncTransforms below.
+                // Restore rotation on both sides first, or the old Transform yaw
+                // can overwrite the Rigidbody reset and leak into observations.
+                avatar.transform.SetPositionAndRotation(m_PlayerStartingPositions[i], m_PlayerStartingRotations[i]);
                 avatar.Body.position = m_PlayerStartingPositions[i];
                 avatar.Body.rotation = m_PlayerStartingRotations[i];
                 avatar.Body.linearVelocity = Vector3.zero;
@@ -412,10 +476,20 @@ namespace MachineLearning.Soccer.Manager
             // Position variation is applied only at an initial spawn or a central
             // kickoff reset. No in-play transform correction is performed.
             ApplyRegularMatchSpawnJitter(m_EpisodeId, m_KickoffIndex);
+            GetComponent<MNG_V2Trace>()?.RecordSpawn(m_EpisodeId, m_KickoffIndex);
             m_Snapshot.Possession = MNG_Possession.Neutral;
             m_Snapshot.Carrier = MNG_CarrierRef.None;
             State = MNG_MatchState.Playing;
             GoalPauseRemainingSeconds = 0f;
+        }
+
+        void UpdateGlobalBallStall(float deltaTime)
+        {
+            if (ballBody == null) return;
+            m_GlobalBallStall.Update(
+                new Vector2(ballBody.position.x, ballBody.position.z),
+                new Vector2(ballBody.linearVelocity.x, ballBody.linearVelocity.z),
+                deltaTime);
         }
 
         void FreezeBodies()
@@ -444,6 +518,11 @@ namespace MachineLearning.Soccer.Manager
             {
                 InterruptActivePolicyEpisodes();
             }
+            else if (finishMode == MNG_MatchFinishMode.SelfPlayTerminalResult)
+            {
+                rewardEngine?.AwardSelfPlayTerminalResult(RedScore, NavyScore, m_EpisodeId);
+                EndActivePolicyEpisodes();
+            }
             else
             {
                 if (RedScore > NavyScore) rewardEngine?.AwardMatchResult(Team.Red, m_EpisodeId);
@@ -452,6 +531,29 @@ namespace MachineLearning.Soccer.Manager
             }
             m_RestartPending = restartOnFinish;
             CaptureSnapshot();
+        }
+
+        public static Vector2[] CreateSpawnOffsets(long episode, int kickoff, int seed, bool mirror)
+        {
+            var random = new System.Random(CalculateSpawnSeed(episode, kickoff, seed));
+            var original = new Vector2[8];
+            for (var i = 0; i < 8; i++) original[i] = MNG_SpawnJitter.Sample(random);
+            if (!mirror) return original;
+            var result = new Vector2[8];
+            for (var i = 0; i < 8; i++) result[i] = -original[(i + 4) % 8];
+            return result;
+        }
+
+        public static int CalculateSpawnSeed(long episodeId, int kickoffIndex, int workerIdentity)
+        {
+            if (episodeId < 0) throw new ArgumentOutOfRangeException(nameof(episodeId));
+            if (kickoffIndex < 0) throw new ArgumentOutOfRangeException(nameof(kickoffIndex));
+            if (workerIdentity < 0) throw new ArgumentOutOfRangeException(nameof(workerIdentity));
+            return unchecked(
+                91073
+                + (int)episodeId * 486187739
+                + kickoffIndex * 16777619
+                + workerIdentity * 104729);
         }
 
         void ValidateBindingsOrThrow()
@@ -481,7 +583,9 @@ namespace MachineLearning.Soccer.Manager
             var teamIndex = team == Team.Red ? 0 : 1;
             var tasks = team == Team.Red ? m_RedTaskBuffer : m_NavyTaskBuffer;
             var revision = ++m_TaskRevisions[teamIndex];
-            MNG_TeamPlanner.Plan(
+            if (useRuntimeV2) MNG_TeamPlanner.PlanV2(m_Snapshot, team, command, decision,
+                revision, EpisodeElapsedSeconds + 0.75f, tasks);
+            else MNG_TeamPlanner.Plan(
                 m_Snapshot,
                 team,
                 command,
@@ -489,8 +593,24 @@ namespace MachineLearning.Soccer.Manager
                 revision,
                 EpisodeElapsedSeconds + 0.75f,
                 tasks);
+            OverlayPassBuildRules(team, command, tasks, revision);
+            OverlayCommonRules(team, tasks, revision);
             for (var slot = 0; slot < MNG_MatchSnapshot.PlayersPerTeam; slot++)
-                m_ExecutorsByIndex[GetIndex(team, slot)]?.SetTask(tasks[slot]);
+            {
+                if (useRuntimeV2)
+                {
+                    if (!tasks[slot].CommonRule && !tasks[slot].PassBuildRule)
+                    {
+                        tasks[slot].ParentCommandId = revision * 2 + teamIndex;
+                        tasks[slot].TaskId = tasks[slot].ParentCommandId * 4 + slot;
+                    }
+                    if (!tasks[slot].CommonRule && !tasks[slot].PassBuildRule && tasks[slot].Source != MNG_ActionSource.KeeperTechnique)
+                        tasks[slot].Source = m_Managers[teamIndex] != null && m_Managers[teamIndex].isActiveAndEnabled
+                            ? MNG_ActionSource.PolicyCommand : MNG_ActionSource.RuleCommand;
+                    m_ExecutorsByIndex[GetIndex(team, slot)]?.RequestTaskV2(tasks[slot]);
+                }
+                else m_ExecutorsByIndex[GetIndex(team, slot)]?.SetTask(tasks[slot]);
+            }
         }
 
         static int GetIndex(Team team, int slot)

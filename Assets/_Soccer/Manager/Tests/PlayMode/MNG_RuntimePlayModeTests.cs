@@ -16,6 +16,8 @@ namespace MachineLearning.Soccer.Manager.Tests
         const string ScenePath = "Assets/_Soccer/Manager/Scenes/MNG_Stadium4v4.unity";
         const string AttackChoiceScenePath =
             "Assets/_Soccer/Manager/Curriculum/M1_AttackChoice/Scenes/MNG_M1_AttackChoice.unity";
+        const string RuleVsRuleScenePath =
+            "Assets/_Soccer/Manager/Curriculum/R0_RuleBaseline/Scenes/MNG_R0_RuleVsRule.unity";
         const string DefenseChoiceScenePath =
             "Assets/_Soccer/Manager/Curriculum/M2_DefenseChoice/Scenes/MNG_M2_DefenseChoice.unity";
         const string AttackMovingScenePath =
@@ -24,6 +26,12 @@ namespace MachineLearning.Soccer.Manager.Tests
             "Assets/_Soccer/Manager/Curriculum/M3_FallbackMatch/Scenes/MNG_M3_FallbackMatch60.unity";
         const string FallbackMatch300ScenePath =
             "Assets/_Soccer/Manager/Curriculum/M3_FallbackMatch/Scenes/MNG_M3_FallbackMatch300.unity";
+        const string MS0TrainScenePath =
+            "Assets/_Soccer/Manager/Curriculum/MS_ManagerSimple/Scenes/MNG_MS_Train.unity";
+        const string MS0SelfPlayScenePath =
+            "Assets/_Soccer/Manager/Curriculum/MS_ManagerSimple/Scenes/MNG_MS_SelfPlay.unity";
+        const string MS1TrainScenePath =
+            "Assets/_Soccer/Manager/Curriculum/MS_ManagerSimple/Scenes/MNG_MS1_Train.unity";
 #if UNITY_EDITOR
 #endif
 
@@ -34,11 +42,15 @@ namespace MachineLearning.Soccer.Manager.Tests
             var requiredScenes = new[]
             {
                 ScenePath,
+                RuleVsRuleScenePath,
                 AttackChoiceScenePath,
                 AttackMovingScenePath,
                 DefenseChoiceScenePath,
                 FallbackMatch60ScenePath,
-                FallbackMatch300ScenePath
+                FallbackMatch300ScenePath,
+                MS0TrainScenePath,
+                MS0SelfPlayScenePath,
+                MS1TrainScenePath
             }
                 .Where(path => originalScenes.All(scene => scene.path != path))
                 .Select(path => new EditorBuildSettingsScene(path, true));
@@ -53,13 +65,104 @@ namespace MachineLearning.Soccer.Manager.Tests
 #if UNITY_EDITOR
             EditorBuildSettings.scenes = EditorBuildSettings.scenes
                 .Where(scene => scene.path != ScenePath
+                    && scene.path != RuleVsRuleScenePath
                     && scene.path != AttackChoiceScenePath
                     && scene.path != AttackMovingScenePath
                     && scene.path != DefenseChoiceScenePath
                     && scene.path != FallbackMatch60ScenePath
-                    && scene.path != FallbackMatch300ScenePath)
+                    && scene.path != FallbackMatch300ScenePath
+                    && scene.path != MS0TrainScenePath
+                    && scene.path != MS0SelfPlayScenePath
+                    && scene.path != MS1TrainScenePath)
                 .ToArray();
 #endif
+        }
+
+        [UnityTest]
+        public IEnumerator MS1SceneUsesOneRedPolicyAndEasyR0Opponent()
+        {
+            Academy.Instance.AutomaticSteppingEnabled = false;
+            yield return SceneManager.LoadSceneAsync(MS1TrainScenePath, LoadSceneMode.Single);
+            yield return null;
+
+            var controller = Object.FindFirstObjectByType<MNG_MS1Controller>();
+            var match = Object.FindFirstObjectByType<MNG_MatchController>();
+            var managers = Object.FindObjectsByType<MNG_ManagerAgent>(
+                FindObjectsInactive.Include, FindObjectsSortMode.None);
+            var rules = Object.FindObjectsByType<MNG_RuleBasedManager>(
+                FindObjectsInactive.Include, FindObjectsSortMode.None);
+            Assert.That(controller, Is.Not.Null);
+            Assert.That(controller.OpponentProfile.Strength, Is.EqualTo(MNG_MSOpponentStrength.Easy));
+            Assert.That(controller.OpponentProfile.MovementSpeedMultiplier, Is.EqualTo(0.35f));
+            Assert.That(controller.OpponentProfile.DecisionIntervalSeconds, Is.EqualTo(1.5f));
+            Assert.That(controller.TimeScale, Is.EqualTo(MNG_MS1Controller.DefaultTimeScale));
+            Assert.That(match.ConfiguredMatchDurationSeconds, Is.EqualTo(MNG_MS1Controller.EpisodeSeconds));
+            Assert.That(match.FinishMode, Is.EqualTo(MNG_MatchFinishMode.InterruptedCollection));
+            Assert.That(managers.Count(agent => agent.isActiveAndEnabled), Is.EqualTo(1));
+            Assert.That(managers.Single(agent => agent.isActiveAndEnabled).Team, Is.EqualTo(Team.Red));
+            Assert.That(rules.Count(rule => rule.isActiveAndEnabled), Is.EqualTo(1));
+            Assert.That(rules.Single(rule => rule.isActiveAndEnabled).Team, Is.EqualTo(Team.Navy));
+            Assert.That(rules.Single(rule => rule.isActiveAndEnabled)
+                .ConfiguredDecisionIntervalSeconds, Is.EqualTo(1.5f));
+            Assert.That(Object.FindObjectsByType<MNG_PlayerMotor>(
+                    FindObjectsInactive.Exclude, FindObjectsSortMode.None)
+                .Where(motor => motor.GetComponent<MNG_PlayerAvatar>().Team == Team.Navy)
+                .All(motor => motor.SpeedMultiplier == 0.35f), Is.True);
+            foreach (var manager in managers) manager.gameObject.SetActive(false);
+        }
+
+        [UnityTest]
+        public IEnumerator MS0R0SceneUsesOneRedPolicyAndExactFullR0Opponent()
+        {
+            Academy.Instance.AutomaticSteppingEnabled = false;
+            yield return SceneManager.LoadSceneAsync(MS0TrainScenePath, LoadSceneMode.Single);
+            yield return null;
+
+            var controller = Object.FindFirstObjectByType<MNG_MSController>();
+            var match = Object.FindFirstObjectByType<MNG_MatchController>();
+            var managers = Object.FindObjectsByType<MNG_ManagerAgent>(
+                FindObjectsInactive.Include, FindObjectsSortMode.None);
+            var rules = Object.FindObjectsByType<MNG_RuleBasedManager>(
+                FindObjectsInactive.Include, FindObjectsSortMode.None);
+            Assert.That(controller.Mode, Is.EqualTo(MNG_MSMode.R0Opponent));
+            Assert.That(controller.OpponentProfile.Strength, Is.EqualTo(MNG_MSOpponentStrength.Full));
+            Assert.That(controller.OpponentProfile.MovementSpeedMultiplier, Is.EqualTo(1f));
+            Assert.That(controller.OpponentProfile.DecisionIntervalSeconds,
+                Is.EqualTo(MNG_RuleBasedManager.DecisionIntervalSeconds));
+            Assert.That(match.FinishMode, Is.EqualTo(MNG_MatchFinishMode.TerminalResult));
+            Assert.That(managers.Count(agent => agent.isActiveAndEnabled), Is.EqualTo(1));
+            Assert.That(managers.Single(agent => agent.isActiveAndEnabled).Team, Is.EqualTo(Team.Red));
+            Assert.That(rules.Count(rule => rule.isActiveAndEnabled), Is.EqualTo(1));
+            Assert.That(rules.Single(rule => rule.isActiveAndEnabled).Team, Is.EqualTo(Team.Navy));
+            Assert.That(rules.Single(rule => rule.isActiveAndEnabled)
+                .ConfiguredDecisionIntervalSeconds, Is.EqualTo(0.5f));
+            Assert.That(Object.FindObjectsByType<MNG_PlayerMotor>(
+                    FindObjectsInactive.Exclude, FindObjectsSortMode.None)
+                .All(motor => motor.SpeedMultiplier == 1f), Is.True);
+            foreach (var manager in managers) manager.gameObject.SetActive(false);
+        }
+
+        [UnityTest]
+        public IEnumerator MS0SelfPlaySceneUsesOnePolicyPerTeamAndSelfPlayTerminalMode()
+        {
+            Academy.Instance.AutomaticSteppingEnabled = false;
+            yield return SceneManager.LoadSceneAsync(MS0SelfPlayScenePath, LoadSceneMode.Single);
+            yield return null;
+
+            var controller = Object.FindFirstObjectByType<MNG_MSController>();
+            var match = Object.FindFirstObjectByType<MNG_MatchController>();
+            var managers = Object.FindObjectsByType<MNG_ManagerAgent>(
+                    FindObjectsInactive.Exclude, FindObjectsSortMode.None)
+                .Where(manager => manager.isActiveAndEnabled)
+                .ToArray();
+            var rules = Object.FindObjectsByType<MNG_RuleBasedManager>(
+                FindObjectsInactive.Include, FindObjectsSortMode.None);
+            Assert.That(controller.Mode, Is.EqualTo(MNG_MSMode.SelfPlay));
+            Assert.That(match.FinishMode, Is.EqualTo(MNG_MatchFinishMode.SelfPlayTerminalResult));
+            Assert.That(managers, Has.Length.EqualTo(2));
+            Assert.That(managers.Select(manager => manager.Team).Distinct().Count(), Is.EqualTo(2));
+            Assert.That(rules.All(rule => !rule.enabled), Is.True);
+            foreach (var manager in managers) manager.gameObject.SetActive(false);
         }
 
         [TearDown]
@@ -67,6 +170,196 @@ namespace MachineLearning.Soccer.Manager.Tests
         {
             if (Academy.IsInitialized)
                 Academy.Instance.AutomaticSteppingEnabled = true;
+        }
+
+        [UnityTest]
+        public IEnumerator R0SceneUsesOnlyTwoNonNeuralRuleManagers()
+        {
+            yield return SceneManager.LoadSceneAsync(RuleVsRuleScenePath, LoadSceneMode.Single);
+            yield return null;
+
+            var rules = Object.FindObjectsByType<MNG_RuleBasedManager>(
+                FindObjectsInactive.Include, FindObjectsSortMode.None);
+            var fallbacks = Object.FindObjectsByType<MNG_FallbackManager>(
+                FindObjectsInactive.Include, FindObjectsSortMode.None);
+            var policyAgents = Object.FindObjectsByType<Agent>(
+                FindObjectsInactive.Include, FindObjectsSortMode.None);
+            var human = Object.FindFirstObjectByType<MNG_HumanInput>(FindObjectsInactive.Include);
+            var monitor = Object.FindFirstObjectByType<MNG_R0RuleMatchMonitor>();
+            var tactics = Object.FindFirstObjectByType<MNG_TacticalRewardTracker>();
+
+            Assert.That(rules, Has.Length.EqualTo(2));
+            Assert.That(rules.All(manager => manager.isActiveAndEnabled), Is.True);
+            Assert.That(rules.Select(manager => manager.Team).Distinct().Count(), Is.EqualTo(2));
+            Assert.That(rules.All(manager => manager.GetComponent<Agent>() == null
+                && manager.GetComponent<Unity.MLAgents.Policies.BehaviorParameters>() == null
+                && manager.GetComponent<Unity.MLAgents.DecisionRequester>() == null), Is.True);
+            Assert.That(fallbacks.All(fallback => !fallback.enabled), Is.True);
+            Assert.That(policyAgents.All(agent => !agent.gameObject.activeInHierarchy), Is.True);
+            Assert.That(human.enabled, Is.False);
+            Assert.That(monitor, Is.Not.Null);
+            Assert.That(tactics, Is.Not.Null);
+
+            for (var step = 0; step < 30; step++) yield return new WaitForFixedUpdate();
+            Assert.That(rules.All(manager => manager.DecisionCount > 0), Is.True);
+            Assert.That(rules.All(manager => !string.IsNullOrEmpty(manager.LastDecision.Reason)), Is.True);
+            Assert.That(monitor.TotalAcceptedCommands, Is.GreaterThan(0));
+        }
+
+        [UnityTest, Timeout(120000)]
+        public IEnumerator R0RuleManagersCompleteThreeFullThreeHundredSecondMatches()
+        {
+            yield return SceneManager.LoadSceneAsync(RuleVsRuleScenePath, LoadSceneMode.Single);
+            yield return null;
+
+            var match = Object.FindFirstObjectByType<MNG_MatchController>();
+            var monitor = Object.FindFirstObjectByType<MNG_R0RuleMatchMonitor>();
+            var tactics = Object.FindFirstObjectByType<MNG_TacticalRewardTracker>();
+            var ball = Object.FindFirstObjectByType<MNG_BallControl>().GetComponent<Rigidbody>();
+            var rules = Object.FindObjectsByType<MNG_RuleBasedManager>(
+                FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+
+#if UNITY_EDITOR
+            var serializedMatch = new SerializedObject(match);
+            serializedMatch.FindProperty("restartOnFinish").boolValue = false;
+            serializedMatch.ApplyModifiedPropertiesWithoutUndo();
+#endif
+
+            var originalTimeScale = Time.timeScale;
+            const int matchCount = 3;
+            var totalSteps = 0;
+            var totalRedScore = 0;
+            var totalNavyScore = 0;
+            var maximumBallDistance = 0f;
+            var possessionTransitions = 0;
+            var minimumFieldTeammateDistance = float.PositiveInfinity;
+            var bunchedFieldSamples = 0;
+            var fieldSpacingSamples = 0;
+            var defensiveCarrierVelocitySamples = 0;
+            var carrierVelocitySamples = 0;
+            var bunchRun = new int[2];
+            try
+            {
+                Time.timeScale = 20f;
+                for (var matchIndex = 0; matchIndex < matchCount; matchIndex++)
+                {
+                    match.ResetMatch();
+                    var matchSteps = 0;
+                    var previousPossession = match.Snapshot.Possession;
+                    while (match.State != MNG_MatchState.Finished && matchSteps < 15100)
+                    {
+                        yield return new WaitForFixedUpdate();
+                        matchSteps++;
+                        totalSteps++;
+                        var snapshot = match.Snapshot;
+                        AssertFinite(ball.position, "R0 ball position");
+                        AssertFinite(ball.linearVelocity, "R0 ball velocity");
+                        maximumBallDistance = Mathf.Max(maximumBallDistance,
+                            new Vector2(ball.position.x, ball.position.z).magnitude);
+                        foreach (var team in new[] { Team.Red, Team.Navy })
+                        {
+                            var sampleMinimum = float.PositiveInfinity;
+                            for (var first = 1; first < MNG_MatchSnapshot.PlayersPerTeam; first++)
+                            for (var second = first + 1; second < MNG_MatchSnapshot.PlayersPerTeam; second++)
+                            {
+                                var firstPlayer = snapshot.GetPlayer(team, first);
+                                var secondPlayer = snapshot.GetPlayer(team, second);
+                                if (!firstPlayer.Active || !secondPlayer.Active) continue;
+                                sampleMinimum = Mathf.Min(
+                                    sampleMinimum,
+                                    Vector2.Distance(firstPlayer.Position, secondPlayer.Position));
+                            }
+
+                            if (!float.IsPositiveInfinity(sampleMinimum))
+                            {
+                                minimumFieldTeammateDistance = Mathf.Min(
+                                    minimumFieldTeammateDistance,
+                                    sampleMinimum);
+                                fieldSpacingSamples++;
+                                if (sampleMinimum < 3f) bunchedFieldSamples++;
+                                bunchRun[(int)team] = sampleMinimum < 3f ? bunchRun[(int)team] + 1 : 0;
+                                if (bunchRun[(int)team] > 25 && bunchRun[(int)team] % 25 == 0)
+                                {
+                                    var trace = $"R0 BUNCH team={team} seconds={match.EpisodeElapsedSeconds:F2} length={bunchRun[(int)team]} ball={snapshot.BallPosition:F2} stall={snapshot.BallStallRecoveryActive}";
+                                    for (var slot=1; slot<4; slot++)
+                                    {
+                                        var a=match.GetPlayerAvatar(team,slot);
+                                        trace += $" slot{slot}:pos={a.Body.position:F2},vel={a.Body.linearVelocity:F2},desired={a.GetComponent<MNG_PlayerMotor>().LastDesiredVelocity:F2},skill={a.GetComponent<MNG_PlayerSkillExecutor>().CurrentTask.Skill}";
+                                    }
+                                    Debug.Log(trace);
+                                }
+                            }
+                        }
+
+                        if (snapshot.Carrier.IsValid)
+                        {
+                            var attackSign = snapshot.Carrier.Team == Team.Red ? 1f : -1f;
+                            carrierVelocitySamples++;
+                            if (snapshot.BallVelocity.x * attackSign < -0.75f)
+                                defensiveCarrierVelocitySamples++;
+                        }
+                        if (snapshot.Possession != previousPossession)
+                        {
+                            possessionTransitions++;
+                            previousPossession = snapshot.Possession;
+                        }
+                    }
+
+                    Assert.That(match.State, Is.EqualTo(MNG_MatchState.Finished));
+                    Assert.That(matchSteps, Is.InRange(14990, 15010));
+                    totalRedScore += match.RedScore;
+                    totalNavyScore += match.NavyScore;
+                }
+            }
+            finally
+            {
+                Time.timeScale = originalTimeScale;
+            }
+
+            var distinctCommands = 0;
+            for (var command = 0; command < MNG_CommandMask.CommandCount; command++)
+            {
+                if (monitor.GetCommandCount(Team.Red, (MNG_Command)command)
+                    + monitor.GetCommandCount(Team.Navy, (MNG_Command)command) > 0)
+                    distinctCommands++;
+            }
+
+            Debug.Log($"MNG R0 RULE 3X300S RESULT matches={matchCount} steps={totalSteps} "
+                + $"score={totalRedScore}:{totalNavyScore} "
+                + $"commands={monitor.TotalAcceptedCommands} distinctCommands={distinctCommands} "
+                + $"possessionTransitions={possessionTransitions} maxBallDistance={maximumBallDistance:R} "
+                + $"minFieldTeammateDistance={minimumFieldTeammateDistance:R} "
+                + $"bunchedFieldSamples={bunchedFieldSamples}/{fieldSpacingSamples} "
+                + $"defensiveCarrierVelocitySamples={defensiveCarrierVelocitySamples}/{carrierVelocitySamples} "
+                + $"passStrikes={tactics.PassStrikeCount} completedPasses={tactics.CompletedPassCount} "
+                + $"shotStrikes={tactics.ShotStrikeCount} validShots={tactics.ValidShotCount} "
+                + $"advanceRewards={tactics.AdvanceRewardCount} "
+                + $"red=[{monitor.GetCommandSummary(Team.Red)}] "
+                + $"navy=[{monitor.GetCommandSummary(Team.Navy)}]");
+            Assert.That(rules.All(manager => manager.DecisionCount > 0), Is.True);
+            Assert.That(monitor.TotalAcceptedCommands, Is.GreaterThan(3000));
+            Assert.That(distinctCommands, Is.EqualTo(MNG_CommandMask.CommandCount));
+            Assert.That(monitor.GetCommandCount(Team.Red, MNG_Command.AdvanceCarry)
+                + monitor.GetCommandCount(Team.Navy, MNG_Command.AdvanceCarry), Is.GreaterThan(0));
+            Assert.That(monitor.GetCommandCount(Team.Red, MNG_Command.PassBuild)
+                + monitor.GetCommandCount(Team.Navy, MNG_Command.PassBuild), Is.GreaterThan(0));
+            Assert.That(monitor.GetCommandCount(Team.Red, MNG_Command.AttemptShot)
+                + monitor.GetCommandCount(Team.Navy, MNG_Command.AttemptShot), Is.GreaterThan(0));
+            Assert.That(possessionTransitions, Is.GreaterThan(0));
+            Assert.That(maximumBallDistance, Is.GreaterThan(5f));
+            Assert.That(totalRedScore + totalNavyScore, Is.GreaterThan(0));
+            Assert.That(tactics.PassStrikeCount, Is.GreaterThan(0));
+            Assert.That(tactics.ShotStrikeCount, Is.GreaterThan(0));
+            Assert.That(tactics.ValidShotCount, Is.GreaterThan(0));
+            Assert.That(tactics.AdvanceRewardCount, Is.GreaterThan(0));
+            Assert.That(fieldSpacingSamples, Is.GreaterThan(0));
+            Assert.That(
+                bunchedFieldSamples / (float)fieldSpacingSamples,
+                Is.LessThan(0.01f));
+            Assert.That(carrierVelocitySamples, Is.GreaterThan(0));
+            Assert.That(
+                defensiveCarrierVelocitySamples / (float)carrierVelocitySamples,
+                Is.LessThan(0.25f));
         }
 
         [UnityTest]
@@ -455,7 +748,7 @@ namespace MachineLearning.Soccer.Manager.Tests
                          FindObjectsInactive.Exclude, FindObjectsSortMode.None))
                 Assert.That(fallback.LastDecision.Reason, Is.Not.Null.And.Not.Empty);
             Assert.That(Object.FindFirstObjectByType<MNG_BallControl>().GetComponent<Rigidbody>().mass,
-                Is.EqualTo(4.5f).Within(0.0001f));
+                Is.EqualTo(3f).Within(0.0001f));
             Assert.DoesNotThrow(() => match.GoalTouched(Team.Red));
             Assert.That(match.RedScore, Is.EqualTo(1));
             Assert.That(match.State, Is.EqualTo(MNG_MatchState.GoalPause));
@@ -555,6 +848,139 @@ namespace MachineLearning.Soccer.Manager.Tests
         }
 
         [UnityTest]
+        public IEnumerator StationarySideWallBallTriggersRetreatAndPhysicalEscape()
+        {
+            yield return SceneManager.LoadSceneAsync(ScenePath, LoadSceneMode.Single);
+            yield return null;
+
+            var match = Object.FindFirstObjectByType<MNG_MatchController>();
+            var ballControl = Object.FindFirstObjectByType<MNG_BallControl>();
+            var ball = ballControl.GetComponent<Rigidbody>();
+            var avatars = Object.FindObjectsByType<MNG_PlayerAvatar>(
+                FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            foreach (var fallback in Object.FindObjectsByType<MNG_FallbackManager>(
+                         FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                fallback.enabled = false;
+
+            var rescuer = avatars.Single(
+                avatar => avatar.Team == Team.Red && avatar.Slot == 3);
+            foreach (var avatar in avatars.Where(avatar => avatar != rescuer))
+                SetPlayerPose(
+                    avatar,
+                    new Vector3(
+                        avatar.Team == Team.Red ? -25f : 25f,
+                        0.52f,
+                        avatar.Slot * 4f - 8f),
+                    avatar.Team == Team.Red ? Vector3.right : Vector3.left);
+
+            var start = new Vector2(
+                0f,
+                match.Snapshot.FieldHalfWidth - MNG_BallControl.BoundaryProximity + 0.25f);
+            SetPlayerPose(
+                rescuer,
+                new Vector3(-3f, 0.52f, match.Snapshot.FieldHalfWidth - 2f),
+                Vector3.right);
+            ball.position = new Vector3(start.x, ball.position.y, start.y);
+            ball.linearVelocity = Vector3.zero;
+            ball.angularVelocity = Vector3.zero;
+            Physics.SyncTransforms();
+            rescuer.GetComponent<MNG_PlayerSkillExecutor>().SetTask(new MNG_PlayerTask
+            {
+                Skill = MNG_PlayerSkill.MoveTo,
+                Target = new Vector2(rescuer.Body.position.x, rescuer.Body.position.z),
+                Revision = 11000,
+                ExpirySeconds = match.EpisodeElapsedSeconds + 12f
+            });
+
+            var retreatObserved = false;
+            var escaped = false;
+            for (var step = 0; step < 500; step++)
+            {
+                yield return new WaitForFixedUpdate();
+                if (ballControl.TryGetBoundaryEscapePlan(
+                        Team.Red,
+                        rescuer.Slot,
+                        out var retreating,
+                        out _)
+                    && retreating)
+                    retreatObserved = true;
+
+                var current = new Vector2(ball.position.x, ball.position.z);
+                if (Vector2.Distance(current, start)
+                    < MNG_BallControl.BoundaryReleaseDistance)
+                    continue;
+                escaped = true;
+                break;
+            }
+
+            var finalPosition = new Vector2(ball.position.x, ball.position.z);
+            Assert.That(ballControl.BoundaryEscapeActivationCount, Is.GreaterThanOrEqualTo(1));
+            Assert.That(retreatObserved, Is.True,
+                "The selected player must create room before approaching the kick plate angle.");
+            Assert.That(escaped, Is.True,
+                "A stationary wall ball must be moved out by a physical kick-plate strike.");
+            Assert.That(finalPosition.y, Is.LessThan(start.y - 0.5f),
+                "The side-wall escape must move the ball back into playable space.");
+        }
+
+        [UnityTest]
+        public IEnumerator NearbyFieldTeammatesDeterministicallySeparateInPhysicalPlay()
+        {
+            yield return SceneManager.LoadSceneAsync(ScenePath, LoadSceneMode.Single);
+            yield return null;
+
+            var match = Object.FindFirstObjectByType<MNG_MatchController>();
+            var avatars = Object.FindObjectsByType<MNG_PlayerAvatar>(
+                FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            foreach (var fallback in Object.FindObjectsByType<MNG_FallbackManager>(
+                         FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                fallback.enabled = false;
+
+            var first = avatars.Single(
+                avatar => avatar.Team == Team.Red && avatar.Slot == 1);
+            var second = avatars.Single(
+                avatar => avatar.Team == Team.Red && avatar.Slot == 2);
+            foreach (var avatar in avatars.Where(
+                         avatar => avatar != first && avatar != second))
+            {
+                SetPlayerPose(
+                    avatar,
+                    new Vector3(
+                        avatar.Team == Team.Red ? -35f : 30f,
+                        0.52f,
+                        avatar.Slot * 7f - 12f),
+                    avatar.Team == Team.Red ? Vector3.right : Vector3.left);
+            }
+
+            SetPlayerPose(first, new Vector3(-10f, 0.52f, -1.25f), Vector3.right);
+            SetPlayerPose(second, new Vector3(-10f, 0.52f, 1.25f), Vector3.right);
+            foreach (var avatar in new[] { first, second })
+            {
+                avatar.GetComponent<MNG_PlayerSkillExecutor>().SetTask(new MNG_PlayerTask
+                {
+                    Skill = MNG_PlayerSkill.SupportRun,
+                    Target = new Vector2(-5f, 0f),
+                    Revision = 12000,
+                    ExpirySeconds = match.EpisodeElapsedSeconds + 5f
+                });
+            }
+
+            yield return new WaitForFixedUpdate();
+            var secondDesired = second.GetComponent<MNG_PlayerMotor>().LastDesiredVelocity;
+            Assert.That(secondDesired.y, Is.GreaterThan(0.25f),
+                "The higher-slot equal-priority player should be the sole deterministic yielder.");
+
+            for (var step = 0; step < 50; step++)
+                yield return new WaitForFixedUpdate();
+
+            var separation = Vector2.Distance(
+                new Vector2(first.Body.position.x, first.Body.position.z),
+                new Vector2(second.Body.position.x, second.Body.position.z));
+            Assert.That(separation, Is.GreaterThan(3.5f),
+                "Emergency spacing must move nearby field teammates outside the 3m bunching gate.");
+        }
+
+        [UnityTest]
         public IEnumerator SpectatorCameraRestoresBroadcastAndHumanFollowViews()
         {
             yield return SceneManager.LoadSceneAsync(ScenePath, LoadSceneMode.Single);
@@ -614,6 +1040,85 @@ namespace MachineLearning.Soccer.Manager.Tests
             for (var step = 0; step < 30; step++) yield return new WaitForFixedUpdate();
             Assert.That(match.SpawnPlacementRevision, Is.EqualTo(kickoffPlacement),
                 "Play after the kickoff must not receive another artificial position change.");
+        }
+
+        [UnityTest, Timeout(30000)]
+        public IEnumerator GlobalBallStallRecoveryMobilizesMultiplePlayersOnBothTeams()
+        {
+            yield return SceneManager.LoadSceneAsync(RuleVsRuleScenePath, LoadSceneMode.Single);
+            yield return null;
+
+            var match = Object.FindFirstObjectByType<MNG_MatchController>();
+            var ballControl = Object.FindFirstObjectByType<MNG_BallControl>();
+            var ball = ballControl.GetComponent<Rigidbody>();
+            var originalTimeScale = Time.timeScale;
+            var originalConstraints = ball.constraints;
+            var stallPoint = Vector3.up * ball.position.y;
+            try
+            {
+                Time.timeScale = 20f;
+                ball.constraints = RigidbodyConstraints.FreezeAll;
+                for (var step = 0; step < 85; step++)
+                {
+                    ball.position = stallPoint;
+                    ball.linearVelocity = Vector3.zero;
+                    ball.angularVelocity = Vector3.zero;
+                    yield return new WaitForFixedUpdate();
+                }
+
+                Assert.That(match.Snapshot.BallStallRecoveryActive, Is.True,
+                    "A stationary ball must trigger recovery regardless of possession.");
+                Assert.That(match.GlobalBallStallRecoveryActivations, Is.GreaterThan(0));
+
+                for (var step = 0; step < 35; step++)
+                {
+                    ball.position = stallPoint;
+                    ball.linearVelocity = Vector3.zero;
+                    yield return new WaitForFixedUpdate();
+                }
+
+                foreach (var team in new[] { Team.Red, Team.Navy })
+                {
+                    var activeTasks = 0;
+                    var movingPlayers = 0;
+                    var safeShotTasks = 0;
+                    var distinctTargets = new System.Collections.Generic.HashSet<Vector2>();
+                    for (var slot = 1; slot < MNG_MatchSnapshot.PlayersPerTeam; slot++)
+                    {
+                        var avatar = match.GetPlayerAvatar(team, slot);
+                        var executor = avatar.GetComponent<MNG_PlayerSkillExecutor>();
+                        var motor = avatar.GetComponent<MNG_PlayerMotor>();
+                        if (executor.CurrentTask.Skill != MNG_PlayerSkill.None) activeTasks++;
+                        if (executor.CurrentTask.Skill == MNG_PlayerSkill.AimShot
+                            && MNG_TeamPlanner.IsSafeStallShotDirection(
+                                match.Snapshot, team, executor.CurrentTask.Target))
+                            safeShotTasks++;
+                        if (motor.LastDesiredVelocity.sqrMagnitude > 0.25f) movingPlayers++;
+                        distinctTargets.Add(executor.CurrentTask.Target);
+                    }
+                    Assert.That(activeTasks, Is.EqualTo(3),
+                        $"All {team} field players must receive an active recovery task.");
+                    Assert.That(safeShotTasks, Is.EqualTo(1),
+                        $"{team} must try one opponent-goal-safe kick before the stall fallback.");
+                    Assert.That(movingPlayers, Is.GreaterThanOrEqualTo(2),
+                        $"At least two {team} field players must physically reposition during a stall.");
+                    Assert.That(distinctTargets.Count, Is.GreaterThanOrEqualTo(2),
+                        $"{team} recovery players must not all follow the same path.");
+                }
+
+                ball.constraints = originalConstraints;
+                ball.position = stallPoint + Vector3.right
+                    * (MNG_GlobalBallStallTracker.ReleaseDistance + 0.5f);
+                ball.linearVelocity = Vector3.right * MNG_GlobalBallStallTracker.ReleaseSpeed;
+                yield return new WaitForFixedUpdate();
+                Assert.That(match.Snapshot.BallStallRecoveryActive, Is.False,
+                    "The override must release once the ball is moving again.");
+            }
+            finally
+            {
+                ball.constraints = originalConstraints;
+                Time.timeScale = originalTimeScale;
+            }
         }
 
         [UnityTest, Timeout(60000)]
@@ -957,6 +1462,7 @@ namespace MachineLearning.Soccer.Manager.Tests
             yield return null;
 
             var match = Object.FindFirstObjectByType<MNG_MatchController>();
+            match.ConfigureCommonRules(false,false); // Preserve the legacy technical release contract.
             var ballControl = Object.FindFirstObjectByType<MNG_BallControl>();
             var ball = ballControl.GetComponent<Rigidbody>();
             var avatars = Object.FindObjectsByType<MNG_PlayerAvatar>(

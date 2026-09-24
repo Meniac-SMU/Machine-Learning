@@ -12,8 +12,41 @@ namespace MachineLearning.Soccer.Manager
     {
         public const int ObservationSize = 133;
         const float PlayerSpeedScale = 9f;
-        const float BallSpeedScale = 30f;
+        public const float BallSpeedScale = MNG_KickSolver.MaximumBallSpeed;
         const float MatchDurationSeconds = 300f;
+
+        public static int WriteV2(MNG_MatchSnapshot snapshot, Team perspective,
+            MNG_TeamDecisionState decision, float[] destination, float[] legacyScratch)
+        {
+            if (destination == null || destination.Length != MNG_RuntimeV2.ObservationSize)
+                throw new ArgumentException("V2 observations require exactly 244 floats.", nameof(destination));
+            Write(snapshot, perspective, decision, legacyScratch);
+            Array.Copy(legacyScratch, destination, ObservationSize);
+            var index = ObservationSize;
+            for (var slot = 0; slot < MNG_MatchSnapshot.PlayersPerTeam; slot++)
+            {
+                var player = snapshot.GetPlayer(perspective, slot);
+                if (!player.Active)
+                {
+                    for (var i = 0; i < 27; i++) destination[index++] = 0f;
+                    continue;
+                }
+                WriteOneHot((int)player.ExecutingSkill, 13, destination, ref index);
+                WriteOneHot((int)player.ExecutingPhase, 5, destination, ref index);
+                destination[index++] = Mathf.Clamp01(player.TaskRemainingSeconds / MNG_RuntimeV2.TaskTimeScale);
+                destination[index++] = Mathf.Clamp01(player.CommitmentRemainingSeconds / MNG_RuntimeV2.CommitmentWatchdogSeconds);
+                WriteOneHot(player.ExecutingReceiverIndex, 5, destination, ref index);
+                WritePlanar(player.ExecutingTarget, perspective, snapshot.FieldHalfLength,
+                    snapshot.FieldHalfWidth, destination, ref index);
+            }
+            destination[index++] = snapshot.BallStallRecoveryActive ? 1f : 0f;
+            destination[index++] = Mathf.Clamp01(snapshot.BallStationarySeconds / MNG_RuntimeV2.StallTimeScale);
+            destination[index++] = snapshot.GoalPauseActive ? 1f : 0f;
+            if (index != MNG_RuntimeV2.ObservationSize) throw new InvalidOperationException("V2 observation count mismatch.");
+            for (var i = 0; i < index; i++)
+                if (!MNG_MatchSnapshot.IsFinite(destination[i])) throw new InvalidOperationException("Nonfinite v2 observation.");
+            return index;
+        }
 
         public static int Write(
             MNG_MatchSnapshot snapshot,

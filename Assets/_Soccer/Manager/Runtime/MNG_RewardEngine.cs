@@ -14,6 +14,9 @@ namespace MachineLearning.Soccer.Manager
         readonly MNG_EventLedger[] m_Ledgers = { new MNG_EventLedger(), new MNG_EventLedger() };
         readonly MNG_ManagerAgent[] m_Managers = new MNG_ManagerAgent[2];
         readonly float[] m_CumulativeRewards = new float[2];
+        public long GetRawCount(Team team, MNG_RewardEventKind kind) => m_Ledgers[team == Team.Red ? 0 : 1].RawCount(kind);
+        public long GetRewardedCount(Team team, MNG_RewardEventKind kind) => m_Ledgers[team == Team.Red ? 0 : 1].RewardedCount(kind);
+        public long GetCappedCount(Team team, MNG_RewardEventKind kind) => m_Ledgers[team == Team.Red ? 0 : 1].CappedCount(kind);
 
         public float GetCumulativeReward(Team team)
             => m_CumulativeRewards[team == Team.Red ? 0 : 1];
@@ -63,6 +66,30 @@ namespace MachineLearning.Soccer.Manager
         {
             Award(winner, MNG_RewardEventKind.MatchWin, matchId);
             Award(Opponent(winner), MNG_RewardEventKind.MatchLoss, matchId);
+        }
+
+        public void AwardSelfPlayTerminalResult(int redScore, int navyScore, long matchId)
+        {
+            GetSelfPlayTerminalRewards(redScore, navyScore, out var redReward, out var navyReward);
+            if (redScore > navyScore) AwardMatchResult(Team.Red, matchId);
+            else if (navyScore > redScore) AwardMatchResult(Team.Navy, matchId);
+
+            if (m_Managers[0] != null && m_Managers[0].isActiveAndEnabled)
+                m_Managers[0].SetReward(redReward);
+            if (m_Managers[1] != null && m_Managers[1].isActiveAndEnabled)
+                m_Managers[1].SetReward(navyReward);
+        }
+
+        public static void GetSelfPlayTerminalRewards(
+            int redScore,
+            int navyScore,
+            out float redReward,
+            out float navyReward)
+        {
+            if (redScore < 0) throw new ArgumentOutOfRangeException(nameof(redScore));
+            if (navyScore < 0) throw new ArgumentOutOfRangeException(nameof(navyScore));
+            redReward = redScore > navyScore ? 0.5f : redScore < navyScore ? -0.5f : 0f;
+            navyReward = -redReward;
         }
 
         public void ResetEpisode()

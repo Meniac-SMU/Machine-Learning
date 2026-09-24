@@ -1,0 +1,29 @@
+# Final six-command fine-tune from the successful pass bootstrap. The Pass
+# fixture remains oversampled, but the training-only priority mask is removed.
+behaviors:
+  MNG_Manager:
+    trainer_type: ppo
+    init_path: results/MNG_MS1-20260920-r004/MNG_Manager/MNG_Manager-80039.pt
+    hyperparameters:
+      batch_size: 256
+      buffer_size: 4096
+      learning_rate: 0.0001
+      beta: 0.01
+      epsilon: 0.2
+      lambd: 0.95
+      num_epoch: 3
+      learning_rate_schedule: linear
+    network_settings:
+      normalize: false
+      hidden_units: 128
+      num_layers: 2
+    reward_signals:
+      extrinsic:
+        gamma: 0.995
+        strength: 1.0
+    max_steps: 60000
+    time_horizon: 128
+    summary_freq: 1000
+    checkpoint_interval: 30000
+    keep_checkpoints: 3
+    threaded: false

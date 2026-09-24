@@ -2,10 +2,13 @@
 
 `Assets/_Soccer`는 현재 Soccer 4v4의 유일한 활성 Root다. 공통 Runtime, 다섯 작업공간, Scene·Prefab·UI·Editor Builder와 Test를 함께 보관한다.
 
+현행 개발 중심은 [MNG 감독](Manager/MNG_README.md)이며 기존 Core·팀·Curriculum도 보존한다. 최신 상태는 [현재 상태](../../docs/soccer/current-status.md)를 먼저 읽는다.
+
 ## 폴더 안내
 
 | 폴더 | 책임 |
 | --- | --- |
+| `Manager` | 현행 MS v3 감독 RL·공유 선수 기술 |
 | `Core` | 공통 Runtime과 Base 환경 |
 | `Teams/Attack_KMW` | Attack 학습 |
 | `Teams/Defense_PJH` | Defense 학습 |

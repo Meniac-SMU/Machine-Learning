@@ -20,11 +20,12 @@ namespace MachineLearning.Soccer.Manager
                 MNG_RewardEventKind.MatchWin => 0.5f,
                 MNG_RewardEventKind.MatchLoss => -0.5f,
                 MNG_RewardEventKind.ValidShot => 0.02f,
-                MNG_RewardEventKind.CompletedPass => 0.02f,
+                MNG_RewardEventKind.CompletedPass => 0.06f,
                 MNG_RewardEventKind.AdvancedFiveMeters => 0.01f,
                 MNG_RewardEventKind.Recovery => 0.03f,
                 MNG_RewardEventKind.FastRecovery => 0.02f,
                 MNG_RewardEventKind.Crowding => -0.002f,
+                MNG_RewardEventKind.BlockedForwardPassDecision => 0.01f,
                 _ => throw new ArgumentOutOfRangeException(nameof(kind))
             };
             return baseValue * GetMultiplier(kind);
@@ -40,6 +41,7 @@ namespace MachineLearning.Soccer.Manager
                 MNG_RewardEventKind.Recovery => 0.12f,
                 MNG_RewardEventKind.FastRecovery => 0.06f,
                 MNG_RewardEventKind.Crowding => 0.04f,
+                MNG_RewardEventKind.BlockedForwardPassDecision => 0.01f,
                 _ => float.PositiveInfinity
             };
         }

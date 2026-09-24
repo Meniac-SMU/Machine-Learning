@@ -3,15 +3,43 @@ using UnityEngine;
 
 namespace MachineLearning.Soccer.Manager
 {
+    public enum MNG_KickIntent
+    {
+        Unspecified = 0,
+        Pass = 1,
+        Shot = 2
+    }
+
     public readonly struct MNG_KickRequest
     {
         public readonly Vector3 Target;
         public readonly float ExitSpeed;
+        public readonly MNG_KickIntent Intent;
+        public readonly long TaskId;
+        public readonly long ParentCommandId;
+        public readonly int IntendedReceiverSlot;
+        public readonly MNG_ActionSource Source;
+        public readonly bool CommonRule;
+        public readonly bool PassBuildRule;
 
         public MNG_KickRequest(Vector3 target, float exitSpeed)
+            : this(target, exitSpeed, MNG_KickIntent.Unspecified)
+        {
+        }
+
+        public MNG_KickRequest(Vector3 target, float exitSpeed, MNG_KickIntent intent,
+            long taskId = 0, long parentCommandId = 0, int intendedReceiverSlot = -1,
+            MNG_ActionSource source = MNG_ActionSource.PolicyCommand, bool commonRule = false, bool passBuildRule = false)
         {
             Target = target;
             ExitSpeed = exitSpeed;
+            Intent = intent;
+            TaskId = taskId;
+            ParentCommandId = parentCommandId;
+            IntendedReceiverSlot = intendedReceiverSlot;
+            Source = source;
+            CommonRule = commonRule;
+            PassBuildRule = passBuildRule;
         }
     }
 
@@ -57,6 +85,8 @@ namespace MachineLearning.Soccer.Manager
         public Vector3 ExtendedLocalPosition => extendedLocalPosition;
         public float ExtensionSeconds => extensionSeconds;
         public float RetractionSeconds => retractionSeconds;
+        public float CommitmentRemainingSeconds => IsStrikeActive ? Mathf.Max(0f, extensionSeconds - m_StateElapsed) : 0f;
+        public float CommitmentElapsedSeconds => IsStrikeActive ? m_StateElapsed : 0f;
         public Vector3 DribblePosition => ParentTransform.TransformPoint(
             retractedLocalPosition + dribbleAnchorLocalPosition);
 
@@ -116,13 +146,19 @@ namespace MachineLearning.Soccer.Manager
             ResetPlate();
         }
 
-        public bool TryArmKick(Vector3 target, float exitSpeed)
+        public bool TryArmKick(
+            Vector3 target,
+            float exitSpeed,
+            MNG_KickIntent intent = MNG_KickIntent.Unspecified,
+            MNG_PlayerTask task = default)
         {
             if (!CanKick || !IsFinite(target)
                 || !MNG_MatchSnapshot.IsFinite(exitSpeed) || exitSpeed <= 0f)
                 return false;
 
-            m_PendingKick = new MNG_KickRequest(target, exitSpeed);
+            m_PendingKick = new MNG_KickRequest(target, exitSpeed, intent,
+                task.TaskId, task.ParentCommandId,
+                intent == MNG_KickIntent.Pass && task.TaskId > 0 ? task.ReceiverSlot : -1, task.Source, task.CommonRule, task.PassBuildRule);
             m_StrikeConsumed = false;
             SetState(PlateState.Extending);
             return true;

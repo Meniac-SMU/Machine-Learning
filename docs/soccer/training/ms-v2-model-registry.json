@@ -1,0 +1,249 @@
+{
+  "schema": "MNG-model-registry-v2",
+  "defaultCandidate": "results/MNG_MS3V2-20260922-r005/MNG_ManagerV2/MNG_ManagerV2-402389.onnx",
+  "entries": [
+    {
+      "path": "results/MNG_MS3-20260921-r001/MNG_Manager.onnx",
+      "sha256": "88bb5d899622d6c6e8efa470f71c78556b4a4b2fa09fcfcc731793795b2224be",
+      "status": "retired-architecture-v1",
+      "reason": "2026-09-22 observation/task/P1 architecture rebuild",
+      "retiredOn": "2026-09-22"
+    },
+    {
+      "path": "results/MNG_MS3-20260921-r001/MNG_Manager/checkpoint.pt",
+      "sha256": "dfdb9921edfbfda171dcb04ade2554bcfeba06e7309524cd575d1a9bc4031ba7",
+      "status": "retired-architecture-v1",
+      "reason": "2026-09-22 observation/task/P1 architecture rebuild",
+      "retiredOn": "2026-09-22"
+    },
+    {
+      "path": "results/MNG_MS3-20260921-r001/MNG_Manager/MNG_Manager-106496.onnx",
+      "sha256": "88bb5d899622d6c6e8efa470f71c78556b4a4b2fa09fcfcc731793795b2224be",
+      "status": "retired-architecture-v1",
+      "reason": "2026-09-22 observation/task/P1 architecture rebuild",
+      "retiredOn": "2026-09-22"
+    },
+    {
+      "path": "results/MNG_MS3-20260921-r001/MNG_Manager/MNG_Manager-106496.pt",
+      "sha256": "5722b8b071a6bafd5a5bfcccb0cf8f5a00a3b71a19d594f32db44392f5590e0f",
+      "status": "retired-architecture-v1",
+      "reason": "2026-09-22 observation/task/P1 architecture rebuild",
+      "retiredOn": "2026-09-22"
+    },
+    {
+      "path": "results/MNG_MS3-20260921-r001/MNG_Manager/MNG_Manager-49941.onnx",
+      "sha256": "84233862084fa773374156ab52e20f4130ba81e5f039c664c7d85f96b4c97c76",
+      "status": "retired-architecture-v1",
+      "reason": "2026-09-22 observation/task/P1 architecture rebuild",
+      "retiredOn": "2026-09-22"
+    },
+    {
+      "path": "results/MNG_MS3-20260921-r001/MNG_Manager/MNG_Manager-49941.pt",
+      "sha256": "15920bae022fba5793d8a6f66770a8edc2c8d6759a5c783057bb818cca4845fc",
+      "status": "retired-architecture-v1",
+      "reason": "2026-09-22 observation/task/P1 architecture rebuild",
+      "retiredOn": "2026-09-22"
+    },
+    {
+      "path": "results/MNG_MS3-20260921-r001/MNG_Manager/MNG_Manager-54325.pt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "retired-architecture-v1",
+      "reason": "2026-09-22 observation/task/P1 architecture rebuild",
+      "retiredOn": "2026-09-22"
+    },
+    {
+      "path": "results/MNG_MS3-20260921-r001/MNG_Manager/MNG_Manager-99968.onnx",
+      "sha256": "9d4f49c31e696a52691d230a74abe25e5e04699a4e4293bbf351c2e7d51e21dd",
+      "status": "retired-architecture-v1",
+      "reason": "2026-09-22 observation/task/P1 architecture rebuild",
+      "retiredOn": "2026-09-22"
+    },
+    {
+      "path": "results/MNG_MS3-20260921-r001/MNG_Manager/MNG_Manager-99968.pt",
+      "sha256": "9ab8536762c0838960ec807fc943cc6e1cb4d166c4324db2d0406bb88ee3c0ca",
+      "status": "retired-architecture-v1",
+      "reason": "2026-09-22 observation/task/P1 architecture rebuild",
+      "retiredOn": "2026-09-22"
+    },
+    {
+      "path": "results/MNG_MS3-20260921-r002/MNG_Manager.onnx",
+      "sha256": "1d0916383887939430401de9058c68ab1d3b841b654569d2aaf6c3db81df2899",
+      "status": "retired-architecture-v1",
+      "reason": "2026-09-22 observation/task/P1 architecture rebuild",
+      "retiredOn": "2026-09-22"
+    },
+    {
+      "path": "results/MNG_MS3-20260921-r002/MNG_Manager/checkpoint.pt",
+      "sha256": "b34d631d16cba6268baf1d405e2293a576aecdcfbd454e74c65bb9c5cb16846d",
+      "status": "retired-architecture-v1",
+      "reason": "2026-09-22 observation/task/P1 architecture rebuild",
+      "retiredOn": "2026-09-22"
+    },
+    {
+      "path": "results/MNG_MS3-20260921-r002/MNG_Manager/MNG_Manager-149908.onnx",
+      "sha256": "387fdac58950e9f29399ff63de49f10fc50078a76cc8f57453259499c221e566",
+      "status": "retired-architecture-v1",
+      "reason": "2026-09-22 observation/task/P1 architecture rebuild",
+      "retiredOn": "2026-09-22"
+    },
+    {
+      "path": "results/MNG_MS3-20260921-r002/MNG_Manager/MNG_Manager-149908.pt",
+      "sha256": "9b67d08f00894ca8a5520ad2c7d868553466967628536a5392562339178b1180",
+      "status": "retired-architecture-v1",
+      "reason": "2026-09-22 observation/task/P1 architecture rebuild",
+      "retiredOn": "2026-09-22"
+    },
+    {
+      "path": "results/MNG_MS3-20260921-r002/MNG_Manager/MNG_Manager-199940.onnx",
+      "sha256": "69c2441174be4074984fe697ae848141f91c5c0a78ccbcbb2b9303eb8defc0d7",
+      "status": "retired-architecture-v1",
+      "reason": "2026-09-22 observation/task/P1 architecture rebuild",
+      "retiredOn": "2026-09-22"
+    },
+    {
+      "path": "results/MNG_MS3-20260921-r002/MNG_Manager/MNG_Manager-199940.pt",
+      "sha256": "b8d3596d14bd9130024afe768c577094ad6d2b2d2ca9026d7caf85705277a1c4",
+      "status": "retired-architecture-v1",
+      "reason": "2026-09-22 observation/task/P1 architecture rebuild",
+      "retiredOn": "2026-09-22"
+    },
+    {
+      "path": "results/MNG_MS3-20260921-r002/MNG_Manager/MNG_Manager-249936.onnx",
+      "sha256": "fd6e2b913af26504e8b20f42c6a3a98caf86f0df0e3d49bffb39f9c8e2e8298b",
+      "status": "retired-architecture-v1",
+      "reason": "2026-09-22 observation/task/P1 architecture rebuild",
+      "retiredOn": "2026-09-22"
+    },
+    {
+      "path": "results/MNG_MS3-20260921-r002/MNG_Manager/MNG_Manager-249936.pt",
+      "sha256": "507f89e9cc866571d11d61dc88200b21af3d9ad3bdc16c0465434d461d7e7813",
+      "status": "retired-architecture-v1",
+      "reason": "2026-09-22 observation/task/P1 architecture rebuild",
+      "retiredOn": "2026-09-22"
+    },
+    {
+      "path": "results/MNG_MS3-20260921-r002/MNG_Manager/MNG_Manager-299900.onnx",
+      "sha256": "1d0916383887939430401de9058c68ab1d3b841b654569d2aaf6c3db81df2899",
+      "status": "retired-architecture-v1",
+      "reason": "2026-09-22 observation/task/P1 architecture rebuild",
+      "retiredOn": "2026-09-22"
+    },
+    {
+      "path": "results/MNG_MS3-20260921-r002/MNG_Manager/MNG_Manager-299900.pt",
+      "sha256": "6f9a18dbc04898048e19b42acdd6b4f7d3835426b84954aff07f35ed9ac1ab54",
+      "status": "retired-architecture-v1",
+      "reason": "2026-09-22 observation/task/P1 architecture rebuild",
+      "retiredOn": "2026-09-22"
+    },
+    {
+      "path": "results/MNG_MS3-20260921-r002/MNG_Manager/MNG_Manager-300028.onnx",
+      "sha256": "1d0916383887939430401de9058c68ab1d3b841b654569d2aaf6c3db81df2899",
+      "status": "retired-architecture-v1",
+      "reason": "2026-09-22 observation/task/P1 architecture rebuild",
+      "retiredOn": "2026-09-22"
+    },
+    {
+      "path": "results/MNG_MS3-20260921-r002/MNG_Manager/MNG_Manager-300028.pt",
+      "sha256": "ee905613f218c3b863b7111b5076adf845ec43fc6c2721e9c7466bb59b68d8ce",
+      "status": "retired-architecture-v1",
+      "reason": "2026-09-22 observation/task/P1 architecture rebuild",
+      "retiredOn": "2026-09-22"
+    },
+    {
+      "path": "results/MNG_MS3-20260921-r002/MNG_Manager/MNG_Manager-49980.onnx",
+      "sha256": "d4009c58e77372913929f7c77cf1844d0e769d86a8066f23c68ea66da39f2c4c",
+      "status": "retired-architecture-v1",
+      "reason": "2026-09-22 observation/task/P1 architecture rebuild",
+      "retiredOn": "2026-09-22"
+    },
+    {
+      "path": "results/MNG_MS3-20260921-r002/MNG_Manager/MNG_Manager-49980.pt",
+      "sha256": "854c888fb3edaad2d219cfa562b9645b8e98d5db62398876ffe4e0b48885aa4b",
+      "status": "retired-architecture-v1",
+      "reason": "2026-09-22 observation/task/P1 architecture rebuild",
+      "retiredOn": "2026-09-22"
+    },
+    {
+      "path": "results/MNG_MS3-20260921-r002/MNG_Manager/MNG_Manager-99976.onnx",
+      "sha256": "72c4dc26d0efca364f6d52b1f1e9b6dd23346ffe97422936a8aafecb6d8dddca",
+      "status": "retired-architecture-v1",
+      "reason": "2026-09-22 observation/task/P1 architecture rebuild",
+      "retiredOn": "2026-09-22"
+    },
+    {
+      "path": "results/MNG_MS3-20260921-r002/MNG_Manager/MNG_Manager-99976.pt",
+      "sha256": "4e7f985d156346ce9d6e739d8940968eeb7aa637717ac81db3b10087de468cee",
+      "status": "retired-architecture-v1",
+      "reason": "2026-09-22 observation/task/P1 architecture rebuild",
+      "retiredOn": "2026-09-22"
+    }
+  ],
+  "excludedRuns": [
+    {
+      "run": "MNG_MS3V2-20260922-r001",
+      "status": "smoke-only-ineligible"
+    },
+    {
+      "run": "MNG_MS3V2-20260922-r002",
+      "status": "smoke-only-ineligible"
+    },
+    {
+      "run": "MNG_MS3V2-20260922-r003",
+      "status": "smoke-only-ineligible"
+    },
+    {
+      "run": "MNG_MS3V2-20260922-r004",
+      "status": "smoke-only-ineligible"
+    },
+    {
+      "run": "MNG_MS2V2-20260922-r001",
+      "status": "diagnostic-ineligible",
+      "reason": "Stopped at 44849 to add missing observation-only recovery metric; no initialization reuse"
+    }
+  ],
+  "references": [
+    {
+      "schema": "MNG-OBS-v2-244",
+      "behavior": "MNG_ManagerV2",
+      "observations": 244,
+      "status": "reference",
+      "sha256": "3e8cd87b21ce50d1dd45384ce9f28145442123dbfb41aed6ee0ae6ce12ec5fd7",
+      "path": "results/MNG_MS2V2-20260922-r002/MNG_ManagerV2/MNG_ManagerV2-200120.onnx",
+      "sourceRun": "MNG_MS2V2-20260922-r002",
+      "preparationStep": 200120,
+      "selfPlayStep": 0,
+      "runtimeSha": "8505e2cfbab3dcc5a24f60685caac4302c3e4e64a979c310bcf67eb08ad1b598"
+    }
+  ],
+  "candidates": [
+    {
+      "schema": "MNG-OBS-v2-244",
+      "behavior": "MNG_ManagerV2",
+      "observations": 244,
+      "status": "candidate",
+      "path": "results/MNG_MS3V2-20260922-r005/MNG_ManagerV2/MNG_ManagerV2-202112.onnx",
+      "sha256": "734d58fa0ff9ebd6a7726a6e81f469c297f032d7a13779ddb926a64c31279d87",
+      "sourceRun": "MNG_MS3V2-20260922-r005",
+      "preparationStep": 200120,
+      "selfPlayStep": 202112,
+      "runtimeSha": "8505e2cfbab3dcc5a24f60685caac4302c3e4e64a979c310bcf67eb08ad1b598"
+    }
+  ],
+  "champions": [
+    {
+      "schema": "MNG-OBS-v2-244",
+      "behavior": "MNG_ManagerV2",
+      "observations": 244,
+      "status": "champion",
+      "path": "results/MNG_MS3V2-20260922-r005/MNG_ManagerV2/MNG_ManagerV2-402389.onnx",
+      "sha256": "653d1f98126bd111ce4c15c26c0382d2170a2be312c8631aded44cff38d1614f",
+      "sourceRun": "MNG_MS3V2-20260922-r005",
+      "preparationStep": 200120,
+      "selfPlayStep": 402389,
+      "runtimeSha": "8505e2cfbab3dcc5a24f60685caac4302c3e4e64a979c310bcf67eb08ad1b598",
+      "assessment": "Logs/MNG-Rebuild/R6-final-assessment.json",
+      "qualification": "First v2 champion under fixed gate; Navy and passing limitations remain; independent training seed not reproduced."
+    }
+  ],
+  "currentChampion": "results/MNG_MS3V2-20260922-r005/MNG_ManagerV2/MNG_ManagerV2-402389.onnx"
+}

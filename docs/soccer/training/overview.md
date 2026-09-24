@@ -1,7 +1,7 @@
 # Soccer 학습·Model 운용
 
 - 대상: Base·Attack·Defense·Press 학습 및 Model 통합 담당자
-- 상태: 학습 Pipeline의 단일 기준
+- 상태: 기존 Core/팀 선수 학습 Pipeline 기준. 현행 MNG 감독 RL은 [MS v3 운영 기준](ms-v3-current.md)을 따른다.
 - 마지막 검토: 2026-08-31
 
 Attack, Defense, Press는 같은 정책 계약을 서로 다른 shaping으로 학습하는 작업공간이다. 최종 게임에서는 세 결과를 한 팀의 감독 전술로 사용한다. Rule은 학습 Pipeline에 포함하지 않는다.

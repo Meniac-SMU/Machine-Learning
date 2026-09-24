@@ -211,7 +211,7 @@ namespace MachineLearning.Soccer.Teams.Rule
                     - Vector3.right * attackSign * 16f
                     + Vector3.forward * laneSign * 7f,
                 _ => ball
-                    + Vector3.right * attackSign * (laneSign > 0f ? 5f : -3f)
+                    + Vector3.right * attackSign * (laneSign * attackSign > 0f ? 5f : -3f)
                     + Vector3.forward * laneSign * 12f
             };
             return ClampToField(target);
@@ -368,7 +368,7 @@ namespace MachineLearning.Soccer.Teams.Rule
             var rightBlocked = IsBlockingRay(origin, rightDirection, ObstacleRayDistance);
             if (leftBlocked == rightBlocked)
             {
-                return GetLaneSign() > 0f ? 1 : 2;
+                return GetLaneSign() * GetAttackSign() > 0f ? 1 : 2;
             }
 
             return leftBlocked ? 1 : 2;
@@ -543,7 +543,8 @@ namespace MachineLearning.Soccer.Teams.Rule
                 return Mathf.Sign(m_Agent.StartingPosition.z);
             }
 
-            return m_Agent.PositionRole == AgentSoccer.Position.Striker ? 1f : -1f;
+            return (m_Agent.Team == Team.Red ? 1f : -1f)
+                * (m_Agent.PositionRole == AgentSoccer.Position.Striker ? 1f : -1f);
         }
 
         Vector3 GetOwnGoal()

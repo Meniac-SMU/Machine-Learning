@@ -53,6 +53,13 @@ namespace MachineLearning.Soccer
         public float rotSign;
 
         SoccerEnvController m_Environment;
+        const float CommonClearancePreparationSeconds = 2f;
+        readonly int[] m_CommonActions = new int[4];
+        Vector3 m_CommonKickTarget;
+        float m_CommonKickUntil;
+        int m_CommonKickAction;
+        public int CommonRuleAttempts { get; private set; }
+        public int CommonRuleStrikes { get; private set; }
         SoccerSettings m_Settings;
         BehaviorParameters m_BehaviorParameters;
         DecisionRequester m_DecisionRequester;
@@ -294,6 +301,7 @@ namespace MachineLearning.Soccer
 
         public override void OnActionReceived(ActionBuffers actionBuffers)
         {
+            if (ApplyCommonPossessionRule(actionBuffers.DiscreteActions)) return;
             MoveAgent(actionBuffers.DiscreteActions);
             var requestedKick = actionBuffers.DiscreteActions.Length > KickActionBranch
                 ? actionBuffers.DiscreteActions[KickActionBranch]
@@ -302,6 +310,34 @@ namespace MachineLearning.Soccer
                 ? m_Environment.ResolveNeuralKickAction(this, requestedKick)
                 : requestedKick;
             ApplyKickAction(resolvedKick);
+        }
+
+        bool ApplyCommonPossessionRule(ActionSegment<int> requested)
+        {
+            if(m_Environment==null || m_Settings==null || m_UseHumanInput) return false;
+            var owns=m_Environment.IsPlayActive && m_Environment.BallCarrier==this;
+            if(!owns) {m_CommonKickUntil=0;return false;}
+            if(Time.time>=m_CommonKickUntil)
+            {
+                if(!m_Environment.TryGetCommonPossessionKick(this,out m_CommonKickTarget,out m_CommonKickAction))return false;
+                m_CommonKickUntil=Time.time+CommonClearancePreparationSeconds;
+                CommonRuleAttempts++;
+            }
+            var ball=m_Environment.Ball.transform.position;
+            var direction=m_CommonKickTarget-ball;direction.y=0;
+            if(direction.sqrMagnitude<0.0001f)return false;
+            var approach=ball-direction.normalized*1.1f;
+            var travel=approach-transform.position;travel.y=0;
+            var facing=travel.magnitude>0.5f?travel:direction;
+            var local=transform.InverseTransformDirection(facing.normalized);
+            System.Array.Clear(m_CommonActions,0,4);
+            m_CommonActions[0]=travel.magnitude>0.4f?1:0;
+            m_CommonActions[2]=local.x>0.08f?2:local.x< -0.08f?1:0;
+            MoveAgent(new ActionSegment<int>(m_CommonActions));
+            var toBall=ball-transform.position;toBall.y=0;
+            if(toBall.magnitude<=1.8f && Vector3.Dot(transform.forward,direction.normalized)>=0.9f
+                && Vector3.Dot(transform.forward,toBall.normalized)>=0.45f) ApplyKickAction(m_CommonKickAction);
+            return true;
         }
 
         public override void Heuristic(in ActionBuffers actionsOut)
@@ -614,6 +650,15 @@ namespace MachineLearning.Soccer
 
             if (explicitStrike)
             {
+                var commonStrike = Time.time < m_CommonKickUntil;
+                if (commonStrike)
+                {
+                    requestedDirection = m_CommonKickTarget - collision.transform.position;
+                    requestedDirection.y = 0f;
+                    requestedDirection.Normalize();
+                    CommonRuleStrikes++;
+                    m_CommonKickUntil=0;
+                }
                 direction = SoccerDefensiveClearanceRules.ResolveKickDirection(
                     team,
                     collision.transform.position,
@@ -624,7 +669,7 @@ namespace MachineLearning.Soccer
                     Time.fixedDeltaTime,
                     out safetyRedirected,
                     m_Environment != null ? m_Environment.ArenaGeometry : null);
-                if (!safetyRedirected && m_Environment != null && !m_UseHumanInput && !IsRuleControlled)
+                if (!commonStrike && !safetyRedirected && m_Environment != null && !m_UseHumanInput && !IsRuleControlled)
                     direction = m_Environment.ResolveNeuralPassDirection(this, direction);
                 appliedPower = safetyRedirected ? EffectiveControlledKickPower : m_ActiveKickPower;
                 if (safetyRedirected)
@@ -676,6 +721,8 @@ namespace MachineLearning.Soccer
 
         public void ResetKickPlate()
         {
+
+            m_CommonKickUntil = 0;
             m_KickPlate ??= GetComponentInChildren<SoccerKickPlate>(true);
             m_KickPlate?.ResetPlate();
             m_ActiveKickPower = EffectiveStrongKickPower;
@@ -684,6 +731,7 @@ namespace MachineLearning.Soccer
 
         public override void OnEpisodeBegin()
         {
+            m_CommonKickUntil=0;CommonRuleAttempts=CommonRuleStrikes=0;
             m_LastForwardAction = 0;
             m_LastLateralAction = 0;
             m_LastRotationAction = 0;

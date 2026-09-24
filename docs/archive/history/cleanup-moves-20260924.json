@@ -1,0 +1,674 @@
+[
+  {
+    "from": "docs/soccer/training/l1-completion-progress.md",
+    "to": "docs/archive/player-curriculum/l1-completion-progress.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "16dbe23e3bfa325949d7b6b34e0ad0b7ef02eff2d6f7b62a24be899720a188a7"
+  },
+  {
+    "from": "docs/soccer/training/l2-opportunity-audit-20260905.md",
+    "to": "docs/archive/player-curriculum/l2-opportunity-audit-20260905.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "f9d0068add28b384ea783dcb11e3441a1534b481aa0dcbcf2f647cd9a0b0b32e"
+  },
+  {
+    "from": "docs/soccer/training/l3-development-plan.md",
+    "to": "docs/archive/player-curriculum/l3-development-plan.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "399e06c42422bddab50b7e67ffd78d4bfedf4cae436825d3a0b43a21bdc3ac80"
+  },
+  {
+    "from": "docs/soccer/training/ms-agent-handoff.md",
+    "to": "docs/archive/manager/ms-v1/ms-agent-handoff.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "c8321d51002e8e690e4037a16887b26915308e10e55a04ba7746062501c2eeef"
+  },
+  {
+    "from": "docs/soccer/training/ms-plan.md",
+    "to": "docs/archive/manager/ms-v1/ms-plan.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "8644421672d8949718a0382207b855e4f5feab1291e45fbcd345e8adb0db4bb5"
+  },
+  {
+    "from": "docs/soccer/training/ms-post-r6-diagnosis-plan-20260923.md",
+    "to": "docs/archive/manager/ms-v2/ms-post-r6-diagnosis-plan-20260923.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "f618fcedc52473783c26bb2bc86b9f107fe8447ddaa26a0a38c7067ade662797"
+  },
+  {
+    "from": "docs/soccer/training/ms-post-r6-implementation-report-20260923.md",
+    "to": "docs/archive/manager/ms-v2/ms-post-r6-implementation-report-20260923.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "6c1e3d47d90bef2e71c9b6733a2453134856704be66d54cf0a13e57d157897d0"
+  },
+  {
+    "from": "docs/soccer/training/ms-rebuild-plan-20260922.md",
+    "to": "docs/archive/manager/ms-v2/ms-rebuild-plan-20260922.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "8b485f8810eb7381cc0b61f4458583afdbf8e2cc6bdcb34f45b348eee2e91665"
+  },
+  {
+    "from": "docs/soccer/training/ms-rebuild-runtime-contract-20260922.md",
+    "to": "docs/archive/manager/ms-v2/ms-rebuild-runtime-contract-20260922.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "540dc7bf25880ec7c882158374a3f34ddc75e4e390f0ad8ce16d2ac992dd72d3"
+  },
+  {
+    "from": "docs/soccer/training/ms-rebuild-training-validation-20260922.md",
+    "to": "docs/archive/manager/ms-v2/ms-rebuild-training-validation-20260922.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "54dc5c15e5137bc021b2496d607448227d11afaf8d07a8898b73b6c3c01d457a"
+  },
+  {
+    "from": "docs/soccer/training/ms-validation.md",
+    "to": "docs/archive/manager/ms-v1/ms-validation.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "40fe429f999cf665295435ce3c1d44cff2354acfe691d8af1d82589acae8d8f0"
+  },
+  {
+    "from": "docs/soccer/training/ms0-checkpoint-20260919.md",
+    "to": "docs/archive/manager/ms-v1/ms0-checkpoint-20260919.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "eb399654968bdade14db9bc0ba429b7bf191ce3347cc12a477985d9037408784"
+  },
+  {
+    "from": "docs/soccer/training/ms0-completion-20260919.md",
+    "to": "docs/archive/manager/ms-v1/ms0-completion-20260919.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "015e1658fad536d439ba9a8129a1f24e322038e6331b562442fb55c051b1c23c"
+  },
+  {
+    "from": "docs/soccer/training/ms0-user-checklist.md",
+    "to": "docs/archive/manager/ms-v1/ms0-user-checklist.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "90cff85546f4935550b6fe9f67c2347d5854918860d8ac50d869d30e0876d3c1"
+  },
+  {
+    "from": "docs/soccer/training/ms1-checkpoint-20260920.md",
+    "to": "docs/archive/manager/ms-v1/ms1-checkpoint-20260920.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "6ebe46367f3e45c4fd5a8bf5a47f1a79f5ca57f3675de1b416daa439ae00856a"
+  },
+  {
+    "from": "docs/soccer/training/ms1-completion-20260920.md",
+    "to": "docs/archive/manager/ms-v1/ms1-completion-20260920.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "e834d182fb1f928830351815c0a0935f24a926dcd706b9df6f757664fdeea6b7"
+  },
+  {
+    "from": "docs/soccer/training/ms1-development-plan-20260920.md",
+    "to": "docs/archive/manager/ms-v1/ms1-development-plan-20260920.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "7039a17e2537b4ffd9b79db4a96e087fab8816e1c380796f2a34f9d1d08a0628"
+  },
+  {
+    "from": "docs/soccer/training/ms1-finalization-stop-handoff-20260920.md",
+    "to": "docs/archive/manager/ms-v1/ms1-finalization-stop-handoff-20260920.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "ba37a7281d4f1272ad62109e1a6623654d589f7dde167e1264c17a88a844ade5"
+  },
+  {
+    "from": "docs/soccer/training/ms1-pass-repair-checkpoint-20260920.md",
+    "to": "docs/archive/manager/ms-v1/ms1-pass-repair-checkpoint-20260920.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "c96ce6fb16632bf27cbb2d4a5244549c2b59b988c8e1e96d2bf0e889b39a5853"
+  },
+  {
+    "from": "docs/soccer/training/ms1-stop-handoff-20260920-r006.md",
+    "to": "docs/archive/manager/ms-v1/ms1-stop-handoff-20260920-r006.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "1912fb8ff38c3c4977696f78b9d129c9c1aff9f74be6945683d6d68212beec86"
+  },
+  {
+    "from": "docs/soccer/training/ms1-user-checklist.md",
+    "to": "docs/archive/manager/ms-v1/ms1-user-checklist.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "405340bd7b25a7ee838664fe4148e8d22baf720ab0fc4dee55cf4e78ee93bcd6"
+  },
+  {
+    "from": "docs/soccer/training/ms2-100k-and-code-assist-audit-20260921.md",
+    "to": "docs/archive/manager/ms-v1/ms2-100k-and-code-assist-audit-20260921.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "88f8592cd4167feb366e84aa962373dfca0e3586b4d4e7b32b02fb9a01e8e200"
+  },
+  {
+    "from": "docs/soccer/training/ms2-common-possession-report-20260923.md",
+    "to": "docs/archive/manager/ms-v2/ms2-common-possession-report-20260923.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "d9028a51a017ec4ef2af6931045f84352a3a6d308e369eb53e522d832344b549"
+  },
+  {
+    "from": "docs/soccer/training/ms2-completion-20260920.md",
+    "to": "docs/archive/manager/ms-v1/ms2-completion-20260920.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "aafe5e52dd5fc3b8ad2fb8b1d484d74f5b559d542eadd044420aaeb118108c59"
+  },
+  {
+    "from": "docs/soccer/training/ms2-p0-proof-plan-20260921.md",
+    "to": "docs/archive/manager/ms-v1/ms2-p0-proof-plan-20260921.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "35a5a2ffeefcc8382e1479fc0213f05bf83c6280f9b79cc7fe8cc23eca6da5cc"
+  },
+  {
+    "from": "docs/soccer/training/ms2-p0-stop-handoff-20260921.md",
+    "to": "docs/archive/manager/ms-v1/ms2-p0-stop-handoff-20260921.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "a670239481a4083e518aed576fb4231b933e15ab3e868df787ab9ee2ab35d37a"
+  },
+  {
+    "from": "docs/soccer/training/ms2-stop-handoff-20260920.md",
+    "to": "docs/archive/manager/ms-v1/ms2-stop-handoff-20260920.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "438ffdfd8c1c4f43df4a79408f5d5be893e50c44965df269a74439b16d3ade95"
+  },
+  {
+    "from": "docs/soccer/training/ms2-user-checklist.md",
+    "to": "docs/archive/manager/ms-v1/ms2-user-checklist.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "19c4459ac772eae008bf23e815099694404705cc1bc051dcaafca5ae1509c6de"
+  },
+  {
+    "from": "docs/soccer/training/ms3-checkpoint-duel-results-20260921.md",
+    "to": "docs/archive/manager/ms-v1/ms3-checkpoint-duel-results-20260921.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "2f26d282a32820f59c6f3b157afd0aa9c37ce9b925baaf9392fd8cde2de987ef"
+  },
+  {
+    "from": "docs/soccer/training/ms3-completion-20260921.md",
+    "to": "docs/archive/manager/ms-v1/ms3-completion-20260921.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "b7eafbd433700a0d79682ee98708aaf9e499867ead25ea4fd7e472d6cdebab76"
+  },
+  {
+    "from": "docs/soccer/training/ms3-development-and-training-plan-20260921.md",
+    "to": "docs/archive/manager/ms-v1/ms3-development-and-training-plan-20260921.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "16f9b375a7fd646a1148df478ae4b93d0b4f5acba656968daa7727dfd556da61"
+  },
+  {
+    "from": "docs/soccer/training/ms3-stability-d1-d2-report-20260923.md",
+    "to": "docs/archive/manager/ms-v2/ms3-stability-d1-d2-report-20260923.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "58a7cbfb1dd51f97d5186d84e7e26fd49aaf2a930e3351762aab3e93d101190c"
+  },
+  {
+    "from": "docs/soccer/training/ms3-stability-d3-d5-report-20260923.md",
+    "to": "docs/archive/manager/ms-v2/ms3-stability-d3-d5-report-20260923.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "90eda6c8b1dd4287da3214917361bc1c0c22635ff28c2d23df2ea0c800969759"
+  },
+  {
+    "from": "docs/soccer/training/ms3-user-checklist.md",
+    "to": "docs/archive/manager/ms-v1/ms3-user-checklist.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "f3c36bf93e8c6e93f29be57cba1110acd5ab5ae8fa65faeae61a3f2ce81f1300"
+  },
+  {
+    "from": "docs/soccer/training/rl-architecture-audit-20260922.md",
+    "to": "docs/archive/manager/ms-v2/rl-architecture-audit-20260922.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "f0d9e9cfcfb4ef6f85d38348cd584172505e80225df14bdb7883639e4434d4e4"
+  },
+  {
+    "from": "docs/soccer/training/staged-reward-plan.md",
+    "to": "docs/archive/player-curriculum/staged-reward-plan.md",
+    "reason": "Superseded plan or completed report; current status and v3 contract take precedence",
+    "sha256": "b67594e661a0122568d9de9c941f606478661e6dc64e2907d083ae4e757f392d"
+  },
+  {
+    "from": "Assets/_Soccer/Manager/MNG_01_Runtime_Contract.md",
+    "to": "docs/archive/manager/m-stage/MNG_01_Runtime_Contract.md",
+    "reason": "Historical M-stage plan, R0 guide or accumulated handoff",
+    "sha256": "16b9905a796450b52f9199394bae419120789aca8f001618b8a9826750fa0c9c"
+  },
+  {
+    "from": "Assets/_Soccer/Manager/MNG_01_Runtime_Contract.md.meta",
+    "to": "docs/archive/manager/m-stage/MNG_01_Runtime_Contract.md.meta",
+    "reason": "Preserve original Markdown asset GUID metadata",
+    "sha256": "1968eb2274e5efe6041b391826dfe33c434c00a0b0160574883b75df0382e6e2"
+  },
+  {
+    "from": "Assets/_Soccer/Manager/MNG_02_Implementation_Plan.md",
+    "to": "docs/archive/manager/m-stage/MNG_02_Implementation_Plan.md",
+    "reason": "Historical M-stage plan, R0 guide or accumulated handoff",
+    "sha256": "9c52e0476795943426877ff2b990870f2154177269fe779096c67f93d27a002c"
+  },
+  {
+    "from": "Assets/_Soccer/Manager/MNG_02_Implementation_Plan.md.meta",
+    "to": "docs/archive/manager/m-stage/MNG_02_Implementation_Plan.md.meta",
+    "reason": "Preserve original Markdown asset GUID metadata",
+    "sha256": "ad50cdbc7e46ec64ee85bc89b30781a1fe95be94a73e417dfa492fc413e73688"
+  },
+  {
+    "from": "Assets/_Soccer/Manager/MNG_03_Curriculum_and_Rewards.md",
+    "to": "docs/archive/manager/m-stage/MNG_03_Curriculum_and_Rewards.md",
+    "reason": "Historical M-stage plan, R0 guide or accumulated handoff",
+    "sha256": "e82b84faf76dd518b52a54f1a3045b841aef41a15a4ef4effc9ad08a80c62d4d"
+  },
+  {
+    "from": "Assets/_Soccer/Manager/MNG_03_Curriculum_and_Rewards.md.meta",
+    "to": "docs/archive/manager/m-stage/MNG_03_Curriculum_and_Rewards.md.meta",
+    "reason": "Preserve original Markdown asset GUID metadata",
+    "sha256": "24b49af2a2e0f3711a8324e947ce74a376e8a1a9e93d3210d6a49d78bf59b8b4"
+  },
+  {
+    "from": "Assets/_Soccer/Manager/MNG_04_Validation_and_Handoff.md",
+    "to": "docs/archive/manager/m-stage/MNG_04_Validation_and_Handoff.md",
+    "reason": "Historical M-stage plan, R0 guide or accumulated handoff",
+    "sha256": "37d2592cdca39e76123ee314b994bd17fa95479567cba694269fd90c28d407bd"
+  },
+  {
+    "from": "Assets/_Soccer/Manager/MNG_04_Validation_and_Handoff.md.meta",
+    "to": "docs/archive/manager/m-stage/MNG_04_Validation_and_Handoff.md.meta",
+    "reason": "Preserve original Markdown asset GUID metadata",
+    "sha256": "6f071442dfd5a7453dcf03e42ff0638e9f87a478508db87fc71409c2491f5efe"
+  },
+  {
+    "from": "Assets/_Soccer/Manager/MNG_05_Development_Handoff.md",
+    "to": "docs/archive/manager/m-stage/MNG_05_Development_Handoff.md",
+    "reason": "Historical M-stage plan, R0 guide or accumulated handoff",
+    "sha256": "1a75338f2207dfd1b83bcfb4b9a21d530b2469212af74559aede18b7d703e8d8"
+  },
+  {
+    "from": "Assets/_Soccer/Manager/MNG_05_Development_Handoff.md.meta",
+    "to": "docs/archive/manager/m-stage/MNG_05_Development_Handoff.md.meta",
+    "reason": "Preserve original Markdown asset GUID metadata",
+    "sha256": "8d73127d7333ba973cf9828ead83f20b8c7600fb586d7b6ca2604bfac043c9e9"
+  },
+  {
+    "from": "Assets/_Soccer/Manager/MNG_R0_Visual_Approval_Guide.md",
+    "to": "docs/archive/manager/m-stage/MNG_R0_Visual_Approval_Guide.md",
+    "reason": "Historical M-stage plan, R0 guide or accumulated handoff",
+    "sha256": "ee513464f045f0f02f0f1be4fd70cdedaca69784326c8075e7ab7c35ec37c3c5"
+  },
+  {
+    "from": "Assets/_Soccer/Manager/MNG_R0_Visual_Approval_Guide.md.meta",
+    "to": "docs/archive/manager/m-stage/MNG_R0_Visual_Approval_Guide.md.meta",
+    "reason": "Preserve original Markdown asset GUID metadata",
+    "sha256": "2df1741c10760eb680894e0e4ab45ab2e9a1919c6bac661c5b67f4acceabc617"
+  },
+  {
+    "from": "Assets/_Soccer/Diagnostics/Timers/Soccer4v4_Attack_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/SoccerRuntimeTimers~/Timers/Soccer4v4_Attack_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "f1d92b7257d48f4191f68b7d328a5472ca873168145b459c243b8b27343fe9d8"
+  },
+  {
+    "from": "Assets/_Soccer/Diagnostics/Timers/Soccer4v4_Attack_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/SoccerRuntimeTimers~/Timers/Soccer4v4_Attack_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "e3b7170836b799935a149a03e8866183b0059319ea4e36c7c81d4a60f0781f8f"
+  },
+  {
+    "from": "Assets/_Soccer/Diagnostics/Timers/Soccer4v4_Base_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/SoccerRuntimeTimers~/Timers/Soccer4v4_Base_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "766d9ea75b1f284d995aecd0680e062ee04f2ec9f0f75174df150742afa4ae69"
+  },
+  {
+    "from": "Assets/_Soccer/Diagnostics/Timers/Soccer4v4_Base_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/SoccerRuntimeTimers~/Timers/Soccer4v4_Base_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "d1d68c807a33bd3e184b4d3a552c9d262f52910171d4cc6807b47b2f9707d6b0"
+  },
+  {
+    "from": "Assets/_Soccer/Diagnostics/Timers/Soccer4v4_Rule_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/SoccerRuntimeTimers~/Timers/Soccer4v4_Rule_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "ebf49758524d1777afc134f53f49a945a01a2ebeee72156deac65b1bf3706141"
+  },
+  {
+    "from": "Assets/_Soccer/Diagnostics/Timers/Soccer4v4_Rule_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/SoccerRuntimeTimers~/Timers/Soccer4v4_Rule_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "69e6d4d9045ef6d12957965a9a108e59978eb8206be311179092b5b413107350"
+  },
+  {
+    "from": "Assets/_Soccer/Diagnostics/Timers/Soccer4v4_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/SoccerRuntimeTimers~/Timers/Soccer4v4_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "c988efd082485f5d930badc986c3294dded9a8d5be0584dd0e5540489481b0b5"
+  },
+  {
+    "from": "Assets/_Soccer/Diagnostics/Timers/Soccer4v4_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/SoccerRuntimeTimers~/Timers/Soccer4v4_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "c277e975e20ea61f69ad7831313d0642008e0d375078d98e5aa6e22229d6bfa8"
+  },
+  {
+    "from": "Assets/_Soccer/Diagnostics/Timers.meta",
+    "to": "Assets/_Legacy/Diagnostics/SoccerRuntimeTimers~/Timers.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "98b3edec17d9fbd0ac2edc11203b471e8df96c36ee881870403fbd8ad70d3885"
+  },
+  {
+    "from": "Assets/_Soccer/Diagnostics.meta",
+    "to": "Assets/_Legacy/Diagnostics/SoccerRuntimeTimers~.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "d39bf66d2b7cd7a53d76d0a06c01987e54f2a90fe7691faf35d1b817e3728ffd"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_M1_AttackChoice_Evaluation_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_M1_AttackChoice_Evaluation_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "05b0ac5fbab87b12dca27446372ad79ecf67979747be708cffff0258fd09c4ef"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_M1_AttackChoice_Evaluation_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_M1_AttackChoice_Evaluation_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "b919859fe2eb9b9e3b64929abb11ce395ebd007ba59f46c359e46883bd312d6d"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_M1_AttackChoice_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_M1_AttackChoice_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "13a20500ecf6e4bbe8cdf18e3fca4b420838895ecb1905432299f70e9cfa8df8"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_M1_AttackChoice_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_M1_AttackChoice_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "0cc65b5f4b2e97df4b6cda12642a2264db0faf9ad9775e7b5258e9822070d80b"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_M1_ConnectionSmoke_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_M1_ConnectionSmoke_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "ce74b271175974cac0d8c30af317a101793faadeb8f419c74b7cf5a7c0a10cba"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_M1_ConnectionSmoke_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_M1_ConnectionSmoke_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "09285d909344526f167d6c446b9cbe20f41d15a80681680eb7f2331fea321a19"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_M2_DefenseChoice_Evaluation_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_M2_DefenseChoice_Evaluation_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "896c2c5c28bf533d167347ee3acfc74dff8c06eae3cb7e44fbb470058cbeed5e"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_M2_DefenseChoice_Evaluation_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_M2_DefenseChoice_Evaluation_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "2b5ec89e648fa0e3c74b42c286e0220da8ec6bb713524e71a65388f646cfdc57"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_M2_DefenseChoice_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_M2_DefenseChoice_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "6bbe8d21b12e7605fe1ee59b2c1c48d31e02a96c6bc6400649a3ce859314cdfb"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_M2_DefenseChoice_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_M2_DefenseChoice_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "17ed304f47ff444fafa728abbf5253f204e5c251f63d5a53f19c8848e642d86f"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_M3_FallbackMatch300_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_M3_FallbackMatch300_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "45108311a09a43854f984f8b236386f464f2d04c74742cec8a1a9558d504d034"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_M3_FallbackMatch300_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_M3_FallbackMatch300_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "688c384fb910de70cf9ae8e54f7d8670804c300130c4e6f0652f5d1893673ace"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_M3_FallbackMatch60_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_M3_FallbackMatch60_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "f4a570a2ec000c0829fe7443f99b7259cff3151cb0bc4272a92b7b5336408392"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_M3_FallbackMatch60_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_M3_FallbackMatch60_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "75a943853036fcef9545c6c968295744621f91d71c49ac6b4672e6ae62155871"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_MS1_Train_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_MS1_Train_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "c52ebfc05cb2e00844db7f6af613eb6b1223d363822c2a2c8e8b6661fdb29d19"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_MS1_Train_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_MS1_Train_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "dfd30cd0e52d71ce4aeb777b8c8a6470057bd2dda82595e79d5c053314631b81"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_MS2V2_Train_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_MS2V2_Train_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "03d1e54aa344026e87c56f1e3a9f095917cc47c342e9ea13d9392f8f556e369b"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_MS2V2_Train_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_MS2V2_Train_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "6f4bd0b5950b79fa5cf2816afb99fd6faeca99e73d3ab8cb4b5e7b11b68e9c3a"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_MS_Evaluation_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_MS_Evaluation_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "44e6a6abe931cf05d4f9d2c5ed38463fa6a32205c4a616889b643bc1f42630c6"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_MS_Evaluation_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_MS_Evaluation_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "0046a55f83b8ce1e2304da9fd59266e0d29d04beae6660c5c1fbc15827ba3315"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_MS_SelfPlay_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_MS_SelfPlay_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "7747614bdb3510849faf818d7ea1c561ed06127442cb79f14fa32c6f203d87cd"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_MS_SelfPlay_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_MS_SelfPlay_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "db77a90612870db9b3b2b5c5b16f3b4121acacd1dd1402ad5c5b64c67580ba67"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_MS_Train_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_MS_Train_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "59fe1171016040ff4f2ee62bbf31460fb3b95b6805ee760d90e637670736a539"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_MS_Train_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_MS_Train_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "e0854769dba775292a8c287db414ffacd789e859adc5e50c823d0d523397d0d5"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_R0_RuleVsRule_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_R0_RuleVsRule_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "16587000693072f9dd5b74ddd8badd09575342aaaa3911b747879bfce667d0a5"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_R0_RuleVsRule_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_R0_RuleVsRule_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "08df5f4d415ca272cbddb42a2c48fb1e315a531b7ef5642891c6b2c14569a605"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_Stadium4v4_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_Stadium4v4_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "108caed5ea1f582bccdc8a18d166eefcb9387f47c53334c6041225a9a34b7f2b"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/MNG_Stadium4v4_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/MNG_Stadium4v4_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "c5a8409839aa9529b9ae3e1c2350a39dad3957af0df1a60fb830a8da18e90d95"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/Soccer4v4_Attack_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/Soccer4v4_Attack_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "137a6ae1d6d69904391276146490046ffd325409fa2ee49046119478f7ed0ef0"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/Soccer4v4_Attack_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/Soccer4v4_Attack_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "b46fc35d692a59f9235358dc4ee0b29fb36f4f3f0b4d13810b9ac1040a210c52"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/Soccer4v4_Base_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/Soccer4v4_Base_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "bdb440e2e4714b58f5e1fcf9b557d4c39b10f9c2a89bb16054bfce4882d66f19"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/Soccer4v4_Base_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/Soccer4v4_Base_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "6658af797877e9e0d8717ce70af569c29e5ad56d04377821d08a21b201f50829"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/Soccer4v4_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/Soccer4v4_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "034b6c9df653c41a40aa7254c74b6e764f9b1ef253778c848ca5154cbadaf712"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/Soccer4v4_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/Soccer4v4_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "d98092969e45290204f53a1b960a77464efbc3d09c0886e20fd0f8e7aa539cc1"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/Stadium4v4_Attack_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/Stadium4v4_Attack_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "99d9e384b5526d4a132dd143d03110de3918f6fff012223bb68dacdf6e433b30"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/Stadium4v4_Attack_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/Stadium4v4_Attack_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "8029deb73f5f02981a8ef58b3751cbc1feb934da0a9c994e5f5e791cbc9babd9"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/Stadium4v4_Base_FallbackTraining_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/Stadium4v4_Base_FallbackTraining_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "c8c70bd706ccc264eed39052986891d2211fb358dadc041841bd668a71032da4"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/Stadium4v4_Base_FallbackTraining_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/Stadium4v4_Base_FallbackTraining_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "b8a250d268c7aff5b586966bc3ca947b27b9f957653efffcd79b703be17b0490"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/Stadium4v4_Base_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/Stadium4v4_Base_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "0575365a3eb81a7f13391b0b5215a5391ff257160b271f7a57c8f675ada8a91f"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/Stadium4v4_Base_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/Stadium4v4_Base_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "f9cafbbb7d24842e76164c827d3081815cc7477d94959f6bd823cc718db6e0a6"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/Stadium4v4_CurriculumL1_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/Stadium4v4_CurriculumL1_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "43ac10f8ee487e140ff2f2e07ca518c8b88f58746d717c207316b8c8c38976b0"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/Stadium4v4_CurriculumL1_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/Stadium4v4_CurriculumL1_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "a92abbb9f53da06e2a551833e13ed30efc5ca2e76d953d565e12501615b900a2"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/Stadium4v4_CurriculumL2Find_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/Stadium4v4_CurriculumL2Find_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "f4ddd1db070e1cb532d03ce4d0f1969afae7d4c90b39d5ea692a4ec7d6a69385"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/Stadium4v4_CurriculumL2Find_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/Stadium4v4_CurriculumL2Find_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "8e483275adc44756266c34612933b7f5cca50a492643acdc03768db3aaed017d"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/Stadium4v4_CurriculumL2_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/Stadium4v4_CurriculumL2_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "a634c15f5126895a3ef836ac418c5d98cdbb740a60bd7303c5c3464c38dea06b"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/Stadium4v4_CurriculumL2_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/Stadium4v4_CurriculumL2_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "34980a91f2a3a0ff1751c057a9d78b68aa91bc39571e4226a07f24921160e913"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/Stadium4v4_CurriculumL3_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/Stadium4v4_CurriculumL3_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "6abe24d1e8541e0354a49b0f1419dd50d8ec676bf760ebfaef979ed6dfb89baf"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/Stadium4v4_CurriculumL3_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/Stadium4v4_CurriculumL3_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "c3bbe1091edcbd23f62fddb4a1825e517464a443bf6c47d41c26eb63206231fd"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/Stadium4v4_Press_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/Stadium4v4_Press_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "ad27db98f6a511ce5063ba2edcc77cfb06411e61f7100b5c4b5b81edbb8f1b4a"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/Stadium4v4_Press_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/Stadium4v4_Press_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "b26ab562e8350fe2cb4d8e8b712883bd6fb9cebed85baf822a385d4e64e10e8a"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/_timers.json",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/_timers.json",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "81a276d2d64e0e44436f88c3485f546507a3ccbc8eba3b5e975b7fb0b9769ef9"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers/_timers.json.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers/_timers.json.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "54e221cc7f97e153edc073d4f035f3c412f3e8c0c1a4afa8575f4090234e0b4b"
+  },
+  {
+    "from": "Assets/ML-Agents/Timers.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~/Timers.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "5a962aa4f092ac8948f0aa7e89bc0975a7bd57665eb7c1add8a5638ed6d3d330"
+  },
+  {
+    "from": "Assets/ML-Agents.meta",
+    "to": "Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~.meta",
+    "reason": "Generated timer evidence, no serialized or source dependency; exclude Unity import with ~",
+    "sha256": "94b5de542d525771fbe5f97f90f1423c68d5bf660fdbcd0a26e3672a25a56b63"
+  }
+]

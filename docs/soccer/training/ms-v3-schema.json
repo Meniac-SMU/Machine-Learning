@@ -1,0 +1,75 @@
+{
+  "schema": "MNG-OBS-v2-244",
+  "behavior": "MNG_ManagerV2",
+  "observations": 244,
+  "actionBranches": [
+    6
+  ],
+  "taskVersion": 2,
+  "eventVersion": 2,
+  "protocolVersion": 3,
+  "environmentRevision": "MNG-MS2-forward-pass-center-20260923",
+  "frozenEvaluationProtocol": "MNG-V2-FROZEN-300-v2",
+  "legacyPrefix": {
+    "offset": 0,
+    "count": 133
+  },
+  "execution": {
+    "offset": 133,
+    "players": [
+      "Keeper",
+      "MidLeft",
+      "MidRight",
+      "Striker"
+    ],
+    "stride": 27,
+    "fields": [
+      {
+        "name": "skill",
+        "offset": 0,
+        "count": 13
+      },
+      {
+        "name": "phase",
+        "offset": 13,
+        "count": 5
+      },
+      {
+        "name": "taskRemaining",
+        "offset": 18,
+        "count": 1,
+        "divisor": 3
+      },
+      {
+        "name": "commitRemaining",
+        "offset": 19,
+        "count": 1,
+        "divisor": 0.15
+      },
+      {
+        "name": "receiverNonePlusSlots",
+        "offset": 20,
+        "count": 5
+      },
+      {
+        "name": "actualTargetTeamCoordinates",
+        "offset": 25,
+        "count": 2
+      }
+    ]
+  },
+  "global": {
+    "offset": 241,
+    "fields": [
+      "stallActive",
+      "stallSecondsDividedBy5",
+      "goalPause"
+    ]
+  },
+  "inactiveExecution": "all-zero",
+  "activeIdle": "None skill, Idle phase, None receiver, zero times and target",
+  "initialization": "MS2 actor only; reset step; fresh optimizer and opponent pool",
+  "historicalV1": "explicit legacy path; never a v2 initialization or default candidate",
+  "generation": "v3",
+  "technicalCompatibility": "Behavior and 244-observation ABI retain V2 identifiers. The MS curriculum/run generation is v3."
+}

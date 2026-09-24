@@ -46,6 +46,15 @@ namespace MachineLearning.Soccer.Manager
         float m_ReleaseSeconds;
         float m_PreviousOwnerLockRemaining;
         long m_EventId;
+        public const float TieDistanceTolerance = 0.00001f;
+        public Team NeutralTieTeam { get; private set; } = Team.Red;
+        readonly int[] m_NeutralTieWins = new int[2];
+        public int NeutralTieWins(Team team) => m_NeutralTieWins[(int)team];
+        public void ConfigureNeutralPriority(Team firstTeam)
+        {
+            NeutralTieTeam = firstTeam;
+            Array.Clear(m_NeutralTieWins, 0, m_NeutralTieWins.Length);
+        }
 
         public MNG_CarrierRef Carrier => m_Carrier;
         public long LatestEventId => m_EventId;
@@ -78,6 +87,8 @@ namespace MachineLearning.Soccer.Manager
             var currentSatisfiesRelease = false;
             var best = MNG_CarrierRef.None;
             var bestDistance = float.PositiveInfinity;
+            var redDistance = float.PositiveInfinity;
+            var navyDistance = float.PositiveInfinity;
 
             for (var i = 0; i < count; i++)
             {
@@ -99,13 +110,21 @@ namespace MachineLearning.Soccer.Manager
                     && IsSame(m_LockedPrevious, candidate.Team, candidate.Slot))
                     continue;
 
-                if (candidate.CenterDistance < bestDistance
-                    || (Math.Abs(candidate.CenterDistance - bestDistance) <= 0.00001f
-                        && PreferCandidate(candidate.Team, candidate.Slot, best)))
-                {
+                if (candidate.Team == Team.Red) redDistance = Math.Min(redDistance, candidate.CenterDistance);
+                else navyDistance = Math.Min(navyDistance, candidate.CenterDistance);
+                bestDistance = Math.Min(bestDistance, candidate.CenterDistance);
+            }
+            // Compare every tie to the true minimum. Pairwise epsilon comparisons
+            // are non-transitive and otherwise depend on candidate array order.
+            for (var i = 0; i < count; i++)
+            {
+                var candidate = candidates[i];
+                if (!candidate.Active || !(candidate.HasPhysicalContact || candidate.IsInControlZone)
+                    || candidate.CenterDistance > candidate.AcquisitionDistance
+                    || candidate.CenterDistance > bestDistance + TieDistanceTolerance
+                    || (m_PreviousOwnerLockRemaining > 0f && IsSame(m_LockedPrevious, candidate.Team, candidate.Slot))) continue;
+                if (!best.IsValid || PreferCandidate(candidate.Team, candidate.Slot, best))
                     best = MNG_CarrierRef.For(candidate.Team, candidate.Slot);
-                    bestDistance = candidate.CenterDistance;
-                }
             }
 
             if (m_Carrier.IsValid && !currentSatisfiesRelease)
@@ -133,6 +152,11 @@ namespace MachineLearning.Soccer.Manager
             m_PendingSeconds += deltaTime;
             if (m_PendingSeconds >= m_ConfirmationDelay)
             {
+                if (!m_Carrier.IsValid && Math.Abs(redDistance - navyDistance) <= TieDistanceTolerance)
+                {
+                    m_NeutralTieWins[(int)best.Team]++;
+                    NeutralTieTeam = best.Team == Team.Red ? Team.Navy : Team.Red;
+                }
                 ChangeCarrier(best, true);
                 ClearPending();
             }
@@ -181,9 +205,9 @@ namespace MachineLearning.Soccer.Manager
         {
             if (IsSame(m_Carrier, team, slot)) return true;
             if (incumbentBest.IsValid && Same(m_Carrier, incumbentBest)) return false;
-            var candidateIndex = (team == Team.Red ? 0 : MNG_MatchSnapshot.PlayersPerTeam) + slot;
+            var candidateIndex = (team == NeutralTieTeam ? 0 : MNG_MatchSnapshot.PlayersPerTeam) + slot;
             var bestIndex = incumbentBest.IsValid
-                ? (incumbentBest.Team == Team.Red ? 0 : MNG_MatchSnapshot.PlayersPerTeam) + incumbentBest.Slot
+                ? (incumbentBest.Team == NeutralTieTeam ? 0 : MNG_MatchSnapshot.PlayersPerTeam) + incumbentBest.Slot
                 : int.MaxValue;
             return candidateIndex < bestIndex;
         }

@@ -54,4 +54,4 @@ r001 첫 100k는 적합한 패스 시도 0%로 중단·보존했다. 후속 `Str
 
 r002 진단 후 새 기준의 초기 실험은 `curriculum_l2_handoff_poca.yaml`로 r002 최종 500,380을 초기화한다. 16 workers/50k 저장/**100k 자동 종료** 후 검사한다. 개선 근거가 있을 때만 같은 Run에 `curriculum_l2_handoff_resume_poca.yaml`과 `--resume`을 사용하여 총 500k 이내 연장한다. 초기화 YAML에는 init_path가 있으므로 재개에 사용하지 않는다. 이 과제는 대기 보조가 있는 준비 단계라 최종 L2 승인과 다르다.
 
-L1 `CurriculumL1-20260904-r017/Soccer4v4_Base-99916.pt`를 초기값으로 사용한다. 16 workers, 50k 저장, 첫 100k 진단, 최대 500k 한정 실험이다. 최근 5요약 각각 성공 50%, 소유 85%, 평균 에피소드 15초 이하와 일반 보상 누출 0을 요구한다. 쉬운 배치 통과 뒤 무작위 배치 확대 및 새 seed 300경기, L0/L1 회귀까지 확인해야 승인한다. 상세 계획은 [단계별 보상 계획](../../../../docs/soccer/training/staged-reward-plan.md), 실행 여부와 재개 지점은 [현재 상태](../../../../docs/soccer/current-status.md)를 따른다.
+L1 `CurriculumL1-20260904-r017/Soccer4v4_Base-99916.pt`를 초기값으로 사용한다. 16 workers, 50k 저장, 첫 100k 진단, 최대 500k 한정 실험이다. 최근 5요약 각각 성공 50%, 소유 85%, 평균 에피소드 15초 이하와 일반 보상 누출 0을 요구한다. 쉬운 배치 통과 뒤 무작위 배치 확대 및 새 seed 300경기, L0/L1 회귀까지 확인해야 승인한다. 상세 계획은 [단계별 보상 계획](../../../../docs/archive/player-curriculum/staged-reward-plan.md), 실행 여부와 재개 지점은 [현재 상태](../../../../docs/soccer/current-status.md)를 따른다.

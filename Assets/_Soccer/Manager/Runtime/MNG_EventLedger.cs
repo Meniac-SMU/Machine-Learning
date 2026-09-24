@@ -15,7 +15,8 @@ namespace MachineLearning.Soccer.Manager
         AdvancedFiveMeters = 6,
         Recovery = 7,
         FastRecovery = 8,
-        Crowding = 9
+        Crowding = 9,
+        BlockedForwardPassDecision = 10
     }
 
     public enum MNG_TacticProfile
@@ -51,6 +52,12 @@ namespace MachineLearning.Soccer.Manager
         readonly WindowRecord[] m_Window = new WindowRecord[MaximumWindowRecords];
         int m_WindowStart;
         int m_WindowCount;
+        readonly long[] m_RawCounts = new long[11];
+        readonly long[] m_RewardedCounts = new long[11];
+        readonly long[] m_CappedCounts = new long[11];
+        public long RawCount(MNG_RewardEventKind kind) => m_RawCounts[(int)kind];
+        public long RewardedCount(MNG_RewardEventKind kind) => m_RewardedCounts[(int)kind];
+        public long CappedCount(MNG_RewardEventKind kind) => m_CappedCounts[(int)kind];
 
         struct WindowRecord
         {
@@ -75,11 +82,13 @@ namespace MachineLearning.Soccer.Manager
             awardedAmount = 0f;
             var key = ((ulong)(uint)rewardEvent.Kind << 56) | (ulong)rewardEvent.EventId;
             if (!m_RecordedEvents.Add(key)) return false;
+            m_RawCounts[(int)rewardEvent.Kind]++;
 
             var nominal = profile.GetNominalReward(rewardEvent.Kind);
             if (!profile.IsShaping(rewardEvent.Kind))
             {
                 awardedAmount = nominal;
+                if (awardedAmount != 0) m_RewardedCounts[(int)rewardEvent.Kind]++;
                 return true;
             }
 
@@ -98,6 +107,8 @@ namespace MachineLearning.Soccer.Manager
             var kindAvailable = Mathf.Max(0f, profile.GetPerKindCap(rewardEvent.Kind) - kindUsed);
             var allowed = Mathf.Min(requested, totalAvailable, kindAvailable);
             awardedAmount = Mathf.Sign(nominal) * allowed;
+            if (allowed < requested) m_CappedCounts[(int)rewardEvent.Kind]++;
+            if (awardedAmount != 0) m_RewardedCounts[(int)rewardEvent.Kind]++;
             if (allowed > 0f) Push(simulatedTime, rewardEvent.Kind, allowed);
             return true;
         }
@@ -105,6 +116,9 @@ namespace MachineLearning.Soccer.Manager
         public void ResetEpisode()
         {
             m_RecordedEvents.Clear();
+            Array.Clear(m_RawCounts, 0, m_RawCounts.Length);
+            Array.Clear(m_RewardedCounts, 0, m_RewardedCounts.Length);
+            Array.Clear(m_CappedCounts, 0, m_CappedCounts.Length);
             m_WindowStart = 0;
             m_WindowCount = 0;
         }

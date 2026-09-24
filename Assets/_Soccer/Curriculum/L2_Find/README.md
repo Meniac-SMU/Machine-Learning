@@ -1,5 +1,7 @@
 # L2-Find
 
+> Current status (2026-09-24 review): r017 ended naturally at 500,248 steps and remains unapproved. The final five uniform-360 summaries were 98.61/98.36/97.14/98.59/98.72%, below the strengthened 99% gate. No independent fixed-300 promotion evaluation was run. Preserve PT/ONNX/config/log/SHA evidence in `Logs/CurriculumL2Find-20260907-r017-result`; do not automatically resume or advance to L2-Score/L3. The chronological paragraphs below describe historical experiments, not current execution permission.
+
 Conditional lesson for the approved L2 policy. Four Red agents learn to find a uniformly randomized ball in an empty Stadium. Navy agents are disabled after registration, kicking is masked, and the strengthened episode ends on the first real Red ball contact or after 15 seconds.
 
 Ball centers stay at least 1 m from every field wall and 5 m from the Red goal center. The controller never rotates, steers, or moves a Red agent toward the ball. Reward includes bounded team potential from the nearest Red distance (`0.01/m`, total `-0.5..+0.5`), a bounded signed potential for each of the two actors nearest at spawn, confirmed contact, and lesson completion. Moving away removes the same potential credit, so distance oscillation and recovered distance cannot farm reward.

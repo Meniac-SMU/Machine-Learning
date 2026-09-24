@@ -46,6 +46,9 @@ namespace MachineLearning.Soccer.Manager
         public int Recoveries { get; private set; }
         public int RecoveriesWithinDeadline { get; private set; }
         public bool CurrentEpisodeRecovered => m_CurrentEpisodeRecovered;
+        public float CurrentEpisodeElapsedSeconds => matchController != null
+            ? matchController.EpisodeElapsedSeconds
+            : 0f;
         public bool UsesValidationScenarios => useValidationScenarios;
         public bool UsesMovingNavyDefense => movingNavyDefense;
 

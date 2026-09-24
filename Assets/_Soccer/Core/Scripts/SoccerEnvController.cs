@@ -722,7 +722,7 @@ namespace MachineLearning.Soccer
                         + Vector3.right * (attackSign * 14f)
                         + Vector3.forward * (laneSign * 8f),
                     _ => ball.transform.position
-                        + Vector3.right * (attackSign * (laneSign > 0f ? 4f : -4f))
+                        + Vector3.right * (attackSign * (laneSign * attackSign > 0f ? 4f : -4f))
                         + Vector3.forward * (laneSign * 11f)
                 };
             }
@@ -845,6 +845,31 @@ namespace MachineLearning.Soccer
                 return true;
             }
 
+            return false;
+        }
+
+        public bool TryGetCommonPossessionKick(AgentSoccer requester, out Vector3 target, out int kickAction)
+        {
+            target=Vector3.zero;kickAction=0;
+            if(requester==null || ball==null || BallCarrier!=requester || !IsPlayActive)return false;
+            var origin=ball.transform.position;
+            var danger=SoccerDefensiveClearanceRules.IsBallInOwnGoalDanger(requester.Team,origin,arenaGeometry);
+            if(!danger)return false;
+            var sign=SoccerDefensiveClearanceRules.GetAttackSign(requester.Team);
+            var best=float.NegativeInfinity;AgentSoccer receiver=null;
+            foreach(var item in AgentsList)
+            {
+                var other=item.Agent;
+                if(other==null || other==requester || other.Team!=requester.Team || !other.isActiveAndEnabled)continue;
+                var offset=other.transform.position-origin;offset.y=0;
+                var distance=offset.magnitude;
+                if(distance<5f || distance>28f || (danger && offset.x*sign<=0f))continue;
+                var score=offset.x*sign-distance*0.12f;
+                if(score<=best)continue;
+                best=score;receiver=other;
+            }
+            if(receiver!=null) {target=receiver.transform.position;kickAction=1;return true;}
+            if(danger) {target=SoccerDefensiveClearanceRules.GetCentralClearanceTarget(origin.y);kickAction=2;return true;}
             return false;
         }
 
@@ -1023,7 +1048,8 @@ namespace MachineLearning.Soccer
                 return Mathf.Sign(agent.StartingPosition.z);
             }
 
-            return agent.PositionRole == AgentSoccer.Position.Striker ? 1f : -1f;
+            return (agent.Team == Team.Red ? 1f : -1f)
+                * (agent.PositionRole == AgentSoccer.Position.Striker ? 1f : -1f);
         }
 
         Vector3 ClampFieldTarget(Vector3 target)

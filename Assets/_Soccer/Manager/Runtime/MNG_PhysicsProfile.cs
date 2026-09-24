@@ -7,8 +7,22 @@ namespace MachineLearning.Soccer.Manager
     public sealed class MNG_PhysicsProfile : ScriptableObject
     {
         public const float RequiredBallScaleMultiplier = 1.10f;
-        public const float RequiredBallMass = 4.5f;
-        public const float InitialBallRestitution = 0.05f;
+        public const float RequiredBallMass = 3f;
+        // Simultaneous opposing plate contacts need more than the engine's 6/1
+        // defaults to converge without metre-per-second mirror divergence.
+        public const int ContactSolverIterations = 48;
+        public const int ContactSolverVelocityIterations = 16;
+
+        public static void ConfigureContactSolver(Rigidbody body)
+        {
+            body.solverIterations = ContactSolverIterations;
+            body.solverVelocityIterations = ContactSolverVelocityIterations;
+        }
+        public const float RequiredBallRestitution = 0.15f;
+        public const float RequiredBallDynamicFriction = 0.05f;
+        public const float RequiredBallStaticFriction = 0.05f;
+        public const float RequiredDribbleAcceleration = 24f;
+        public const float RequiredDribbleDampingPerSecond = 5.5f;
         public const float KickPlateReleasePadding = 0.30f;
         public const float KickPlateReleaseDelaySeconds = 0.08f;
         public const float KickPlatePossessionConfirmationSeconds = 0.02f;
@@ -17,7 +31,7 @@ namespace MachineLearning.Soccer.Manager
         [Header("Ball contract")]
         [SerializeField] float ballScaleMultiplier = RequiredBallScaleMultiplier;
         [SerializeField] float ballMass = RequiredBallMass;
-        [SerializeField] float ballRestitution = InitialBallRestitution;
+        [SerializeField] float ballRestitution = RequiredBallRestitution;
         [SerializeField] float maximumBallSpeed = MNG_KickSolver.MaximumBallSpeed;
 
         [Header("Player motor")]
@@ -35,14 +49,16 @@ namespace MachineLearning.Soccer.Manager
         [SerializeField] float previousOwnerLockSeconds = KickPlatePreviousOwnerLockSeconds;
 
         [Header("Dribble")]
-        [SerializeField] float dribbleAcceleration = 30f;
-        [SerializeField] float dribbleDampingPerSecond = 8f;
+        [SerializeField] float dribbleAcceleration = RequiredDribbleAcceleration;
+        [SerializeField] float dribbleDampingPerSecond = RequiredDribbleDampingPerSecond;
         [SerializeField] float dribbleForwardOffset = 0.35f;
 
         public float BallScaleMultiplier => ballScaleMultiplier;
         public float BallMass => ballMass;
         public float BallRestitution => ballRestitution;
-        public float MaximumBallSpeed => maximumBallSpeed;
+        // Keep runtime physics authoritative in code so older serialized MNG scenes
+        // cannot silently clamp a newly approved kick contract to a stale value.
+        public float MaximumBallSpeed => MNG_KickSolver.MaximumBallSpeed;
         public float MaximumPlayerSpeed => maximumPlayerSpeed;
         public float Acceleration => acceleration;
         public float Deceleration => deceleration;
@@ -57,19 +73,24 @@ namespace MachineLearning.Soccer.Manager
         public float DribbleDampingPerSecond => dribbleDampingPerSecond;
         public float DribbleForwardOffset => dribbleForwardOffset;
 
-        public void ApplyKickPlateTuning()
+        public void ApplyRuntimeTuning()
         {
+            ballMass = RequiredBallMass;
+            ballRestitution = RequiredBallRestitution;
+            maximumBallSpeed = MNG_KickSolver.MaximumBallSpeed;
             releasePadding = KickPlateReleasePadding;
             releaseDelaySeconds = KickPlateReleaseDelaySeconds;
             possessionConfirmationSeconds = KickPlatePossessionConfirmationSeconds;
             previousOwnerLockSeconds = KickPlatePreviousOwnerLockSeconds;
+            dribbleAcceleration = RequiredDribbleAcceleration;
+            dribbleDampingPerSecond = RequiredDribbleDampingPerSecond;
         }
 
         public void ValidateOrThrow()
         {
             RequireExact(ballScaleMultiplier, RequiredBallScaleMultiplier, nameof(ballScaleMultiplier));
             RequireExact(ballMass, RequiredBallMass, nameof(ballMass));
-            RequireExact(ballRestitution, InitialBallRestitution, nameof(ballRestitution));
+            RequireExact(ballRestitution, RequiredBallRestitution, nameof(ballRestitution));
             RequirePositive(maximumBallSpeed, nameof(maximumBallSpeed));
             RequirePositive(maximumPlayerSpeed, nameof(maximumPlayerSpeed));
             RequirePositive(acceleration, nameof(acceleration));
@@ -83,8 +104,9 @@ namespace MachineLearning.Soccer.Manager
                 nameof(possessionConfirmationSeconds));
             RequireExact(previousOwnerLockSeconds, KickPlatePreviousOwnerLockSeconds,
                 nameof(previousOwnerLockSeconds));
-            RequirePositive(dribbleAcceleration, nameof(dribbleAcceleration));
-            RequireNonNegative(dribbleDampingPerSecond, nameof(dribbleDampingPerSecond));
+            RequireExact(dribbleAcceleration, RequiredDribbleAcceleration, nameof(dribbleAcceleration));
+            RequireExact(dribbleDampingPerSecond, RequiredDribbleDampingPerSecond,
+                nameof(dribbleDampingPerSecond));
             RequireNonNegative(dribbleForwardOffset, nameof(dribbleForwardOffset));
         }
 

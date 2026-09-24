@@ -1,10 +1,12 @@
 # Soccer 경기·정책 계약
 
+2026-09-23 최종 사용자 규칙: 자기 골문 앞 적극 걷어내기는 모든 자동 선수 유형에 유지한다. 2초 정체/0.1m 전진 판정에 따른 강제 패스는 폐지한다. 감독이 PassBuild를 선택한 경우에만 전방 동료를 향한 패스를 강제 준비하며, 상대가 실제 패스 경로를 막으면 취소한다. 상대 골문 중심에서 기존 슈팅 범위24m 이내에서는 PassBuild를 선택하지 않는다. 기존 물리 패스 범위5~28m, 경로 여유1.25m, 예측 수신점의 중앙 쪽1.5m 편향을 재사용한다. 전진 드리블 목표는 중앙 쪽으로 기존 횡이동 폭3m만큼 치우치되 중앙선을 넘기지 않는다. MNG 정책형·규칙형·fallback은 같은 기술 경로를 사용한다. Core 자동 선수는 정체 강제 패스 없이 자기 골문 앞 걷어내기를 유지한다. 감독 선택 이후의 준비/수신 예산은 각2초이며 성공·소유를 만들어내지 않는다. 수동 입력 소유권, 관측/행동 차원과 보상액은 유지한다.
+
 - 대상: Core, 학습, Rule, UI 담당자
 - 상태: 공통 런타임 계약의 단일 기준
-- 마지막 검토: 2026-09-04
+- 마지막 검토: 2026-09-24 (범위·현행 규칙 표기)
 
-이 문서의 값은 모든 활성 Soccer 환경에 공통이다. 한 팀의 실험을 위해 바꾸지 않는다. 구현 기준은 `AgentSoccer`, `SoccerEnvController`, `SoccerSettings`, `SoccerDefenderKeeperRules`, `SoccerDefensiveClearanceRules`와 `SoccerProjectBuilder`다.
+아래 관측379·행동[3,3,3,3]과 Stadium 수치는 기존 Core/팀 선수 환경의 계약이다. MNG 감독의244관측·6명령과 전용 물리 계약은 [MS v3 운영 기준](training/ms-v3-current.md)을 따른다. 최상단 공통 선수 규칙은 해당 적용 범위에 유지한다. 한 팀의 실험을 위해 바꾸지 않는다. 구현 기준은 `AgentSoccer`, `SoccerEnvController`, `SoccerSettings`, `SoccerDefenderKeeperRules`, `SoccerDefensiveClearanceRules`와 `SoccerProjectBuilder`다.
 
 ## 경기 흐름
 

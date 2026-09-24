@@ -1,41 +1,79 @@
 # 문서 Archive
 
-이 폴더는 완료된 작업, 대체된 결정과 현재 개발 대상이 아닌 실험을 보관한다. 일반적인 Soccer 작업에서는 이 폴더 전체를 읽지 않는다. 현재 문서가 특정 근거를 요구할 때 해당 파일 하나만 선택한다.
+마지막 정리: 2026-09-24. 과거 계획·완료 보고서·당시 승인과 실패 기록이다. 기본 Context에서 제외하고 필요한 파일 하나만 읽는다. 현행 기준은 [현재 상태](../soccer/current-status.md)와 [MS v3 운영 기준](../soccer/training/ms-v3-current.md)이다.
 
-## 분류
+## M 단계·R0 원문
 
-| 폴더 | 내용 | 기본 Context |
-| --- | --- | --- |
-| `history` | 과거 결정 원문, 작업 Log, 이전 문서 구조 | 제외 |
-| `completed` | 완료된 Camera·Material 같은 변경 기록 | 제외 |
-| `legacy` | Turtle·Escape 기획과 기술 자료 | 제외 |
+- [MNG_01_Runtime_Contract.md](manager/m-stage/MNG_01_Runtime_Contract.md)
+- [MNG_02_Implementation_Plan.md](manager/m-stage/MNG_02_Implementation_Plan.md)
+- [MNG_03_Curriculum_and_Rewards.md](manager/m-stage/MNG_03_Curriculum_and_Rewards.md)
+- [MNG_04_Validation_and_Handoff.md](manager/m-stage/MNG_04_Validation_and_Handoff.md)
+- [MNG_05_Development_Handoff.md](manager/m-stage/MNG_05_Development_Handoff.md)
+- [MNG_R0_Visual_Approval_Guide.md](manager/m-stage/MNG_R0_Visual_Approval_Guide.md)
+- [MNG_README-before-20260924.md](manager/m-stage/MNG_README-before-20260924.md)
 
-Unity Asset의 보관 Root는 `Assets/_Legacy`다. Markdown Archive는 설명과 이력을 보관하고 Unity Asset을 대신하지 않는다.
+## MS v1 계획·실험
 
-## 현재 파일
+- [ms-agent-handoff.md](manager/ms-v1/ms-agent-handoff.md)
+- [ms-plan.md](manager/ms-v1/ms-plan.md)
+- [ms-validation.md](manager/ms-v1/ms-validation.md)
+- [ms0-checkpoint-20260919.md](manager/ms-v1/ms0-checkpoint-20260919.md)
+- [ms0-completion-20260919.md](manager/ms-v1/ms0-completion-20260919.md)
+- [ms0-user-checklist.md](manager/ms-v1/ms0-user-checklist.md)
+- [ms1-checkpoint-20260920.md](manager/ms-v1/ms1-checkpoint-20260920.md)
+- [ms1-completion-20260920.md](manager/ms-v1/ms1-completion-20260920.md)
+- [ms1-development-plan-20260920.md](manager/ms-v1/ms1-development-plan-20260920.md)
+- [ms1-finalization-stop-handoff-20260920.md](manager/ms-v1/ms1-finalization-stop-handoff-20260920.md)
+- [ms1-pass-repair-checkpoint-20260920.md](manager/ms-v1/ms1-pass-repair-checkpoint-20260920.md)
+- [ms1-stop-handoff-20260920-r006.md](manager/ms-v1/ms1-stop-handoff-20260920-r006.md)
+- [ms1-user-checklist.md](manager/ms-v1/ms1-user-checklist.md)
+- [ms2-100k-and-code-assist-audit-20260921.md](manager/ms-v1/ms2-100k-and-code-assist-audit-20260921.md)
+- [ms2-completion-20260920.md](manager/ms-v1/ms2-completion-20260920.md)
+- [ms2-p0-proof-plan-20260921.md](manager/ms-v1/ms2-p0-proof-plan-20260921.md)
+- [ms2-p0-stop-handoff-20260921.md](manager/ms-v1/ms2-p0-stop-handoff-20260921.md)
+- [ms2-stop-handoff-20260920.md](manager/ms-v1/ms2-stop-handoff-20260920.md)
+- [ms2-user-checklist.md](manager/ms-v1/ms2-user-checklist.md)
+- [ms3-checkpoint-duel-results-20260921.md](manager/ms-v1/ms3-checkpoint-duel-results-20260921.md)
+- [ms3-completion-20260921.md](manager/ms-v1/ms3-completion-20260921.md)
+- [ms3-development-and-training-plan-20260921.md](manager/ms-v1/ms3-development-and-training-plan-20260921.md)
+- [ms3-user-checklist.md](manager/ms-v1/ms3-user-checklist.md)
 
-### History
+## MS v2 개편·Post-R6·안정화 이력
 
-- [전체 결정 원문](history/decision-log-full.md) — D-001~D-026 배경과 대체 관계
-- [2026 작업 기록](history/work-log-2026.md) — 날짜별 상세 구현 Log
+- [ms-post-r6-diagnosis-plan-20260923.md](manager/ms-v2/ms-post-r6-diagnosis-plan-20260923.md)
+- [ms-post-r6-implementation-report-20260923.md](manager/ms-v2/ms-post-r6-implementation-report-20260923.md)
+- [ms-rebuild-plan-20260922.md](manager/ms-v2/ms-rebuild-plan-20260922.md)
+- [ms-rebuild-runtime-contract-20260922.md](manager/ms-v2/ms-rebuild-runtime-contract-20260922.md)
+- [ms-rebuild-training-validation-20260922.md](manager/ms-v2/ms-rebuild-training-validation-20260922.md)
+- [ms2-common-possession-report-20260923.md](manager/ms-v2/ms2-common-possession-report-20260923.md)
+- [ms3-stability-d1-d2-report-20260923.md](manager/ms-v2/ms3-stability-d1-d2-report-20260923.md)
+- [ms3-stability-d3-d5-report-20260923.md](manager/ms-v2/ms3-stability-d3-d5-report-20260923.md)
+- [rl-architecture-audit-20260922.md](manager/ms-v2/rl-architecture-audit-20260922.md)
 
-### Completed
+## 기존 선수 Curriculum 계획·실험
 
-- [Camera·외형·Material 변경](completed/visual-updates.md)
+- [curriculum-before-20260924.md](player-curriculum/curriculum-before-20260924.md)
+- [l1-completion-progress.md](player-curriculum/l1-completion-progress.md)
+- [l2-opportunity-audit-20260905.md](player-curriculum/l2-opportunity-audit-20260905.md)
+- [l3-development-plan.md](player-curriculum/l3-development-plan.md)
+- [rewards-through-20260923.md](player-curriculum/rewards-through-20260923.md)
+- [staged-reward-plan.md](player-curriculum/staged-reward-plan.md)
 
-### Legacy
+## 누적 상태·결정 기록
 
-- [Turtle 기술 메모](legacy/turtle-baseline.md)
-- [Escape 프로토타입](legacy/escape-prototype.md)
-- [Escape 성능 계획](legacy/escape-performance.md)
+- [agent-instructions-before-20260924.md](history/agent-instructions-before-20260924.md)
+- [decision-log-full.md](history/decision-log-full.md)
+- [soccer-status-through-20260923.md](history/soccer-status-through-20260923.md)
+- [work-log-2026.md](history/work-log-2026.md)
 
-## 보관 규칙
+## 기타 완료 작업
 
-- 문서 상단에 보관 이유, 대체 문서와 마지막 상태를 적는다.
-- 당시 경로와 실패 기록은 사실로 보존하되 현재 지침으로 사용하지 않는다고 표시한다.
-- 현재 규칙이나 수치는 활성 문서에만 갱신한다. Archive에 같은 값을 동기화하지 않는다.
-- Archive 문서의 향후형 문장은 취소·완료 여부가 드러나는 과거형으로 바꾼다.
-- 비밀번호, Token, 개인 Key는 Archive에도 기록하지 않는다.
-- 삭제가 필요한 중복은 활성 문서에 정보가 이관됐는지 먼저 확인한다.
+- [visual-updates.md](completed/visual-updates.md)
 
-[문서 색인으로 돌아가기](../README.md)
+## Turtle·Escape
+
+- [escape-performance.md](legacy/escape-performance.md)
+- [escape-prototype.md](legacy/escape-prototype.md)
+- [turtle-baseline.md](legacy/turtle-baseline.md)
+
+원문에 적힌 경로·수치·미래형 실행 지시는 당시의 사실이다. 현행 파일 이동은 정리 보고서의 moves.json으로 추적하며 Logs/results의 동결 사본·manifest를 소급 수정하지 않는다. Markdown 에셋의 기존 .meta도 원본 보존을 위해 함께 보관했다.

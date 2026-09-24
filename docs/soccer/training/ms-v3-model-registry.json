@@ -1,0 +1,28 @@
+{
+  "schema": "MNG-model-registry-v3",
+  "generation": "v3",
+  "stage": "MS3-v3 fresh self-play from MS2",
+  "defaultCandidate": "results/MNG_MS2V2-20260922-r002/MNG_ManagerV2/MNG_ManagerV2-200120.onnx",
+  "currentChampion": null,
+  "baseActor": {
+    "path": "Logs/MNG-Rebuild/R5-r2-200k-gate-initial-policy.pt",
+    "sha256": "c00073aece11511a16fe9fcd048530218e8c80add8b877f77eefaf2196700970",
+    "step": 200120
+  },
+  "baseOnnx": {
+    "path": "results/MNG_MS2V2-20260922-r002/MNG_ManagerV2/MNG_ManagerV2-200120.onnx",
+    "sha256": "3e8cd87b21ce50d1dd45384ce9f28145442123dbfb41aed6ee0ae6ce12ec5fd7"
+  },
+  "pinnedExternalHistory": [],
+  "allowedRunPattern": "^MNG_MS3V3-\\d{8}-r\\d{3}$",
+  "excluded": [
+    {
+      "run": "MNG_MS3V2-20260922-r005",
+      "status": "archived-not-eligible-in-v3",
+      "reason": "User requested MS3 restart from MS2; no initialization, opponent, evaluation baseline, champion or resume use",
+      "onnxSha": "653d1f98126bd111ce4c15c26c0382d2170a2be312c8631aded44cff38d1614f",
+      "ptSha": "c4747b8df1280d030951d2c290ccb3a4fb0287133929446910c121a2db899ed2"
+    }
+  ],
+  "artifactPolicy": "Preserve original files and v2 registry as historical evidence. Active v3 workflows use this registry only."
+}

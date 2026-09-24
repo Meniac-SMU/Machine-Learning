@@ -1,0 +1,89 @@
+default_settings: null
+behaviors:
+  MNG_ManagerV2:
+    trainer_type: ppo
+    hyperparameters:
+      batch_size: 256
+      buffer_size: 4096
+      learning_rate: 5.0e-05
+      beta: 0.003
+      epsilon: 0.15
+      lambd: 0.95
+      num_epoch: 3
+      shared_critic: false
+      learning_rate_schedule: constant
+      beta_schedule: constant
+      epsilon_schedule: constant
+    checkpoint_interval: 100000
+    network_settings:
+      normalize: false
+      hidden_units: 128
+      num_layers: 2
+      vis_encode_type: simple
+      memory: null
+      goal_conditioning_type: hyper
+      deterministic: false
+    reward_signals:
+      extrinsic:
+        gamma: 0.995
+        strength: 1.0
+        network_settings:
+          normalize: false
+          hidden_units: 128
+          num_layers: 2
+          vis_encode_type: simple
+          memory: null
+          goal_conditioning_type: hyper
+          deterministic: false
+    init_path: null
+    keep_checkpoints: 21
+    even_checkpoints: false
+    max_steps: 200000
+    time_horizon: 128
+    summary_freq: 1000
+    threaded: false
+    self_play: null
+    behavioral_cloning: null
+env_settings:
+  env_path: C:\GitHub\Machine-Learning\Builds\MNG_V2\R5R6-20260922-r2\MS2V2\MNG_MS2V2.exe
+  env_args:
+  - -mngEvidenceDir
+  - C:\GitHub\Machine-Learning\Logs\MNG-Rebuild\MNG_MS2V2-20260922-r002\to-200000/workers
+  - -mngRunId
+  - MNG_MS2V2-20260922-r002
+  - -mngBuildSha
+  - 8505e2cfbab3dcc5a24f60685caac4302c3e4e64a979c310bcf67eb08ad1b598
+  - -mngPolicyAssistMode
+  - none
+  - -mngFullTrace
+  - 'true'
+  base_port: 6500
+  num_envs: 32
+  num_areas: 1
+  timeout_wait: 120
+  seed: 20260922
+  max_lifetime_restarts: 0
+  restarts_rate_limit_n: 1
+  restarts_rate_limit_period_s: 60
+engine_settings:
+  width: 84
+  height: 84
+  quality_level: 5
+  time_scale: 20
+  target_frame_rate: -1
+  capture_frame_rate: 60
+  no_graphics: true
+  no_graphics_monitor: false
+environment_parameters: null
+checkpoint_settings:
+  run_id: MNG_MS2V2-20260922-r002
+  initialize_from: null
+  load_model: false
+  resume: true
+  force: false
+  train_model: false
+  inference: false
+  results_dir: C:\GitHub\Machine-Learning/results
+torch_settings:
+  device: cuda
+debug: false

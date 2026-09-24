@@ -28,7 +28,7 @@ MonoBehaviour:
   m2TrainingSeed: 12001
   m2ValidationSeed: 22001
   m2EvaluationScenarioCount: 100
-  m2TimeScale: 1
+  m2TimeScale: 20
   m3TrainingMatchSeconds: 60
   m3FullMatchSeconds: 300
   m3TrainingSeed: 13001

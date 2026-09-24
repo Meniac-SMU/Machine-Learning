@@ -1,0 +1,42 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1789928964",
+        "python_version": "3.10.12 | packaged by Anaconda, Inc. | (main, Jul  5 2023, 19:01:18) [MSC v.1916 64 bit (AMD64)]",
+        "command_line_arguments": "C:\\Users\\USER\\miniconda3\\envs\\mlagents\\Scripts\\mlagents-learn C:\\GitHub\\Machine-Learning\\Assets\\_Soccer\\Manager\\Training\\MNG_MS2.yaml --run-id MNG_MS2-20260921-r004 --results-dir C:\\GitHub\\Machine-Learning\\results --env C:\\GitHub\\Machine-Learning\\Builds\\MNG_MS\\MS2\\MNG_MS2.exe --num-envs 32 --base-port 5940 --seed 192001 --torch-device cuda --timeout-wait 120 --no-graphics --env-args -mngEvidenceDir C:\\GitHub\\Machine-Learning\\Logs\\MNG-MS\\MNG_MS2-20260921-r004\\workers -mngPolicyAssistMode none",
+        "mlagents_version": "1.2.0.dev0",
+        "mlagents_envs_version": "1.2.0.dev0",
+        "communication_protocol_version": "1.5.0",
+        "pytorch_version": "2.2.2+cu121",
+        "numpy_version": "1.23.5",
+        "end_time_seconds": "1789928981"
+    },
+    "total": 16.37743180000689,
+    "count": 1,
+    "self": 2.9343992000212893,
+    "children": {
+        "run_training.setup": {
+            "total": 3.20212360000005,
+            "count": 1,
+            "self": 3.20212360000005
+        },
+        "TrainerController.start_learning": {
+            "total": 10.24090899998555,
+            "count": 1,
+            "self": 0.00036890001501888037,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 10.240527599991765,
+                    "count": 1,
+                    "self": 10.240527599991765
+                },
+                "TrainerController._save_models": {
+                    "total": 1.2499978765845299e-05,
+                    "count": 1,
+                    "self": 1.2499978765845299e-05
+                }
+            }
+        }
+    }
+}

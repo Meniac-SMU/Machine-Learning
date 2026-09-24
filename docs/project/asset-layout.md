@@ -1,87 +1,47 @@
-# Unity 에셋 구조와 소유권
+# 프로젝트 파일 구조와 보존 기준
 
-마지막 검토: 2026-08-10  
-상태: `Asset 위치와 소유권의 단일 기준`
+마지막 검토: 2026-09-24. 물리 경로와 탐색 범위의 기준이다.
 
-## 목적
+| 경로 | 역할 | 기본 탐색 |
+|---|---|---|
+| `docs/soccer/current-status.md` | 최신 진행 상태만 | 상태 확인 시 |
+| `docs/soccer/training/ms-v3-current.md` | 현행 MNG 운영 계약 | MNG 작업 시 |
+| `docs/soccer`, `docs/project` | 현재 주제별 문서 | 필요한 주제만 |
+| `docs/archive` | 과거 계획·완료 보고서·누적 이력 | 제외, 색인에서 선택 |
+| `Assets/_Soccer/Manager` | 현재 감독 RL와 재사용하는 M/MS 기반 | Runtime/Editor/Tests부터 |
+| `Assets/_Soccer/Core`, `Teams` | 공통 선수·팀별 구현 | Core 작업 시 |
+| `Assets/_Soccer/Curriculum` | 기존 선수 L0~L4·L2-Find/Score 보존 | 해당 단계 작업 시 |
+| `Assets/_Soccer/Materials`, `Meshes`, `SourceModels`, `UI` | 공용 외형·UI | 해당 자산 작업 시 |
+| `Assets/Hayq Art` | 프로젝트에 존재하는 외부 아트 자산 | 사용 여부를 이름만으로 판단하지 않음 |
+| `Assets/Settings`, `InputSystem_Actions.inputactions` | 공통 렌더·입력 | 설정 작업 시 |
+| `Assets/_Legacy` | Turtle·Escape·과거 실험·진단 원본 | 제외 |
+| `Tools` | 실행·평가·검증 도구 | README에서 진입점 선택 |
+| `Builds`, `results`, `Logs` | 빌드·정책 계보·검증 원본 | 전체 읽기 제외, 정확한 경로 선택 |
+| `Library`, `obj`, `.vs`, `UserSettings`, `__pycache__` | 생성물·개인 설정 | 제외 |
 
-현재 개발 중인 Soccer와 과거 Turtle·Escape·Soccer 실험을 물리적으로 분리한다. 모든 관련 에셋과 `.meta`를 저장소 안에 유지하여 Git으로 받은 팀원이 GUID 참조를 잃지 않고 프로젝트를 열 수 있게 한다.
+## Unity 에셋
 
-## 최상위 구조
+에셋은 대응 `.meta`와 함께 이동한다. GUID 참조와 문자열 경로를 따로 확인한다. 씬·프리팹·모델의 사용 여부는 Builder·프로필·Build Settings·실행 스크립트까지 검사해야 판단할 수 있다.
 
-```text
-Assets/
-├─ _Soccer/                    # 활성 Soccer만
-├─ _Legacy/                    # 보관 실험과 진단 자료
-├─ Settings/                   # 현재 프로젝트 공통 URP 설정
-└─ InputSystem_Actions.inputactions  # 현재 프로젝트 공통 입력 참조
-```
+MNG의 `Curriculum/MS_V2`, `MNG_ManagerV2`, MS3V2 빌드·YAML 이름은 현행 v3에서도 쓰는 기술 ABI다. Models/EvaluationModels 및 이전 커리큘럼은 Builder와 과거 평가의 참조가 있어 원위치 보존한다. 기존 선수 정책과 감독 정책을 합치지 않는다.
 
-`Assets/AI Models`, `Escape`, `Materials`, `ML-Agents`, `Prefabs`, `Scenes`, `Scripts`, `TutorialInfo`처럼 용도가 섞였던 옛 최상위 폴더는 다시 만들지 않는다. `Assets/Settings`와 `Assets/InputSystem_Actions.inputactions`는 실제 공통 참조이므로 Assets 루트에 유지한다.
+2026-09-24에 참조 없는 타이머 산출물을 다음 위치로 보관했다. 내용과 `.meta`는 원본 hash 그대로다.
 
-## 활성 Soccer
+- `Assets/_Soccer/Diagnostics` → `Assets/_Legacy/Diagnostics/SoccerRuntimeTimers~`
+- `Assets/ML-Agents` → `Assets/_Legacy/Diagnostics/MLAgentsTimers-20260924~`
 
-```text
-Assets/_Soccer/
-├─ Core/
-├─ Teams/
-│  ├─ Attack_KMW/
-│  ├─ Defense_PJH/
-│  ├─ Press_KMG/
-│  └─ Rule_PHC/
-├─ Editor, Prefabs, Scenes, Tests, Training, UI/
-└─ Materials, Meshes, SourceModels, Diagnostics/
-```
+`~` 폴더는 Unity import에서 제외된다. `Assets/ML-Agents`는 ML-Agents 종료 때 타이머가 다시 생길 수 있는 생성 경로다. `.gitignore`의 기존 제외를 유지하며 재생성을 소스 복구로 오인하지 않는다.
 
-담당 접미사는 물리 폴더만 구분한다. 다음 값은 정책 호환성과 직렬화 계약이므로 폴더명에 맞춰 바꾸면 안 된다.
+기존 `Training~`, `ArchivedSoccer~`도 import 제외 보관소다. 과거 Pass 사본과 현행 Rule의 동일 GUID 사본을 동시에 import하지 않는다. Legacy에는 신규 Soccer 기능을 추가하지 않는다.
 
-| 물리 폴더 | 논리 전술명 | 유지할 대표 식별자 |
-| --- | --- | --- |
-| `Attack_KMW` | `Attack` | `Soccer4v4_Attack`, `AttackRewardProfile`, Attack BehaviorName·모델 접두사 |
-| `Defense_PJH` | `Defense` | `Soccer4v4_Defense`, `DefenseRewardProfile`, Defense BehaviorName·모델 접두사 |
-| `Press_KMG` | `Press` | `Soccer4v4_Press`, `PressRewardProfile`, Press BehaviorName·모델 접두사 |
-| `Rule_PHC` | `Rule` | `Soccer4v4_Rule`, `RuleRewardProfile`, Rule BehaviorName·FSM 클래스 |
+## 문서·실행 증거
 
-## Legacy
+MNG의 과거 `MNG_01`~`MNG_05`, R0 안내는 `docs/archive/manager/m-stage`에 모았다. 원래 Markdown `.meta`도 같은 위치에 보존했으며 runtime 에셋으로 사용하지 않는다. 활성 Manager 폴더에는 짧은 `MNG_README.md`를 둔다.
 
-```text
-Assets/_Legacy/
-├─ Turtle/
-│  ├─ Models, Materials, Prefabs, Scenes, Scripts/
-│  └─ Training~/Config, Results/
-├─ Escape/
-├─ UnityTemplate/
-├─ Diagnostics/ML-Agents, UnityUpgrade~, GeneratedProjects~/
-└─ ArchivedSoccer~/Pass, MLAgentsSamples/
-```
+Builds와 results는 큰 파일이라는 이유로 제거하지 않는다. 현행 actor·평가 비교·정상 중단·실패 원인 재현의 원본이다. `Logs`의 source snapshot·hash manifest·당시 명령은 역사적 기록이므로 현재 경로로 일괄 치환하지 않는다. 이동된 현행 문서는 [Archive](../archive/README.md)와 [정리 보고서](cleanup-20260924.md)의 이동 명세로 찾는다.
 
-- Turtle와 Escape는 삭제하지 않으며 관련 에셋과 `.meta`를 함께 보존한다.
-- `Training~`와 `ArchivedSoccer~`는 Unity import 대상이 아니다. Turtle YAML은 `mlagents-learn`에서 명시적 경로로 직접 사용할 수 있다.
-- `GeneratedProjects~`의 `.csproj`와 `.sln`, Root의 Build·Cache·학습 결과 일부는 ignore된 로컬 산출물일 수 있다. Source 보존과 Git 전달을 같은 의미로 보지 않는다.
-- Escape Builder가 필요하면 현재 루트 `Assets/_Legacy/Escape`를 사용한다.
-- `ArchivedSoccer~/Pass`와 현행 Rule에는 같은 GUID의 역사 사본이 있으므로 둘을 Unity import 대상에 동시에 두지 않는다.
-- Legacy를 활성 개발로 되돌릴 때는 필요한 범위, 대상 GUID와 Build Settings 영향을 별도 결정으로 기록한다.
+## 이동 검증
 
-## 이동·이름 변경 규칙
+양쪽 절대 경로가 프로젝트 안인지 확인 → 기존 변경·hash 기록 → Editor 종료 확인 → 에셋/meta 함께 이동 → 현재 문서·코드 참조 갱신 → 링크·GUID·내용 보존 검사 순서로 수행한다. 실행 자산을 이동하면 Unity import/compile와 영향 회귀까지 확인한다. 이번 이동은 Markdown과 미참조 진단 JSON이며 런타임 C#·씬·프리팹·모델·설정을 유지했다.
 
-1. 원본과 목적지가 모두 `C:\GitHub\Machine-Learning` 안인지 절대 경로로 확인한다.
-2. Unity가 닫힌 상태에서 에셋과 대응 `.meta`를 함께 이동한다.
-3. 폴더 이동 후 Builder 상수, Build Settings, 테스트 경로, 문서와 문자열 기반 로드를 검색한다.
-4. GUID 기반 씬·프리팹 참조가 유지되는지 확인한다.
-5. Unity import와 컴파일, Builder 검증, 가능한 EditMode·PlayMode 테스트를 실행한다.
-6. 비어 있는 옛 폴더를 남기거나 같은 이름으로 다시 만들지 않는다.
-7. 삭제가 필요한 것으로 보이는 산출물은 지우지 말고 후보 목록과 근거를 사용자에게 먼저 보고한다.
-
-## 문서와 전달
-
-- `docs`, Root README, Soccer·Legacy README와 팀 README는 향후 팀 공유 대상이다.
-- 프로젝트가 관리하는 모든 Markdown은 `.gitignore`에서 Git 추적 대상으로 허용한다. 생성 cache처럼 폴더 전체가 제외된 위치는 다시 포함하지 않는다.
-- 실제 GitHub 공개는 Markdown 검토 후 `git add`·commit·push 단계에서 진행한다.
-- 과거 로그에는 당시 경로를 유지하고 `현재 위치:` 주석을 추가한다.
-- 현행 명세·명령·체크리스트는 반드시 현재 물리 경로를 사용한다.
-
-## 관련 문서
-
-- 코드와 Prefab 책임: [Soccer 아키텍처](../soccer/architecture.md)
-- 공통 계약 변경 검증: [설정 및 검증](setup-and-validation.md)
-- 과거 Asset과 기획 기록: [Archive 안내](../archive/README.md)
+담당 접미사 `Attack_KMW`, `Defense_PJH`, `Press_KMG`, `Rule_PHC`는 물리 폴더에만 쓴다. 논리 BehaviorName·모델 접두사·타입·asmdef는 유지한다. `.gitignore`, commit/push 및 공개 범위를 파일 정리와 함께 임의 변경하지 않는다.

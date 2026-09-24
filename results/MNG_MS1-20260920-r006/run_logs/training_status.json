@@ -1,0 +1,47 @@
+{
+    "MNG_Manager": {
+        "checkpoints": [
+            {
+                "steps": 14968,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\MNG_MS1-20260920-r006\\MNG_Manager\\MNG_Manager-14968.onnx",
+                "reward": 0.7559090776538308,
+                "creation_time": 1789871791.2477527,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\MNG_MS1-20260920-r006\\MNG_Manager\\MNG_Manager-14968.pt"
+                ]
+            },
+            {
+                "steps": 29991,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\MNG_MS1-20260920-r006\\MNG_Manager\\MNG_Manager-29991.onnx",
+                "reward": 0.8125806337282542,
+                "creation_time": 1789871846.593053,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\MNG_MS1-20260920-r006\\MNG_Manager\\MNG_Manager-29991.pt"
+                ]
+            },
+            {
+                "steps": 30002,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\MNG_MS1-20260920-r006\\MNG_Manager\\MNG_Manager-30002.onnx",
+                "reward": 0.8218749893712811,
+                "creation_time": 1789871846.6350503,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\MNG_MS1-20260920-r006\\MNG_Manager\\MNG_Manager-30002.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 30002,
+            "file_path": "C:\\GitHub\\Machine-Learning\\results\\MNG_MS1-20260920-r006\\MNG_Manager.onnx",
+            "reward": 0.8218749893712811,
+            "creation_time": 1789871846.6350503,
+            "auxillary_file_paths": [
+                "C:\\GitHub\\Machine-Learning\\results\\MNG_MS1-20260920-r006\\MNG_Manager\\MNG_Manager-30002.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.2.0.dev0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

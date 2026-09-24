@@ -2,6 +2,10 @@
 
 Unity `6000.3.16f1`, ML-Agents `4.0.3` 기반 Soccer 4v4 프로젝트다. 활성 게임과 과거 실험을 분리했으며, 팀별 강화학습과 Rule FSM을 같은 경기 계약에서 비교한다.
 
+현재 개발 중심은 **MNG 감독 RL: MS2-v3 출발 기준 / MS3-v3 학습 전 D5 준비 완료**다. 실제 v3 학습은 미시작이며 기존 선수 학습은 별도 보존 경로다.
+
+기본 탐색은 [문서 색인](docs/README.md), [현재 상태](docs/soccer/current-status.md), [Tools 색인](Tools/README.md)으로 한정한다. 과거 자료는 [Archive](docs/archive/README.md)에서 필요한 파일만 선택한다.
+
 ## 빠른 시작
 
 1. 저장소 루트를 Unity `6000.3.16f1`로 연다.
@@ -14,6 +18,8 @@ Unity `6000.3.16f1`, ML-Agents `4.0.3` 기반 Soccer 4v4 프로젝트다. 활성
 ```text
 Assets/
 ├─ _Soccer/                  활성 Soccer 코드·Scene·Prefab·팀 작업공간
+│  ├─ Manager/              현행 감독 RL
+│  ├─ Curriculum/           기존 선수 커리큘럼 보존
 │  ├─ Core/
 │  └─ Teams/
 │     ├─ Attack_KMW/

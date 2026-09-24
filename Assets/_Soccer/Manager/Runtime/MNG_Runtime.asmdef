@@ -4,6 +4,7 @@
   "references": [
     "Soccer.Runtime",
     "Unity.ML-Agents",
+    "Unity.InferenceEngine",
     "Unity.InputSystem"
   ],
   "autoReferenced": true
