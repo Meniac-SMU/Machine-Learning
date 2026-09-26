@@ -33,6 +33,8 @@ def validate_evaluation_policy(source):
     relative = path.relative_to(ROOT / 'results')
     run_id = relative.parts[0]
     assert re.fullmatch(record['allowedRunPattern'], run_id), 'Only MS2 or new MS3-v3 candidates are allowed'
-    manifest = json.loads((ROOT / 'Logs/MNG-Rebuild' / run_id / 'manifest.json').read_text(encoding='utf-8-sig'))
+    evidence = ROOT / 'Logs/MNG-Rebuild' / run_id
+    assert not (evidence / 'quarantine.json').exists() and not (evidence / 'player-failure.json').exists(), 'Quarantined or failed Run is not an evaluation policy'
+    manifest = json.loads((evidence / 'manifest.json').read_text(encoding='utf-8-sig'))
     assert manifest['generation'] == 'v3' and not manifest['historicalPolicy'], 'Invalid v3 lineage'
     assert manifest['baseActorSourceSha'] == record['baseActor']['sha256'], 'Candidate did not start from the approved MS2 actor'

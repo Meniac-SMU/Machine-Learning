@@ -157,7 +157,7 @@ namespace MachineLearning.Soccer.Manager
             var args=Environment.GetCommandLineArgs();var i=Array.IndexOf(args,"-mngEvidenceDir");
             if(i<0 || i+1>=args.Length)return;
             Directory.CreateDirectory(args[i+1]);
-            File.AppendAllText(Path.Combine(args[i+1],"common-rules.jsonl"),JsonUtility.ToJson(new CommonRuleRecord {
+            File.AppendAllText(Path.Combine(args[i+1],MNG_MSController.EvidenceFileName("common-rules")),JsonUtility.ToJson(new CommonRuleRecord {
                 episode=m_EpisodeId,tick=m_TickId,time=EpisodeElapsedSeconds,team=(int)team,slot=slot,receiver=receiver,
                 reason=reason,kickId=kickId,parentCommandId=commonKick[(int)team].ParentCommandId,policyCommand=(int)m_Decisions[(int)team].PreviousCommand})+"\n");
         }

@@ -195,6 +195,13 @@ namespace MachineLearning.Soccer.Manager
             return 0;
         }
 
+        public static string EvidenceFileName(string stem, int worker, int process)
+            => $"{stem}-{worker}-process-{process}.jsonl";
+
+        public static string EvidenceFileName(string stem)
+            => EvidenceFileName(stem, ResolveWorkerIdentity(Environment.GetCommandLineArgs()),
+                System.Diagnostics.Process.GetCurrentProcess().Id);
+
         static string ResolveArgument(string[] arguments, string name)
         {
             if (arguments == null) return string.Empty;

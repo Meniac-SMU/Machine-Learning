@@ -1,12 +1,14 @@
 # 프로젝트 도구 색인
 
-마지막 검토: 2026-09-24. 먼저 용도별 진입점만 읽는다. 스크립트 목록 전체를 매번 열지 않는다.
+마지막 검토: 2026-09-25. 먼저 용도별 진입점만 읽는다. 스크립트 목록 전체를 매번 열지 않는다.
 
 ## 현행 MS v3
 
 | 용도 | 진입점 | 의존성과 실행 경계 |
 |---|---|---|
 | 파일·본문 검색 | `Find-ProjectContext.ps1` | 기본은 현행 문서. Archive/Legacy는 명시 선택 |
+| 현행 Manager Player 빌드 | `Build-MNGCurrent.ps1` | 단계·목적 필수, UTC 이름의 새 경로, 기록 자동 등록. `-PlanOnly`는 실행 없음 |
+| 빌드 생성·사용 기록 / 정리 검토 | `Build-Lifecycle.ps1` | Register/Use/Review. [관리 기준](../docs/project/build-lifecycle.md); 자동 삭제 없음 |
 | 경기 시연 | `watch_mng_v3.py` | 내부 `watch_mng_v2.py` 재사용. MS2-v3 자기대전 기준선 |
 | 동결 평가 | `mng_v3_evaluate.py` | 내부 `mng_v2_evaluate.py` 재사용. v3 계보·runtime 검사 |
 | 정책 계보 | `mng_v3_policy_guard.py` | `docs/soccer/training/ms-v3-model-registry.json` |
@@ -21,13 +23,15 @@
 ## 유지하는 도구
 
 - `mng_v2_learn.py`, `mng_v2_formal_learn.py`, `mng_v2_assess.py` 등은 v3 실행기·검사기의 의존성이 있다. 이름만으로 Archive로 이동하지 않는다.
-- `MNG_MS*`, `MNG_Build.ps1`, `MNG_Train.ps1`, `MNG_Evaluate*.ps1`은 구 M/MS 단계 재현용이다. 현행 v3 시작 명령으로 사용하지 않는다. 파일의 `$PSScriptRoot` 및 보존된 스냅샷·스크립트 참조를 유지한다.
+- `MNG_MS*`, `MNG_Build.ps1`, `MNG_Train.ps1`, `MNG_Evaluate*.ps1`은 구 M/MS 구현 이력이다. 현행 v3 시작 명령으로 사용하지 않는다. 대응 과거 바이너리는 2026-09-25 폐기했으므로 원래 명령 그대로의 재실행은 불가능하다. 동결 스냅샷·스크립트의 역사적 경로는 유지하며 자동 재빌드하지 않는다.
 - `MNG_V2_League.ps1`, `MNG_V2_ModelGuard.ps1`, `mng_v2_pin_champion.py` 등의 직접 실행은 v2 이력 경로다. 현행 자격은 v3 registry를 우선한다.
 - `Diagnose-MNGPostR6.ps1`, `diagnose_mng_post_r6.py`, `inspect_mng_post_r6.py`, `compare_mng_common_rules.py`는 원인 조사 재현용이다.
 - `Train-Soccer.ps1`, `Build-SoccerTraining.ps1`, `evaluate_soccer_policy.py`, `inspect_soccer_training.py`, `assess_soccer_l3_entry.py`, `soccer_evaluation_seeding.py`, `test_soccer_*.py`는 기존 선수 Curriculum 경로다. r017 중단 상태를 존중한다.
 - `MNG_*Snapshot.ps1`은 증거 보존용이다. `__pycache__`는 생성 캐시이며 기본 검색에서 제외한다.
 
 도구 물리 경로는 의존성·재현성과 동결된 source hash를 위해 유지했다. 사용되지 않음이 확정되지 않은 실행 도구는 삭제하지 않았다.
+
+구 v2 시연 기본값, `MNG_V2_Smoke.ps1`, `Diagnose-MNGPostR6.ps1` 등의 기본 경로에 있던 이전 Player도 삭제됐다. 이력 분석 코드는 보존했으나 바이너리가 필요한 구 명령은 그대로 실행할 수 없다. 현행 시연은 `watch_mng_v3.py`를 사용한다. 새 빌드로 오래된 실험을 실행해 동일 조건 재현으로 간주하지 않는다.
 
 ## 최소 검색 예
 

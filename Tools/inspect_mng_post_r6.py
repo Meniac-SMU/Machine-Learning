@@ -12,6 +12,13 @@ def read_lines(path):
     return [json.loads(line) for line in path.read_text().splitlines()]
 
 
+def read_evidence_stream(folder, stem):
+    # One evaluation match owns its directory; support preserved legacy evidence too.
+    paths = list(Path(folder).glob(stem + '*.jsonl'))
+    assert len(paths) == 1, f'Expected one {stem} stream in {folder}, found {len(paths)}'
+    return read_lines(paths[0])
+
+
 def vectors(row, key):
     return np.array([[v[k] for k in ('x', 'y', 'z')] for v in row[key]])
 
@@ -70,8 +77,8 @@ def inspect(root):
         other = lookup[row['seed'], 1, row['inferenceRngSwap']]
         other_folder = root / f"match-{other['index']:03d}"
         assert other['neutralFirstTeam'] == 1-row['neutralFirstTeam']
-        a = {(r['episode'], r['kickoff']): r for r in read_lines(folder/'spawns.jsonl')}
-        b = {(r['episode'], r['kickoff']): r for r in read_lines(other_folder/'spawns.jsonl')}
+        a = {(r['episode'], r['kickoff']): r for r in read_evidence_stream(folder, 'spawns')}
+        b = {(r['episode'], r['kickoff']): r for r in read_evidence_stream(other_folder, 'spawns')}
         common = a.keys() & b.keys()
         errors = {}
         for key in ('positions', 'forwards'):

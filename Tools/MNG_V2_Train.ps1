@@ -1,14 +1,17 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)][ValidatePattern('^MNG_(MS[23]V2|MS3V3)-\d{8}-r\d{3}$')][string]$RunId,
-    [Parameter(Mandatory)][ValidateSet(100000,200000,300000,400000)][int]$StopAt,
+    [Parameter(Mandatory)][ValidateRange(100000,2000000)][ValidateScript({$_ % 100000 -eq 0})][int]$StopAt,
     [Parameter(Mandatory)][string]$TrainingBuild,
-    [ValidateRange(100000,1000000)][int]$MaximumSteps=200000,
+    [ValidateRange(100000,2000000)][int]$MaximumSteps=200000,
     [int]$Seed=20260923,
     [switch]$Resume,
+    [ValidatePattern('^[a-zA-Z0-9][a-zA-Z0-9-]{0,63}$')][string]$SegmentSuffix,
     [string]$InitialPolicy,
     [string]$HistoricalPolicy,
     [string]$PreparationGate,
+    [string]$ExtensionGate,
+    [string]$EntryRepairGate,
     [switch]$ValidateOnly
 )
 Set-StrictMode -Version Latest
@@ -54,8 +57,32 @@ $result=Join-Path $root "results/$RunId"
 $adapter=Sha (Join-Path $root 'Tools/mng_v2_learn.py')
 $entry=Sha (Join-Path $root 'Tools/mng_v2_formal_learn.py')
 if ($Resume) {
+    if(Test-Path (Join-Path $evidence 'STOP')){throw 'Run has an unresolved STOP marker; do not resume'}
     $prior=Get-Content (Join-Path $evidence 'manifest.json') -Raw | ConvertFrom-Json
-    if($prior.adapterSha -ne $adapter -or $prior.entrySha -ne $entry -or $prior.runtimeSha -ne $info.runtimeSha256 -or $prior.seed -ne $Seed -or $prior.maximumSteps -ne $MaximumSteps){throw 'Resume source or experiment contract mismatch'}
+    if($prior.entrySha -ne $entry){
+        if(!$EntryRepairGate){throw 'Changed entry requires a validated repair gate'}
+        $repair=Get-Content -LiteralPath $EntryRepairGate -Raw | ConvertFrom-Json
+        if(!$repair.passed -or $repair.runId -ne $RunId -or $repair.oldEntrySha -ne $prior.entrySha -or
+            $repair.newEntrySha -ne $entry -or $repair.adapterSha -ne $adapter -or
+            $repair.originalManifestSha -ne (Sha (Join-Path $evidence 'manifest.json')) -or
+            $repair.launcherSha -ne (Sha $PSCommandPath)){throw 'Invalid entry repair gate'}
+    }
+    if($prior.adapterSha -ne $adapter -or $prior.runtimeSha -ne $info.runtimeSha256 -or $prior.seed -ne $Seed){throw 'Resume source or experiment contract mismatch'}
+    if($prior.maximumSteps -ne $MaximumSteps){
+        if(!$ExtensionGate){throw 'Maximum extension requires an explicit validated extension gate'}
+        $extension=Get-Content -LiteralPath $ExtensionGate -Raw | ConvertFrom-Json
+        if(!$extension.passed -or $extension.runId -ne $RunId -or $extension.fromMaximum -ne $prior.maximumSteps -or
+            $extension.toMaximum -ne $MaximumSteps -or $MaximumSteps -le $prior.maximumSteps -or
+            $extension.originalManifestSha -ne (Sha (Join-Path $evidence 'manifest.json')) -or
+            $extension.adapterSha -ne $adapter -or $extension.entrySha -ne $entry -or
+            $extension.runtimeSha -ne $info.runtimeSha256 -or
+            $extension.configSourceSha -ne (Sha (Join-Path $root "Assets/_Soccer/Manager/Training/MNG_$stage.yaml"))){throw 'Invalid extension gate'}
+        if($MaximumSteps -gt 1000000 -and $extension.artifactKeepCheckpoints -ne 64){throw '2M extension must preserve 64 checkpoints'}
+        $configText=Get-Content (Join-Path $root "Assets/_Soccer/Manager/Training/MNG_$stage.yaml") -Raw
+        foreach($schedule in @('learning_rate_schedule','beta_schedule','epsilon_schedule')){
+            if($configText -notmatch "(?m)^      ${schedule}: constant\s*$"){throw 'Extension requires unchanged constant PPO schedules'}
+        }
+    }
     if($selfPlay -and !(Test-Path "$result/MNG_ManagerV2/mng-v2-pool.pt")){throw 'Missing pool sidecar'}
     if($isV3){
         if($prior.generation -ne 'v3' -or $prior.historicalPolicy -or $prior.baseActorSourceSha -ne $baseActorSha){throw 'Invalid v3 resume lineage'}
@@ -64,6 +91,10 @@ if ($Resume) {
 } else {
     if((Test-Path $result) -or (Test-Path $evidence)){throw 'Preserve existing formal Run'}
 }
+$segmentName="to-$StopAt"
+if($SegmentSuffix){$segmentName+="-$SegmentSuffix"}
+$segment=Join-Path $evidence $segmentName
+if(Test-Path $segment){throw 'Preserve existing segment'}
 if($ValidateOnly){
     [ordered]@{validated=$true;generation=$generation;runId=$RunId;trainingStarted=$false;runtimeSha=$info.runtimeSha256;historicalPolicy=$HistoricalPolicy} | ConvertTo-Json
     return
@@ -71,14 +102,15 @@ if($ValidateOnly){
 if(!$Resume){
     New-Item -ItemType Directory -Path $evidence | Out-Null
     New-Item -ItemType Directory -Path "$evidence/source" | Out-Null
-    Copy-Item "$root/Tools/mng_v2_learn.py","$root/Tools/mng_v2_formal_learn.py",$PSCommandPath -Destination "$evidence/source"
+    Copy-Item "$root/Tools/mng_v2_learn.py","$root/Tools/mng_v2_formal_learn.py","$root/Tools/mng_player_log_guard.py",$PSCommandPath -Destination "$evidence/source"
     Copy-Item (Join-Path $build 'build-info.json') "$evidence/build-info.json"
 }
-$segment=Join-Path $evidence "to-$StopAt"
-if(Test-Path $segment){throw 'Preserve existing segment'}
 New-Item -ItemType Directory -Path $segment | Out-Null
 $yaml=Get-Content (Join-Path $root "Assets/_Soccer/Manager/Training/MNG_$stage.yaml") -Raw
 $yaml=[regex]::Replace(($yaml -join "`n"),'(?m)^    max_steps: \d+\s*$',"    max_steps: $MaximumSteps")
+if($Resume -and $MaximumSteps -gt 1000000){
+    $yaml=[regex]::Replace($yaml,'(?m)^    keep_checkpoints: \d+\s*$',"    keep_checkpoints: $($extension.artifactKeepCheckpoints)")
+}
 if(!$Resume -and $selfPlay){
     $yaml=$yaml.Replace('trainer_type: ppo', "trainer_type: ppo`n    init_path: $($InitialPolicy.Replace('\','/'))")
 }
@@ -94,6 +126,7 @@ if(!$Resume){
 }
 $env:MNG_V2_STOP_AT=[string]$StopAt
 $env:MNG_V2_EVIDENCE=$evidence
+$env:MNG_V2_PLAYER_LOGS=Join-Path $result 'run_logs'
 $env:MNG_V2_POOL_SEED='20260922'
 $env:MNG_EXPERIMENT_GENERATION=$generation
 if($isV3){$env:MNG_V3_INITIAL_SNAPSHOT_SHA=$baseSnapshotSha}
@@ -115,4 +148,5 @@ try{
         Sort-Object { [int]($_.BaseName -split '-')[-1] } | Select-Object -Last 1
     [ordered]@{step=[int]($last.BaseName -split '-')[-1];status='saved';stopAt=$StopAt;runtimeSha=$info.runtimeSha256} |
         ConvertTo-Json | Set-Content "$evidence/progress.json"
-}finally{Pop-Location; Remove-Item Env:MNG_V2_STOP_AT,Env:MNG_V2_EVIDENCE,Env:MNG_V2_PINNED_POLICY,Env:MNG_V2_POOL_SEED,Env:MNG_EXPERIMENT_GENERATION,Env:MNG_V3_INITIAL_SNAPSHOT_SHA -ErrorAction SilentlyContinue}
+    if(Test-Path (Join-Path $evidence 'player-failure.json')){throw 'Player failure detected; checkpoint saved, run blocked'}
+}finally{Pop-Location; Remove-Item Env:MNG_V2_STOP_AT,Env:MNG_V2_EVIDENCE,Env:MNG_V2_PLAYER_LOGS,Env:MNG_V2_PINNED_POLICY,Env:MNG_V2_POOL_SEED,Env:MNG_EXPERIMENT_GENERATION,Env:MNG_V3_INITIAL_SNAPSHOT_SHA -ErrorAction SilentlyContinue}
