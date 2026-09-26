@@ -1,0 +1,32 @@
+{
+  "schema": "project-build-retention-v1",
+  "reviewedOn": "2026-09-26",
+  "retained": [
+    {
+      "path": "Builds/MNG_V2/MS2-forward-pass-center-20260923/MS3V2",
+      "reason": "Historical pre-WorkerIOFix Player pinned by original D5/r001 evidence; preserve pending a separate retention decision",
+      "evidence": "Logs/MNG-Rebuild/MS3-v3-D5-prepared-20260923/manifest.json"
+    },
+    {
+      "path": "Builds/MNG_V2/MS2-forward-pass-center-20260923/EvaluationV2",
+      "reason": "Historical pre-WorkerIOFix evaluation Player preserved with original D4/D5 evidence",
+      "evidence": "docs/soccer/training/ms3-v3-d4-d5-report-20260923.md"
+    },
+    {
+      "path": "Builds/MNG_V2/MS3-v3-WorkerIOFix-20260924T182752604Z/MS3V2",
+      "reason": "Current runtime for completed r002 2M training and future explicitly approved continuation",
+      "evidence": "docs/soccer/current-status.md; Logs/MNG-Rebuild/MS3-v3-IO-ready-20260925"
+    },
+    {
+      "path": "Builds/MNG_V2/MS3-v3-WorkerIOFix-20260924T182752604Z/EvaluationV2",
+      "reason": "Current r002 evaluation runtime used for the 2M champion tournament",
+      "evidence": "Logs/MNG-Rebuild/MS3-v3-r002-tournament-20260926/completion.json"
+    },
+    {
+      "path": "Builds/SoccerTraining",
+      "reason": "Final shared player-curriculum build still referenced by training/evaluation tools; r017 remains suspended",
+      "evidence": "docs/soccer/training/overview.md; Tools/evaluate_soccer_policy.py"
+    }
+  ],
+  "deletionPolicy": "Review only. A missing retention entry, age, or old name alone never authorizes deletion. Verify current manifests, running processes, replacement, and retained evidence."
+}

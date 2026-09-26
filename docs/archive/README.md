@@ -1,6 +1,12 @@
 # 문서 Archive
 
-마지막 정리: 2026-09-24. 과거 계획·완료 보고서·당시 승인과 실패 기록이다. 기본 Context에서 제외하고 필요한 파일 하나만 읽는다. 현행 기준은 [현재 상태](../soccer/current-status.md)와 [MS v3 운영 기준](../soccer/training/ms-v3-current.md)이다.
+마지막 정리: 2026-09-25. 과거 계획·완료 보고서·당시 승인과 실패 기록이다. 기본 Context에서 제외하고 필요한 파일 하나만 읽는다. 현행 기준은 [현재 상태](../soccer/current-status.md)와 [MS v3 운영 기준](../soccer/training/ms-v3-current.md)이다.
+
+## MS v3 완료 기록
+
+- [r002 0k~2M 토너먼트·챔피언 선발](manager/ms-v3/ms3-v3-r002-tournament-20260926.md)
+
+- [r002 R6 완료·1M 학습·정규 평가](manager/ms-v3/ms3-v3-r002-long-training-20260925.md)
 
 ## M 단계·R0 원문
 
@@ -77,3 +83,5 @@
 - [turtle-baseline.md](legacy/turtle-baseline.md)
 
 원문에 적힌 경로·수치·미래형 실행 지시는 당시의 사실이다. 현행 파일 이동은 정리 보고서의 moves.json으로 추적하며 Logs/results의 동결 사본·manifest를 소급 수정하지 않는다. Markdown 에셋의 기존 .meta도 원본 보존을 위해 함께 보관했다.
+
+2026-09-25 사용 종료된 과거 빌드129개를 삭제했다. 본문 속 Build 경로가 현재도 존재한다는 뜻은 아니다. [삭제 명세](history/build-cleanup-20260925.json)와 [판단·검증 보고서](../project/build-cleanup-20260925.md)를 확인한다. 기존 PT/ONNX·results·Logs 원본은 유지했다.

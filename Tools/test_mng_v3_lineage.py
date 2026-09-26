@@ -8,6 +8,21 @@ from mng_v2_learn import snapshot_sha, validate_v3_pool
 from mng_v3_policy_guard import validate_initial, validate_evaluation_policy, sha
 
 class V3LineageTests(unittest.TestCase):
+    def test_quarantined_candidate_is_rejected_before_manifest_loading(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            run = 'MNG_MS3V3-20260925-r001'
+            candidate = root/'results'/run/'candidate.onnx'
+            candidate.parent.mkdir(parents=True)
+            candidate.write_bytes(b'failed candidate')
+            evidence = root/'Logs/MNG-Rebuild'/run
+            evidence.mkdir(parents=True)
+            (evidence/'quarantine.json').write_text('{}')
+            record = dict(baseOnnx={'sha256':'approved'}, excluded=[], allowedRunPattern=r'^MNG_MS3V3-\d{8}-r\d{3}$')
+            with patch('mng_v3_policy_guard.ROOT', root), patch('mng_v3_policy_guard.registry', return_value=record):
+                with self.assertRaisesRegex(AssertionError, 'Quarantined'):
+                    validate_evaluation_policy(str(candidate))
+
     def setUp(self):
         self.snapshot = {'MNG_ManagerV2': {'w': torch.tensor([1.])}}
         self.identity = snapshot_sha(self.snapshot)

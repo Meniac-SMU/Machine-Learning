@@ -1,6 +1,6 @@
 # 프로젝트 문서 색인
 
-마지막 검토: 2026-09-24. 필요한 행의 문서만 읽는다. 기본 진입점은 이 색인과 [현재 상태](soccer/current-status.md)이며 전체 문서 순독은 하지 않는다.
+마지막 검토: 2026-09-26. 필요한 행의 문서만 읽는다. 기본 진입점은 이 색인과 [현재 상태](soccer/current-status.md)이며 전체 문서 순독은 하지 않는다.
 
 | 작업 | 먼저 읽기 | 필요할 때만 추가 |
 |---|---|---|
@@ -13,6 +13,8 @@
 | 팀별 수정 | [학습형 가이드](soccer/training/learning-teams.md) / [Rule 가이드](soccer/training/rule-team.md) | [경기 계약](soccer/gameplay-contract.md) |
 | Unity·검증 | [설정 및 검증](project/setup-and-validation.md) | 필요한 검사 하나 |
 | 구조·파일 이동 | [Asset 구조](project/asset-layout.md) | [2026-09-24 정리 보고서](project/cleanup-20260924.md) |
+| 전체 용량·삭제 가능성 | [2026-09-26 용량 점검](project/storage-review-20260926.md) | [과거 Run 보존 결정](archive/history/storage-candidates-20260926.json) |
+| 빌드 생성·사용·용량 정리 | [빌드 관리 기준](project/build-lifecycle.md) | [보존 목록](project/build-retention.json), [2026-09-25 삭제 보고서](project/build-cleanup-20260925.md) |
 | 과거 결정·실험 조사 | [Archive 색인](archive/README.md) | 지정된 보고서 하나 |
 
 ## 검색 범위

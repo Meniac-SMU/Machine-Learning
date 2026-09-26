@@ -1,0 +1,139 @@
+{
+  "date": "2026-09-26",
+  "scope": "C:\\GitHub\\Machine-Learning",
+  "head": "84242324a55e2ff82c011cd4e40f0b0377b3d1e4",
+  "compression": {
+    "completedUtc": "2026-09-26T08:35:06.9919882Z",
+    "files": 17032,
+    "logicalBytes": 40853516483,
+    "allocatedBefore": 40853516483,
+    "allocatedAfter": 12378361856,
+    "allContentHashesMatch": true,
+    "directoryInheritanceChanged": false,
+    "savedBytes": 28475154627
+  },
+  "deletions": [
+    {
+      "path": "Library/Bee",
+      "fullPath": "C:\\GitHub\\Machine-Learning\\Library\\Bee",
+      "files": 4667,
+      "bytes": 690401622,
+      "reason": "Regenerable build/compiler cache; original source is retained"
+    },
+    {
+      "path": "Library/BurstCache",
+      "fullPath": "C:\\GitHub\\Machine-Learning\\Library\\BurstCache",
+      "files": 5132,
+      "bytes": 286923174,
+      "reason": "Regenerable build/compiler cache; original source is retained"
+    },
+    {
+      "path": "Library/ShaderCache",
+      "fullPath": "C:\\GitHub\\Machine-Learning\\Library\\ShaderCache",
+      "files": 4947,
+      "bytes": 27681048,
+      "reason": "Regenerable build/compiler cache; original source is retained"
+    },
+    {
+      "path": "Library/PlayerDataCache",
+      "fullPath": "C:\\GitHub\\Machine-Learning\\Library\\PlayerDataCache",
+      "files": 14,
+      "bytes": 28390533,
+      "reason": "Regenerable build/compiler cache; original source is retained"
+    },
+    {
+      "path": "Library/BuildPlayerData",
+      "fullPath": "C:\\GitHub\\Machine-Learning\\Library\\BuildPlayerData",
+      "files": 3,
+      "bytes": 3087243,
+      "reason": "Regenerable build/compiler cache; original source is retained"
+    },
+    {
+      "path": "obj",
+      "fullPath": "C:\\GitHub\\Machine-Learning\\obj",
+      "files": 71,
+      "bytes": 4936563,
+      "reason": "Regenerable build/compiler cache; original source is retained"
+    },
+    {
+      "path": "Tools/__pycache__",
+      "fullPath": "C:\\GitHub\\Machine-Learning\\Tools\\__pycache__",
+      "files": 16,
+      "bytes": 102760,
+      "reason": "Regenerable build/compiler cache; original source is retained"
+    },
+    {
+      "path": "Assets/_Legacy/UnityTemplate",
+      "fullPath": "C:\\GitHub\\Machine-Learning\\Assets\\_Legacy\\UnityTemplate",
+      "files": 14,
+      "bytes": 52517,
+      "reason": "Unused Unity welcome/tutorial template; no external GUID or type/path consumers"
+    },
+    {
+      "path": "Assets/_Legacy/UnityTemplate.meta",
+      "fullPath": "C:\\GitHub\\Machine-Learning\\Assets\\_Legacy\\UnityTemplate.meta",
+      "files": 1,
+      "bytes": 172,
+      "reason": "Unused Unity welcome/tutorial template; no external GUID or type/path consumers"
+    }
+  ],
+  "git": {
+    "bytesBefore": 4936587580,
+    "bytesAfter": 4891565184,
+    "savedBytes": 45022396,
+    "objects": 4564,
+    "allObjectsPreserved": true,
+    "refsUnchanged": true
+  },
+  "deletedFiles": 14865,
+  "deletedLogicalBytes": 1041575632,
+  "trackedDeletedFiles": 31,
+  "trackedDeletedLogicalBytes": 155449,
+  "preservedGroups": [
+    {
+      "group": "A",
+      "runs": 65,
+      "bytes": 5135303279,
+      "decision": "preserve-user-20260926"
+    },
+    {
+      "group": "B",
+      "runs": 41,
+      "bytes": 370960162,
+      "decision": "preserve-user-20260926"
+    }
+  ],
+  "verification": {
+    "verifiedUtc": "2026-09-26T08:35:00.942Z",
+    "assetHashesVerified": 1831,
+    "allowedAssetTextChanges": [
+      "Assets/_Legacy/README.md",
+      "Assets/_Soccer/Manager/MNG_README.md"
+    ],
+    "resultsFilesVerified": 4066,
+    "logsFilesVerified": 81738,
+    "buildFilesVerified": 1057,
+    "missing": [],
+    "sizeChanges": [],
+    "headUnchanged": true,
+    "refsUnchanged": true,
+    "allGitObjectsPreserved": true,
+    "gitObjects": 4564,
+    "currentChampionVerified": true,
+    "championPath": "results/MNG_MS3V3-20260925-r002/MNG_ManagerV2/MNG_ManagerV2-2001834.onnx",
+    "championHash": "31b042143e5a01be5e5c2717126e6a967b1c16400d8a4167e72580acde4dc2a1",
+    "modelChecks": [
+      {
+        "path": "Logs/MNG-Rebuild/R5-r2-200k-gate-initial-policy.pt",
+        "hashVerified": true
+      },
+      {
+        "path": "results/MNG_MS2V2-20260922-r002/MNG_ManagerV2/MNG_ManagerV2-200120.onnx",
+        "hashVerified": true
+      }
+    ]
+  },
+  "measurementNote": "NTFS GetCompressedFileSizeW storage-size reduction plus logical file sizes for deleted caches and Git; approximate disk saving, not an exact volume free-space measurement. Newly written audit evidence is not subtracted.",
+  "approximateSavedBytes": 29561752655,
+  "auditEvidenceBytes": 36060445
+}

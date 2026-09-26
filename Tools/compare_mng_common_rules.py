@@ -24,8 +24,9 @@ def load(folder):
     unstruck = {}
     for row in rows:
         match = Path(folder) / f"match-{row['index']:03d}"
-        common_path = match / 'common-rules.jsonl'
-        common = [json.loads(line) for line in common_path.read_text().splitlines()] if common_path.exists() else []
+        common_paths = list(match.glob('common-rules*.jsonl'))
+        assert len(common_paths) <= 1, 'Multiple common-rule streams in one frozen match'
+        common = [json.loads(line) for path in common_paths for line in path.read_text().splitlines()]
         common = [event for event in common if event['team'] == row['policyTeam']]
         requests = {event['parentCommandId']: event for event in common if event['reason'] in ('OwnGoalClearance', 'NoForwardProgress2s')}
         physical = [event for event in common if event['reason'] == 'PhysicalStrike']

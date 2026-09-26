@@ -74,7 +74,7 @@ namespace MachineLearning.Soccer.Manager
                 row.forwards[team * 4 + slot] = avatar.Body.rotation * Vector3.forward;
             }
             Directory.CreateDirectory(m_Output);
-            File.AppendAllText(Path.Combine(m_Output, "spawns.jsonl"), JsonUtility.ToJson(row) + "\n");
+            File.AppendAllText(Path.Combine(m_Output, MNG_MSController.EvidenceFileName("spawns")), JsonUtility.ToJson(row) + "\n");
         }
         [Serializable] public struct Entry
         {

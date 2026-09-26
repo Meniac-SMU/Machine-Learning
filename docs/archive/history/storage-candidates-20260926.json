@@ -1,0 +1,967 @@
+{
+  "schema": "storage-decision-candidates-v1",
+  "date": "2026-09-26",
+  "protectedRuns": [
+    "results/MNG_MS2V2-20260922-r002",
+    "results/CurriculumL2Find-20260907-r017",
+    "results/MNG_MS3V3-20260925-r001",
+    "results/MNG_MS3V3-20260925-r002",
+    "results/MNG_MS3V3-20260925-r900"
+  ],
+  "candidates": [
+    {
+      "group": "A",
+      "path": "results/CurriculumL1-20260903-r010",
+      "bytes": 401497904,
+      "files": 104,
+      "gitTrackedBytes": 401349508,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2Find-20260906-r005",
+      "bytes": 267953178,
+      "files": 80,
+      "gitTrackedBytes": 267881685,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/Base-20260831-r004",
+      "bytes": 146375223,
+      "files": 36,
+      "gitTrackedBytes": 146357794,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL1-20260903-r012",
+      "bytes": 146360927,
+      "files": 44,
+      "gitTrackedBytes": 145973166,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL1-20260904-r015",
+      "bytes": 146214823,
+      "files": 44,
+      "gitTrackedBytes": 145989749,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2Score-20260906-r001",
+      "bytes": 146141884,
+      "files": 60,
+      "gitTrackedBytes": 146046039,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2Find-20260906-r006",
+      "bytes": 146129698,
+      "files": 60,
+      "gitTrackedBytes": 146058205,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL1-20260903-r014",
+      "bytes": 146107067,
+      "files": 44,
+      "gitTrackedBytes": 145965940,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL1-20260903-r011",
+      "bytes": 146048809,
+      "files": 44,
+      "gitTrackedBytes": 145941718,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2-20260904-r002",
+      "bytes": 145718850,
+      "files": 45,
+      "gitTrackedBytes": 145677418,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2-20260905-r011",
+      "bytes": 121835603,
+      "files": 58,
+      "gitTrackedBytes": 121763888,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2Find-20260906-r003",
+      "bytes": 97791871,
+      "files": 54,
+      "gitTrackedBytes": 97720380,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2Find-20260906-r004",
+      "bytes": 97698918,
+      "files": 52,
+      "gitTrackedBytes": 97627425,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2Find-20260906-r009",
+      "bytes": 97682717,
+      "files": 52,
+      "gitTrackedBytes": 97611224,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2Find-20260906-r011",
+      "bytes": 97660344,
+      "files": 52,
+      "gitTrackedBytes": 97588853,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2Find-20260906-r010",
+      "bytes": 97652342,
+      "files": 52,
+      "gitTrackedBytes": 97580849,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2Find-20260907-r014",
+      "bytes": 97629881,
+      "files": 37,
+      "gitTrackedBytes": 97594087,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2Find-20260906-r008",
+      "bytes": 97601323,
+      "files": 52,
+      "gitTrackedBytes": 97529832,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2Find-20260906-r007",
+      "bytes": 97460315,
+      "files": 52,
+      "gitTrackedBytes": 97388822,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2Find-20260906-r001",
+      "bytes": 97167383,
+      "files": 52,
+      "gitTrackedBytes": 97095890,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2Find-20260906-r002",
+      "bytes": 97149580,
+      "files": 52,
+      "gitTrackedBytes": 97078089,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL0-20260902-r007",
+      "bytes": 85284835,
+      "files": 34,
+      "gitTrackedBytes": 85250221,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2-20260904-r005",
+      "bytes": 85124999,
+      "files": 38,
+      "gitTrackedBytes": 85088647,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL0-20260901-r001",
+      "bytes": 85121300,
+      "files": 26,
+      "gitTrackedBytes": 85104133,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2-20260904-r004",
+      "bytes": 85099694,
+      "files": 37,
+      "gitTrackedBytes": 85063215,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2-20260904-r003",
+      "bytes": 85058529,
+      "files": 37,
+      "gitTrackedBytes": 85021542,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS3V2-20260922-r005",
+      "bytes": 78180198,
+      "files": 71,
+      "gitTrackedBytes": 75610158,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2Find-20260907-r015",
+      "bytes": 73505643,
+      "files": 32,
+      "gitTrackedBytes": 73469849,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2Find-20260907-r016",
+      "bytes": 73373641,
+      "files": 32,
+      "gitTrackedBytes": 73337974,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL3-20260905-r005",
+      "bytes": 73256231,
+      "files": 49,
+      "gitTrackedBytes": 73185152,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL1-20260903-r013",
+      "bytes": 73061491,
+      "files": 32,
+      "gitTrackedBytes": 72937636,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL1-20260905-r018",
+      "bytes": 73027963,
+      "files": 49,
+      "gitTrackedBytes": 72930087,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL0-20260902-r006",
+      "bytes": 72898499,
+      "files": 32,
+      "gitTrackedBytes": 72864012,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL0-20260902-r005",
+      "bytes": 72830725,
+      "files": 32,
+      "gitTrackedBytes": 72796238,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL0-20260902-r004",
+      "bytes": 72804526,
+      "files": 32,
+      "gitTrackedBytes": 72770039,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL0-20260902-r003",
+      "bytes": 72791256,
+      "files": 32,
+      "gitTrackedBytes": 72756769,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL0-20260902-r002",
+      "bytes": 72759766,
+      "files": 32,
+      "gitTrackedBytes": 72725279,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL1-20260902-r006",
+      "bytes": 61113309,
+      "files": 30,
+      "gitTrackedBytes": 61030588,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2Find-20260907-r013",
+      "bytes": 60939779,
+      "files": 47,
+      "gitTrackedBytes": 60868288,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2Find-20260906-r012",
+      "bytes": 60907310,
+      "files": 47,
+      "gitTrackedBytes": 60835819,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS3V2-20260922-r003",
+      "bytes": 53787576,
+      "files": 95,
+      "gitTrackedBytes": 53307135,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS3V2-20260922-r004",
+      "bytes": 52793616,
+      "files": 95,
+      "gitTrackedBytes": 52314283,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL1-20260902-r003",
+      "bytes": 48881260,
+      "files": 28,
+      "gitTrackedBytes": 48749110,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL1-20260902-r004",
+      "bytes": 48843208,
+      "files": 28,
+      "gitTrackedBytes": 48776590,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2-20260905-r008",
+      "bytes": 48838782,
+      "files": 44,
+      "gitTrackedBytes": 48767322,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2-20260905-r009",
+      "bytes": 48813678,
+      "files": 44,
+      "gitTrackedBytes": 48741710,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL3-20260905-r004",
+      "bytes": 48810466,
+      "files": 44,
+      "gitTrackedBytes": 48739387,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2-20260905-r010",
+      "bytes": 48802086,
+      "files": 44,
+      "gitTrackedBytes": 48730880,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2-20260905-r012",
+      "bytes": 48792924,
+      "files": 44,
+      "gitTrackedBytes": 48721591,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2-20260905-r013",
+      "bytes": 48780896,
+      "files": 44,
+      "gitTrackedBytes": 48709817,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2-20260905-r007",
+      "bytes": 48712886,
+      "files": 31,
+      "gitTrackedBytes": 48677169,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2-20260905-r006",
+      "bytes": 48705983,
+      "files": 31,
+      "gitTrackedBytes": 48670012,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL1-20260902-r005",
+      "bytes": 36571549,
+      "files": 26,
+      "gitTrackedBytes": 36520070,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/Base-20260831-r003",
+      "bytes": 36437300,
+      "files": 18,
+      "gitTrackedBytes": 36419998,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL1-20260904-r017",
+      "bytes": 35595214,
+      "files": 22,
+      "gitTrackedBytes": 35509353,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL1-20260904-r016",
+      "bytes": 35487275,
+      "files": 22,
+      "gitTrackedBytes": 35427703,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2-20260904-r001",
+      "bytes": 35411116,
+      "files": 22,
+      "gitTrackedBytes": 35380754,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL1-20260902-r009",
+      "bytes": 24400520,
+      "files": 24,
+      "gitTrackedBytes": 24332378,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL1-20260902-r007",
+      "bytes": 24385691,
+      "files": 24,
+      "gitTrackedBytes": 24338504,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL1-20260902-r002",
+      "bytes": 24322874,
+      "files": 24,
+      "gitTrackedBytes": 24287625,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL2Score-20260906-r002",
+      "bytes": 24321836,
+      "files": 40,
+      "gitTrackedBytes": 24249615,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL1-20260902-r008",
+      "bytes": 24300303,
+      "files": 24,
+      "gitTrackedBytes": 24265816,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/Base-20260831-r002",
+      "bytes": 24239584,
+      "files": 8,
+      "gitTrackedBytes": 24239584,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL1-20260902-r001",
+      "bytes": 23424815,
+      "files": 20,
+      "gitTrackedBytes": 23396191,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL3-20260905-r002",
+      "bytes": 23382363,
+      "files": 36,
+      "gitTrackedBytes": 23323163,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS3-20260921-r002",
+      "bytes": 15954183,
+      "files": 52,
+      "gitTrackedBytes": 8448105,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS3V2-20260922-r002",
+      "bytes": 11808607,
+      "files": 59,
+      "gitTrackedBytes": 11668463,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_M1Attack-20260911-r001",
+      "bytes": 9014166,
+      "files": 19,
+      "gitTrackedBytes": 7479527,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS2-20260920-r003",
+      "bytes": 8375404,
+      "files": 34,
+      "gitTrackedBytes": 7102844,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS1-20260920-r001",
+      "bytes": 7382372,
+      "files": 28,
+      "gitTrackedBytes": 6435176,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_M3Fallback-20260910-r001",
+      "bytes": 7160630,
+      "files": 17,
+      "gitTrackedBytes": 6132044,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS0SelfPlay-20260919-r001",
+      "bytes": 6952260,
+      "files": 20,
+      "gitTrackedBytes": 6906757,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_M2Defense-20260910-r001",
+      "bytes": 6598248,
+      "files": 17,
+      "gitTrackedBytes": 6278997,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_M1Attack-20260910-r001",
+      "bytes": 6416676,
+      "files": 17,
+      "gitTrackedBytes": 6110284,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS0R0-20260919-r001",
+      "bytes": 6391424,
+      "files": 21,
+      "gitTrackedBytes": 6379106,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_M1Moving-20260910-r001",
+      "bytes": 6387927,
+      "files": 17,
+      "gitTrackedBytes": 6110521,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_M1Attack-20260913-r002",
+      "bytes": 5533762,
+      "files": 9,
+      "gitTrackedBytes": 4055735,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS0SelfPlay-20260919-r002",
+      "bytes": 5239504,
+      "files": 14,
+      "gitTrackedBytes": 5209803,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_M1Attack-20260917-r003",
+      "bytes": 5147349,
+      "files": 13,
+      "gitTrackedBytes": 4131225,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS1-20260920-r004",
+      "bytes": 5073615,
+      "files": 28,
+      "gitTrackedBytes": 4345234,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS2-20260920-r002",
+      "bytes": 4942836,
+      "files": 24,
+      "gitTrackedBytes": 3971157,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS1-20260920-r005",
+      "bytes": 4780877,
+      "files": 28,
+      "gitTrackedBytes": 4229023,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS1-20260920-r002",
+      "bytes": 4620762,
+      "files": 28,
+      "gitTrackedBytes": 4233827,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS1-20260920-r003",
+      "bytes": 4565883,
+      "files": 28,
+      "gitTrackedBytes": 4192182,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS1-20260920-r006",
+      "bytes": 4422333,
+      "files": 28,
+      "gitTrackedBytes": 4101967,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS1-20260920-r009",
+      "bytes": 4322273,
+      "files": 28,
+      "gitTrackedBytes": 4048395,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS1-20260920-r008",
+      "bytes": 4309250,
+      "files": 28,
+      "gitTrackedBytes": 4057707,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS3-20260921-r001",
+      "bytes": 4294553,
+      "files": 43,
+      "gitTrackedBytes": 4016615,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS1-20260920-r007",
+      "bytes": 4195515,
+      "files": 28,
+      "gitTrackedBytes": 4022547,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS2V2-20260922-r001",
+      "bytes": 4022674,
+      "files": 42,
+      "gitTrackedBytes": 3403180,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS2-20260921-r005",
+      "bytes": 3222055,
+      "files": 37,
+      "gitTrackedBytes": 1899959,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_M1Smoke-20260909-r002",
+      "bytes": 3103009,
+      "files": 11,
+      "gitTrackedBytes": 2960257,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_M1Smoke-20260909-r001",
+      "bytes": 3100269,
+      "files": 11,
+      "gitTrackedBytes": 2958357,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_M1Smoke-20260909-r007",
+      "bytes": 2972283,
+      "files": 11,
+      "gitTrackedBytes": 2961946,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_M1Smoke-20260909-r003",
+      "bytes": 2964607,
+      "files": 11,
+      "gitTrackedBytes": 2961953,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_M1Smoke-20260909-r004",
+      "bytes": 2964453,
+      "files": 11,
+      "gitTrackedBytes": 2961947,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_M1Smoke-20260909-r005",
+      "bytes": 2964450,
+      "files": 11,
+      "gitTrackedBytes": 2961944,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_M1Smoke-20260909-r006",
+      "bytes": 2963602,
+      "files": 11,
+      "gitTrackedBytes": 2961988,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS0Parallel8-20260919-r001",
+      "bytes": 1307669,
+      "files": 18,
+      "gitTrackedBytes": 1289881,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS0Parallel1-20260919-r001",
+      "bytes": 1303209,
+      "files": 11,
+      "gitTrackedBytes": 1298456,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS0Parallel2-20260919-r001",
+      "bytes": 1296752,
+      "files": 12,
+      "gitTrackedBytes": 1289782,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL3-20260905-r003",
+      "bytes": 100689,
+      "files": 33,
+      "gitTrackedBytes": 41489,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/CurriculumL3-20260905-r001",
+      "bytes": 96003,
+      "files": 33,
+      "gitTrackedBytes": 36803,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS3V2-20260922-r001",
+      "bytes": 63664,
+      "files": 36,
+      "gitTrackedBytes": 5953,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "B",
+      "path": "results/MNG_MS2-20260921-r004",
+      "bytes": 59667,
+      "files": 34,
+      "gitTrackedBytes": 4250,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    },
+    {
+      "group": "A",
+      "path": "results/validate-only",
+      "bytes": 5842,
+      "files": 4,
+      "gitTrackedBytes": 5014,
+      "decision": "preserve-user-20260926",
+      "reason": "User explicitly chose to preserve both A and B, including local files and existing Git tracking."
+    }
+  ]
+}

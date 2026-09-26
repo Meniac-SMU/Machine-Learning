@@ -104,3 +104,8 @@ InitTestScene*.unity*
 
 # ML-Agents가 종료 시 이 고정 경로에 다시 만드는 성능 진단 로그.
 /Assets/ML-Agents/
+
+# Python bytecode is regenerated from tracked source; never share interpreter caches.
+__pycache__/
+*.pyc
+*.pyo

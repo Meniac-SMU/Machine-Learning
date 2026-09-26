@@ -1,11 +1,11 @@
 # MNG 감독 강화학습 진입점
 
-마지막 검토: 2026-09-24. 현행 단계는 MS2-v3 출발 기준 / MS3-v3 학습 전 D5 준비 완료이며 새 R6 학습은 미시작이다.
+마지막 검토: 2026-09-26. 현행 상태는 MS3-v3 r002의2M 학습·평가 완료, 토너먼트로2M 챔피언 확정이다. 진행 상태의 단일 기준은 아래 current-status이며 다음 학습을 자동 시작하지 않는다.
 
 - 현재 상태: [Soccer 현재 상태](../../../docs/soccer/current-status.md)
 - 기술·학습·평가 경계: [MS v3 운영 기준](../../../docs/soccer/training/ms-v3-current.md)
 - 실행 도구와 준비물: [Tools 색인](../../../Tools/README.md)
-- 현행 증거: [D4·D5 보고서](../../../docs/soccer/training/ms3-v3-d4-d5-report-20260923.md)
+- 현행 증거: [2M 챔피언 선발](../../../docs/archive/manager/ms-v3/ms3-v3-r002-tournament-20260926.md). [D4·D5 보고서](../../../docs/soccer/training/ms3-v3-d4-d5-report-20260923.md)는 초기 준비 이력이다.
 - 과거 M0~M3·R0·MS v1/v2 계획: [Archive](../../../docs/archive/README.md), 필요할 때만 선택한다.
 
 ## 코드·에셋 위치

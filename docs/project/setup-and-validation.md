@@ -76,6 +76,8 @@ Markdown 링크는 상대 경로를 기준으로 모두 해석해야 한다. Arc
 
 ## Builder
 
+빌드 생성·보관은 [빌드 관리 기준](build-lifecycle.md)을 따른다. 현행 Manager는 `Tools/Build-MNGCurrent.ps1`에 단계·목적을 넣어 새 경로로 만들고 기록한다. 다른 Unity 메뉴/기존 Builder를 사용해도 완료 직후 `Build-Lifecycle.ps1 -Action Register`, 실제 사용 후 `-Action Use`, 새 빌드/단계 전환 때 `-Action Review`를 수행한다. 현재 보존 목록은 `docs/project/build-retention.json`이다.
+
 Unity Menu에서는 다음을 사용한다.
 
 - 비파괴 검사: `Tools/Soccer/Validate active 4v4 Stadiums`

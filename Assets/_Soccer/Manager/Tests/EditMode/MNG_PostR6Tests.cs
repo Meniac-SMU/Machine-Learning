@@ -8,6 +8,27 @@ namespace MachineLearning.Soccer.Manager.Tests
 {
     public sealed class MNG_PostR6Tests
     {
+        [Test]
+        public void ConcurrentWorkersKeepIndependentCompleteEvidenceStreams()
+        {
+            var directory = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "mng-evidence-" + Guid.NewGuid());
+            System.IO.Directory.CreateDirectory(directory);
+            try
+            {
+                System.Threading.Tasks.Parallel.For(0, 32, worker =>
+                {
+                    var path = System.IO.Path.Combine(directory, MNG_MSController.EvidenceFileName("spawns", 6500 + worker, 1000 + worker));
+                    for (var reset = 0; reset < 64; reset++) System.IO.File.AppendAllText(path, reset + "\n");
+                });
+                var files = System.IO.Directory.GetFiles(directory);
+                Assert.AreEqual(32, files.Length);
+                foreach (var path in files) Assert.AreEqual(64, System.IO.File.ReadAllLines(path).Length);
+                Assert.AreNotEqual(MNG_MSController.EvidenceFileName("spawns", 6500, 1000),
+                    MNG_MSController.EvidenceFileName("spawns", 6500, 1001));
+            }
+            finally { System.IO.Directory.Delete(directory, true); }
+        }
+
         public static IEnumerable<TestCaseData> MirrorCases()
         {
             foreach (var command in (MNG_Command[])Enum.GetValues(typeof(MNG_Command)))

@@ -3,7 +3,7 @@
   "generation": "v3",
   "stage": "MS3-v3 fresh self-play from MS2",
   "defaultCandidate": "results/MNG_MS2V2-20260922-r002/MNG_ManagerV2/MNG_ManagerV2-200120.onnx",
-  "currentChampion": null,
+  "currentChampion": "results/MNG_MS3V3-20260925-r002/MNG_ManagerV2/MNG_ManagerV2-2001834.onnx",
   "baseActor": {
     "path": "Logs/MNG-Rebuild/R5-r2-200k-gate-initial-policy.pt",
     "sha256": "c00073aece11511a16fe9fcd048530218e8c80add8b877f77eefaf2196700970",
@@ -24,5 +24,29 @@
       "ptSha": "c4747b8df1280d030951d2c290ccb3a4fb0287133929446910c121a2db899ed2"
     }
   ],
-  "artifactPolicy": "Preserve original files and v2 registry as historical evidence. Active v3 workflows use this registry only."
+  "artifactPolicy": "Preserve original files and v2 registry as historical evidence. Active v3 workflows use this registry only.",
+  "championEvidence": "Logs/MNG-Rebuild/MS3-v3-r002-tournament-20260926/completion.json",
+  "championHistory": [
+    {
+      "path": "results/MNG_MS3V3-20260925-r002/MNG_ManagerV2/MNG_ManagerV2-400719.onnx",
+      "evidence": "Logs/MNG-Rebuild/MS3-v3-r002-to800k-20260925/r6-completion-gate.json",
+      "supersededByTournament": "Logs/MNG-Rebuild/MS3-v3-r002-tournament-20260926/completion.json"
+    }
+  ],
+  "championSelectionRule": "Standing user rule from 2026-09-26: replace the incumbent when the new model wins their direct match series. 40 base games, +20 once if win-rate gap <=5 percentage points, then +40 only for exact cumulative ties until resolved; cumulative wins decide. Other-opponent metrics and confidence intervals are reported separately, not additional promotion gates.",
+  "evaluationPolicy": {
+    "detailedCadenceSteps": 400000,
+    "monitorOnlyCadenceSteps": 100000,
+    "secondsPerMatch": 300,
+    "pairedTeams": true,
+    "parallelMatches": true,
+    "championDuelBaseGames": 40,
+    "nearTieGapPercentagePoints": 5,
+    "nearTieAdditionalGames": 20,
+    "exactTieAdditionalGames": 40,
+    "indicatorOpponents": ["approved-MS2", "R0-Full-v2", "recover", "carry-shot", "balanced", "same-run-historical-policies"],
+    "randomOpponentEvaluation": false,
+    "otherOpponentMetricsBlockPromotion": false,
+    "authority": "docs/soccer/training/ms-v3-current.md"
+  }
 }

@@ -33,6 +33,7 @@ def main():
     for key in ('build-root','preflight','receipt','initial-actor','output','run-id'):p.add_argument('--'+key,required=True)
     p.add_argument('--historical-policy')
     p.add_argument('--generation',choices=('v2','v3'),default='v2')
+    p.add_argument('--maximum-steps',type=int,choices=(200000,400000,600000),default=200000)
     args=p.parse_args();build=Path(args.build_root).resolve();out=Path(args.output).resolve()
     training=json.loads((build/'MS3V2/build-info.json').read_text())
     evaluation=json.loads((build/'EvaluationV2/build-info.json').read_text())
@@ -61,15 +62,15 @@ def main():
     out.mkdir(parents=True,exist_ok=False)
     initial=out/'initial-policy.pt';torch.save(state,initial)
     config=yaml.safe_load((ROOT/'Assets/_Soccer/Manager/Training/MNG_MS3V2.yaml').read_text())
-    config['behaviors']['MNG_ManagerV2']['max_steps']=200000
+    config['behaviors']['MNG_ManagerV2']['max_steps']=args.maximum_steps
     config['behaviors']['MNG_ManagerV2']['init_path']=initial.as_posix()
     (out/'config-preview.yaml').write_text(yaml.safe_dump(config,sort_keys=False),encoding='ascii')
-    gate=dict(passed=ready,runtimeSha=training['runtimeSha256'],initialPolicySha=sha(initial),maximumSteps=200000,
+    gate=dict(passed=ready,runtimeSha=training['runtimeSha256'],initialPolicySha=sha(initial),maximumSteps=args.maximum_steps,
         receiptSha=sha(args.receipt),preflightSha=sha(args.preflight),generation=args.generation,
         baseActorSourceSha=sha(actor),baseSnapshotSha=base_snapshot_sha)
     if historical: gate['historicalPolicySha']=sha(historical)
     (out/'preparation-gate.json').write_text(json.dumps(gate,indent=2))
-    sources=['Tools/MNG_V2_Train.ps1','Tools/mng_v2_learn.py','Tools/mng_v2_formal_learn.py',
+    sources=['Tools/MNG_V2_Train.ps1','Tools/mng_v2_learn.py','Tools/mng_v2_formal_learn.py','Tools/mng_player_log_guard.py',
         'Assets/_Soccer/Manager/Training/MNG_MS3V2.yaml']
     if args.generation=='v3':
         sources += ['Tools/prepare_mng_ms3_experiment.py','Tools/mng_v3_policy_guard.py','Tools/mng_v3_evaluate.py',
@@ -78,7 +79,7 @@ def main():
         sources += [str(p.relative_to(ROOT)).replace('\\','/') for folder in ('Assets/_Soccer/Manager/Runtime','Assets/_Soccer/Core/Scripts') for p in (ROOT/folder).rglob('*.cs')]
     manifest=dict(stage=f'MS3-{args.generation} / bounded learning preparation (D5)',generation=args.generation,readyToStart=ready,trainingStarted=False,
         optimizerUpdates=0,runId=args.run_id,workers=32,trainerSeed=20260923,poolSeed=20260922,
-        nominalMaximumSteps=200000,firstStopAt=100000,stepAccounting='aggregate learning-team transitions; final trainer batch may cross boundary',
+        nominalMaximumSteps=args.maximum_steps,firstStopAt=100000,stepAccounting='aggregate learning-team transitions; final trainer batch may cross boundary',
         hypothesis=('MS3-v3 restart from the approved MS2 actor with fresh optimizer and pool; only initial and this new run snapshots; unchanged PPO settings.' if args.generation=='v3' else 'Bounded adaptation with initial and historical actors pinned.'),
         initialActorSource=str(actor),initialActorSourceSha=sha(actor),initialActorSourceStep=int(source_state['global_step']['_GlobalSteps__global_step']),
         initialStep=0,initialPolicySha=sha(initial),runtimeSha=training['runtimeSha256'],
@@ -94,7 +95,7 @@ def main():
     def quote(value):return "'"+str(value).replace("'","''")+"'"
     guard="param([switch]$ValidateOnly)\n$ErrorActionPreference='Stop'\n$plan=Get-Content (Join-Path $PSScriptRoot 'manifest.json') -Raw | ConvertFrom-Json\nif(!$plan.readyToStart){throw 'Readiness gate is not passed'}\n"
     guard+=f"$root={quote(ROOT)}\nforeach($entry in $plan.sourceHashes.PSObject.Properties){{if((Get-FileHash (Join-Path $root $entry.Name) -Algorithm SHA256).Hash.ToLowerInvariant() -ne $entry.Value){{throw 'Prepared source changed; revalidate'}}}}\n"
-    base=f"& {quote(ROOT/'Tools/MNG_V2_Train.ps1')} -RunId {quote(args.run_id)} -TrainingBuild {quote(build/'MS3V2')} -MaximumSteps 200000 -Seed 20260923"
+    base=f"& {quote(ROOT/'Tools/MNG_V2_Train.ps1')} -RunId {quote(args.run_id)} -TrainingBuild {quote(build/'MS3V2')} -MaximumSteps {args.maximum_steps} -Seed 20260923"
     guard+=f"if((Get-FileHash {quote(out/'preparation-gate.json')} -Algorithm SHA256).Hash.ToLowerInvariant() -ne {quote(sha(out/'preparation-gate.json'))}){{throw 'Prepared gate changed'}}\n"
     guard+=f"if((Get-FileHash {quote(args.receipt)} -Algorithm SHA256).Hash.ToLowerInvariant() -ne {quote(sha(args.receipt))}){{throw 'Readiness receipt changed'}}\n"
     guard+=f"if((Get-FileHash {quote(args.preflight)} -Algorithm SHA256).Hash.ToLowerInvariant() -ne {quote(sha(args.preflight))}){{throw 'Preflight changed'}}\n"

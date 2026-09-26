@@ -1,6 +1,6 @@
 # 프로젝트 파일 구조와 보존 기준
 
-마지막 검토: 2026-09-24. 물리 경로와 탐색 범위의 기준이다.
+마지막 검토: 2026-09-26. 물리 경로와 탐색 범위의 기준이다.
 
 | 경로 | 역할 | 기본 탐색 |
 |---|---|---|
@@ -16,7 +16,8 @@
 | `Assets/Settings`, `InputSystem_Actions.inputactions` | 공통 렌더·입력 | 설정 작업 시 |
 | `Assets/_Legacy` | Turtle·Escape·과거 실험·진단 원본 | 제외 |
 | `Tools` | 실행·평가·검증 도구 | README에서 진입점 선택 |
-| `Builds`, `results`, `Logs` | 빌드·정책 계보·검증 원본 | 전체 읽기 제외, 정확한 경로 선택 |
+| `Builds` | 현재 필요한 실행용 생성물, 별도 보존/폐기 검토 | 전체 읽기 제외, 보존 목록에서 선택 |
+| `results`, `Logs` | 정책 계보·검증 원본 | 전체 읽기 제외, 정확한 경로 선택 |
 | `Library`, `obj`, `.vs`, `UserSettings`, `__pycache__` | 생성물·개인 설정 | 제외 |
 
 ## Unity 에셋
@@ -38,7 +39,9 @@ MNG의 `Curriculum/MS_V2`, `MNG_ManagerV2`, MS3V2 빌드·YAML 이름은 현행 
 
 MNG의 과거 `MNG_01`~`MNG_05`, R0 안내는 `docs/archive/manager/m-stage`에 모았다. 원래 Markdown `.meta`도 같은 위치에 보존했으며 runtime 에셋으로 사용하지 않는다. 활성 Manager 폴더에는 짧은 `MNG_README.md`를 둔다.
 
-Builds와 results는 큰 파일이라는 이유로 제거하지 않는다. 현행 actor·평가 비교·정상 중단·실패 원인 재현의 원본이다. `Logs`의 source snapshot·hash manifest·당시 명령은 역사적 기록이므로 현재 경로로 일괄 치환하지 않는다. 이동된 현행 문서는 [Archive](../archive/README.md)와 [정리 보고서](cleanup-20260924.md)의 이동 명세로 찾는다.
+results와 Logs의 모델·원본 검증 증거는 보존한다. 2026-09-26 사용자는 과거 선수 실험(A)과 과거 MNG 실험(B)을 모두 원위치·Git 추적 상태 그대로 보존하기로 결정했다. [용량 점검 보고서](storage-review-20260926.md)와 [Run별 보존 결정](../archive/history/storage-candidates-20260926.json)을 따른다. 완료된 대용량 텍스트 로그는 경로·내용·해시를 유지하는 NTFS 파일 압축을 적용했다. 신규 파일·폴더에 자동 압축을 설정하지 않았다.
+
+빌드는 [빌드 관리 기준](build-lifecycle.md)과 [보존 목록](build-retention.json)에 따라 별도 검토한다. 2026-09-25 과거 Player129개를 삭제한 [당시 보고서](build-cleanup-20260925.md)는 역사적 기록이다. 2026-09-26 현재 보존 대상은 WorkerIOFix 현행2개, 이전 D4/D5 증거용2개, 공용 SoccerTraining1개로 총5개다. `Logs`의 source snapshot·hash manifest·당시 명령은 역사적 기록이므로 현재 경로로 일괄 치환하지 않는다. 이동된 현행 문서는 [Archive](../archive/README.md)와 [문서 정리 보고서](cleanup-20260924.md)의 이동 명세로 찾는다.
 
 ## 이동 검증
 
