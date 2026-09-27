@@ -1,0 +1,5 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement name="viewport" style="flex-grow: 1; overflow: hidden; background-color: rgb(16,19,16);">
+        <ui:VisualElement name="stage" style="position: absolute; width: 1920px; height: 1080px; transform-origin: 0 0; overflow: hidden;" />
+    </ui:VisualElement>
+</ui:UXML>

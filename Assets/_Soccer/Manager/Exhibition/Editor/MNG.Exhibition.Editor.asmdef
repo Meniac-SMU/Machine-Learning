@@ -1,0 +1,5 @@
+{
+ "name":"MNG.Exhibition.Editor",
+ "references":["MNG.Exhibition","MNG.Runtime","MNG.Editor","Soccer.Runtime","Unity.ML-Agents","Unity.InferenceEngine","Unity.Localization","Unity.Localization.Editor","Unity.Addressables","Unity.Addressables.Editor","Unity.ResourceManager"],
+ "includePlatforms":["Editor"]
+}

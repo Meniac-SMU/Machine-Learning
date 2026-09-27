@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97269afb30aa84742ae3f3342603618a, type: 3}
+  m_Name: ExhibitionArt_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.AssetTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 2c94ee191f059284ca63dc0ac341b454, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 788078592
+    m_Localized: f5bd28aa16d81c04bb690fd5f28ad235
+    m_Metadata:
+      m_Items: []
+  - m_Id: 809050112
+    m_Localized: aac895f7eefe7e14da811a80419dbda2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 809050113
+    m_Localized: 0b1ce4e3150c2f749bf4476a53fd4730
+    m_Metadata:
+      m_Items: []
+  - m_Id: 809050114
+    m_Localized: b135b98e3aebd4440b4a4ae3824c47cf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 223688661737472
+    m_Localized: 7c84f6723cc94d54ca0f8fba5743a411
+    m_Metadata:
+      m_Items: []
+  - m_Id: 223688703680512
+    m_Localized: 99c1946aa5c748f4ba9ed88dd4a7a9b7
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e46df454b80b63e4883d774895abd32e, type: 3}
+  m_Name: ExhibitionAssets
+  m_EditorClassIdentifier: MNG.Exhibition::MachineLearning.Soccer.Manager.Exhibition.ExhibitionAssets
+  arena: {fileID: 815330020974768883, guid: bf89268ef407c6845b9d841dab7d67a4, type: 3}
+  models:
+  - {fileID: 5022602860645237092, guid: f9b444335e6ee154abad9587a7ad9f1d, type: 3}
+  - {fileID: 5022602860645237092, guid: 97a041970e6883f408d147fd81b2080b, type: 3}
+  - {fileID: 5022602860645237092, guid: 9ca5d8dcd56401d44acd36003ed0cf9c, type: 3}
+  - {fileID: 5022602860645237092, guid: 6b08d92b9bdfd20499e6dfc78a26937f, type: 3}
+  - {fileID: 5022602860645237092, guid: 36baaec88a7e71840b8909ab4cdc009b, type: 3}
+  - {fileID: 5022602860645237092, guid: bc5b8bcdaf01f2f40a3af820574da80d, type: 3}
+  fonts:
+  - {fileID: 11400000, guid: 4dd872684459c8c4187d066fd50aa3b3, type: 2}
+  - {fileID: 11400000, guid: dd901876c5bdb174a9e2a49cc978db1d, type: 2}
+  - {fileID: 11400000, guid: fa1ad5b7c98b8874191c6d225bedf332, type: 2}
+  - {fileID: 11400000, guid: abf85a15f1e6f674da2f58a91bc74101, type: 2}
+  - {fileID: 11400000, guid: ee8c57dbc4744ac4bbdf6e3b639f5641, type: 2}
+  - {fileID: 11400000, guid: 6c2ee974ba91de1439f4bae05884166c, type: 2}
+  teamLogo: {fileID: 2800000, guid: 41db79a4748ec5d4e8cf7a3ac61c4e20, type: 3}
+  gameLogo: {fileID: 2800000, guid: bd4a69685de2e274f80be404141097b6, type: 3}

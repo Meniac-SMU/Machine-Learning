@@ -117,7 +117,7 @@ namespace MachineLearning.Soccer.Manager
             if (!matchController.IsPlayActive || m_Avatar.IsHuman)
             {
                 CancelV2(MNG_TaskResultKind.CancelledMatchState);
-                plate.ResetPlate();
+                if (!matchController.IsPlayActive) plate.ResetPlate();
                 return;
             }
             if (plate.IsStrikeActive) return;

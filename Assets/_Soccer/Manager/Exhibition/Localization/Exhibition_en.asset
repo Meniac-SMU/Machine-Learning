@@ -1,0 +1,418 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Exhibition_en
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: a67cf58a328c60c40b67d95b7bc6b42f, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 792272896
+    m_Localized: "2\xD7 SPEED"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 817438720
+    m_Localized: Hydration Break!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827328
+    m_Localized: Resume match
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827329
+    m_Localized: End match
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827330
+    m_Localized: "Human Centered AI Major \xB7 EXHIBITION 2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827331
+    m_Localized: Developing a 4vs4 football game with reinforcement learning
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827332
+    m_Localized: "PREPARE MATCH \u2197"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827333
+    m_Localized: Language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827334
+    m_Localized: Credits
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827335
+    m_Localized: Guide
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827336
+    m_Localized: MATCH SETUP
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827337
+    m_Localized: "\u2190 Title screen"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827338
+    m_Localized: YOUR TEAM
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827339
+    m_Localized: OPPONENT
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827340
+    m_Localized: TEAM MODEL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827341
+    m_Localized: In Play mode, you control the RED striker.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827342
+    m_Localized: Your chosen AI manages the NAVY team.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827343
+    m_Localized: MATCH MODE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827344
+    m_Localized: Play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827345
+    m_Localized: AI simulation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827346
+    m_Localized: MATCH DURATION
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827347
+    m_Localized: 5 min
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827348
+    m_Localized: 10 min
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827349
+    m_Localized: "KICK OFF \u2197"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827350
+    m_Localized: EXHIBITION
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827351
+    m_Localized: Move
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827352
+    m_Localized: Turn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827353
+    m_Localized: Pass
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827354
+    m_Localized: Shoot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827355
+    m_Localized: Switch to AI
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827356
+    m_Localized: TIME REMAINING
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827357
+    m_Localized: FULL TIME
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827358
+    m_Localized: MATCH STATISTICS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827359
+    m_Localized: Total shots
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827360
+    m_Localized: AI shots
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827361
+    m_Localized: Human shots
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827362
+    m_Localized: Total shots = AI shots + human shots
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827363
+    m_Localized: Select Exit to return to the title screen.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827364
+    m_Localized: "EXIT \u2197"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827365
+    m_Localized: Final cumulative reward
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827366
+    m_Localized: Ball recoveries
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827367
+    m_Localized: Saves
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827368
+    m_Localized: Close guide
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827369
+    m_Localized: "Next page \u2192"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827370
+    m_Localized: "Finish guide \u2713"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827371
+    m_Localized: Close
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827372
+    m_Localized: RL MODELS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827373
+    m_Localized: RULE-BASED MANAGERS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827374
+    m_Localized: RL model
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827375
+    m_Localized: Rule-based
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827376
+    m_Localized: AI TEAM
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827377
+    m_Localized: "AI vs AI \xB7 SIMULATION"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827378
+    m_Localized: DRAW
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827379
+    m_Localized: WINS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827380
+    m_Localized: SELECT MODEL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827381
+    m_Localized: All reinforcement learning models have completed 1 million pre-training
+      steps.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827382
+    m_Localized: Each manager uses the same player skills and a different set of
+      tactical rules.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827383
+    m_Localized: MANAGERS
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827384
+    m_Localized: Current decision
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827385
+    m_Localized: Total reward
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827386
+    m_Localized: GOAL
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827387
+    m_Localized: Advance carry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827388
+    m_Localized: Build with passes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827389
+    m_Localized: Attempt shot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827390
+    m_Localized: Recover ball
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827391
+    m_Localized: Stay balanced
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827392
+    m_Localized: Protect defence
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827393
+    m_Localized: Temporary team credits image
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827394
+    m_Localized: Schematic pitch view, not a Unity runtime capture.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827395
+    m_Localized: Control the RED striker in Play mode.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827396
+    m_Localized: W/S move, A/D turn, E pass, Space shoot, H switch AI.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827397
+    m_Localized: Choose both models and 5 or 10 minutes. Exit returns to the title
+      screen after the match.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827398
+    m_Localized: Initial model
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827399
+    m_Localized: 'Initial model: 0 steps'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827400
+    m_Localized: 400K
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827401
+    m_Localized: 400K
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827402
+    m_Localized: 800K
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827403
+    m_Localized: 800K
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827404
+    m_Localized: 1.2M
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827405
+    m_Localized: 1.2M
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827406
+    m_Localized: 1.6M
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827407
+    m_Localized: 1.6M
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827408
+    m_Localized: 2M
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827409
+    m_Localized: 2M
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827410
+    m_Localized: Recover
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827411
+    m_Localized: Recover
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827412
+    m_Localized: Prioritizes recovering the ball.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827413
+    m_Localized: Balanced
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827414
+    m_Localized: Balanced
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827415
+    m_Localized: Chooses a balanced team shape.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827416
+    m_Localized: Carry & Shoot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827417
+    m_Localized: Carry & Shoot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827418
+    m_Localized: Chooses by possession and shot availability.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827419
+    m_Localized: Random
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827420
+    m_Localized: Random
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827421
+    m_Localized: Randomly chooses among valid actions only.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18276326907904
+    m_Localized: Switch to human control
+    m_Metadata:
+      m_Items: []
+  - m_Id: 216470402965504
+    m_Localized: Quit game
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

@@ -8,6 +8,7 @@
 |---|---|---|
 | 파일·본문 검색 | `Find-ProjectContext.ps1` | 기본은 현행 문서. Archive/Legacy는 명시 선택 |
 | 현행 Manager Player 빌드 | `Build-MNGCurrent.ps1` | 단계·목적 필수, UTC 이름의 새 경로, 기록 자동 등록. `-PlanOnly`는 실행 없음 |
+| 졸업 전시 UI 1차 최종 Player | `Build-Exhibition.ps1` | 전시 전용 씬·Localization·6종 신경망/4종 규칙형. [구현·검증 현황](../docs/soccer/exhibition/implementation-status.md) |
 | 빌드 생성·사용 기록 / 정리 검토 | `Build-Lifecycle.ps1` | Register/Use/Review. [관리 기준](../docs/project/build-lifecycle.md); 자동 삭제 없음 |
 | 경기 시연 | `watch_mng_v3.py` | 내부 `watch_mng_v2.py` 재사용. MS2-v3 자기대전 기준선 |
 | 동결 평가 | `mng_v3_evaluate.py` | 내부 `mng_v2_evaluate.py` 재사용. v3 계보·runtime 검사 |

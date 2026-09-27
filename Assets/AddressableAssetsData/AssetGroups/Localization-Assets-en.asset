@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Localization-Assets-en
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Localization-Assets-en
+  m_GUID: 9b8e9ae2d0d58934d9e97fc2ed7ed8d4
+  m_SerializeEntries:
+  - m_GUID: 0b1ce4e3150c2f749bf4476a53fd4730
+    m_Address: guide-en-2
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7c84f6723cc94d54ca0f8fba5743a411
+    m_Address: guide-en-4
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 99c1946aa5c748f4ba9ed88dd4a7a9b7
+    m_Address: guide-en-5
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: aac895f7eefe7e14da811a80419dbda2
+    m_Address: guide-en-1
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b135b98e3aebd4440b4a4ae3824c47cf
+    m_Address: guide-en-3
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f5bd28aa16d81c04bb690fd5f28ad235
+    m_Address: credits-en
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 1
+  m_Settings: {fileID: 11400000, guid: 731ed40ce7bb4bc47b08bc678f4c2f57, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: b97011675ff8e124a94674d445bf60b2, type: 2}
+    - {fileID: 11400000, guid: a6be771b40992e94d8b8e3cb99fdd288, type: 2}
+    - {fileID: 11400000, guid: 39f5c6174edb03147b32e910e1e61cd4, type: 2}

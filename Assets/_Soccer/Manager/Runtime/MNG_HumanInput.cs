@@ -23,6 +23,15 @@ namespace MachineLearning.Soccer.Manager
         bool m_StrongKickRequested;
 
         public bool IsHuman => m_Avatar != null && m_Avatar.Ownership.Owner == MNG_InputOwner.Human;
+        // Presentation statistics only; human kicks keep Unspecified in the AI reward contract.
+        public MNG_KickIntent LastArmedKickIntent { get; private set; }
+
+        // Menus can suspend this component without carrying a buffered kick into resume.
+        void OnDisable()
+        {
+            m_Throttle = m_Turn = 0f;
+            m_WeakKickRequested = m_StrongKickRequested = false;
+        }
 
         void Awake()
         {
@@ -81,11 +90,15 @@ namespace MachineLearning.Soccer.Manager
 
         void FixedUpdate()
         {
-            if (!IsHuman) return;
+            if (!IsHuman || matchController == null || !matchController.IsPlayActive)
+            {
+                m_WeakKickRequested = m_StrongKickRequested = false;
+                return;
+            }
             var revision = m_Avatar.Ownership.Revision;
             var facing = Quaternion.AngleAxis(
                 m_Turn * m_Motor.Profile.RotationDegreesPerSecond * Time.fixedDeltaTime,
-                Vector3.up) * transform.forward;
+                Vector3.up) * (m_Avatar.Body.rotation * Vector3.forward);
             var desired = new Vector2(facing.x, facing.z) * (m_Throttle * m_Motor.Profile.MaximumPlayerSpeed);
             m_Motor.ApplyDesiredVelocity(
                 desired,
@@ -96,11 +109,15 @@ namespace MachineLearning.Soccer.Manager
 
             if (m_StrongKickRequested || m_WeakKickRequested)
             {
+                var target = m_Avatar.Body.position + facing.normalized * 30f;
                 var exitSpeed = m_StrongKickRequested
                     ? MNG_KickSolver.StrongExitSpeed
-                    : MNG_KickSolver.ControlledExitSpeed;
-                var target = m_Avatar.Body.position + facing.normalized * 30f;
-                ballControl?.TryKick(m_Avatar.Team, m_Avatar.Slot, target, exitSpeed, out _);
+                    : MNG_KickSolver.PassExitSpeedForDistance(Vector3.Distance(m_Avatar.Body.position, target));
+                // Human input arms the physical plate even without an AI carrier lease.
+                // The ball is struck only on real plate contact; cooldown still applies.
+                if (m_Avatar.KickCooldownSeconds <= 0f
+                    && m_Avatar.KickPlate != null && m_Avatar.KickPlate.TryArmKick(target, exitSpeed))
+                    LastArmedKickIntent = m_StrongKickRequested ? MNG_KickIntent.Shot : MNG_KickIntent.Pass;
             }
             m_WeakKickRequested = false;
             m_StrongKickRequested = false;
