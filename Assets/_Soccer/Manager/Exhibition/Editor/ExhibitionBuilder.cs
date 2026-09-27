@@ -100,8 +100,9 @@ namespace MachineLearning.Soccer.Manager.Exhibition.Editor
             foreach(var camera in arena.GetComponentsInChildren<Camera>(true))
             {
                 camera.transform.position*=.88f;
-                var spectator=camera.GetComponent<MNG_SpectatorCamera>()??camera.gameObject.AddComponent<MNG_SpectatorCamera>();
-                spectator.Configure(arena.GetComponent<MNG_MatchController>(),arena.GetComponentInChildren<MNG_HumanInput>(true));
+                var spectator=camera.GetComponent<MNG_SpectatorCamera>();
+                if(spectator!=null)UnityEngine.Object.DestroyImmediate(spectator);
+                camera.gameObject.AddComponent<ExhibitionCamera>();
             }
             PrepareExhibitionPresentation(arena);
             arena.SetActive(false);

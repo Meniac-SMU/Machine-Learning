@@ -1,6 +1,6 @@
 {
   "name": "MNG.Exhibition",
   "rootNamespace": "MachineLearning.Soccer.Manager.Exhibition",
-  "references": ["MNG.Runtime", "Soccer.Runtime", "Unity.ML-Agents", "Unity.InferenceEngine", "Unity.InputSystem", "Unity.Localization", "Unity.ResourceManager", "Unity.Addressables"],
+  "references": ["MNG.Runtime", "Soccer.Runtime", "Unity.ML-Agents", "Unity.InferenceEngine", "Unity.InputSystem", "Unity.Localization", "Unity.ResourceManager", "Unity.Addressables", "Unity.Cinemachine"],
   "autoReferenced": true
 }

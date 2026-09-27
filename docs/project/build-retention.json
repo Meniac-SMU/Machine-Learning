@@ -28,9 +28,9 @@
       "evidence": "docs/soccer/training/overview.md; Tools/evaluate_soccer_policy.py"
     },
     {
-      "reason": "Latest verified exhibition UI: title-only navy hydration panel and Unity splash disabled; replaces preceding verified UI build",
-      "evidence": "Logs/Exhibition/pause-splash-20260927/player/result.json",
-      "path": "Builds/MNG_Exhibition/UI1-20260927T074211233Z"
+      "reason": "Latest verified exhibition build: player-centered camera orbit limited to plus/minus 30 degrees",
+      "evidence": "Logs/Exhibition/orbit-20260927/player/result.json",
+      "path": "Builds/MNG_Exhibition/UI1-20260927T094640749Z"
     }
   ],
   "deletionPolicy": "Review only. A missing retention entry, age, or old name alone never authorizes deletion. Verify current manifests, running processes, replacement, and retained evidence."

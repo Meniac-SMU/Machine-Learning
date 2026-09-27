@@ -1,0 +1,37 @@
+{
+  "status": "complete",
+  "completedAtUtc": "2026-09-27T07:46:21.5880870Z",
+  "build": "Builds/MNG_Exhibition/UI1-20260927T074211233Z/MANAGER.exe",
+  "revision": "docs/soccer/exhibition/pause-splash-20260927.md",
+  "player": {
+    "errors": 0,
+    "passed": true,
+    "actualQuitButtonClick": true,
+    "checks": 36,
+    "processExitCode": 0,
+    "evidence": "Logs/Exhibition/pause-splash-20260927/player/result.json"
+  },
+  "pauseTitle": {
+    "backgroundAlpha": 0.95,
+    "outlineWidth": 0,
+    "background": "#101C38",
+    "titleOnly": true,
+    "text": "#EAF7FF"
+  },
+  "unitySplash": {
+    "showUnityLogo": false,
+    "serializedComparison": "Logs/Exhibition/pause-splash-20260927/serialized-splash-comparison.json",
+    "show": false,
+    "teamLogoPreserved": true
+  },
+  "cleanup": {
+    "removedBuilds": 1,
+    "evidence": "Logs/Exhibition/pause-splash-20260927/retired-builds/cleanup.json",
+    "retainedUIBuilds": 1
+  },
+  "gameplayAssemblyUnchanged": true,
+  "projectSettingsRestored": true,
+  "editorBuildSettingsRestored": true,
+  "weeklyRemainingPercent": 88,
+  "previousCompletion": "docs/archive/exhibition/implementation-guides-completion-20260927.json"
+}

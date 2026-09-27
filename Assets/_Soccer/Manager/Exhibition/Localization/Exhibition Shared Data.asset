@@ -407,6 +407,14 @@ MonoBehaviour:
     m_Key: MNG.Exhibition.quitGame
     m_Metadata:
       m_Items: []
+  - m_Id: 247039287435264
+    m_Key: MNG.Exhibition.mouseLook
+    m_Metadata:
+      m_Items: []
+  - m_Id: 247039312601088
+    m_Key: MNG.Exhibition.cameraCycle
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

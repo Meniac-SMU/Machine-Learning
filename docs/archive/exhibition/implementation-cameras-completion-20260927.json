@@ -1,12 +1,12 @@
 {
   "status": "complete",
-  "completedAtUtc": "2026-09-27T09:50:18.7053532Z",
-  "build": "Builds/MNG_Exhibition/UI1-20260927T094640749Z/MANAGER.exe",
+  "completedAtUtc": "2026-09-27T09:12:49.0901880Z",
+  "build": "Builds/MNG_Exhibition/UI1-20260927T090744798Z/MANAGER.exe",
   "revision": "docs/soccer/exhibition/cameras-20260927.md",
   "cameraPlayer": {
     "actualQuitButtonClick": true,
-    "checks": 132,
-    "evidence": "Logs/Exhibition/orbit-20260927/player/result.json",
+    "checks": 122,
+    "evidence": "Logs/Exhibition/cameras-20260927/compact-player-final/result.json",
     "passed": true,
     "errors": 0,
     "processExitCode": 0
@@ -18,14 +18,14 @@
     "checks": 92,
     "matchSeconds": 300,
     "evidence": "Logs/Exhibition/cameras-20260927/full-player-final/result.json",
-    "scope": "Historical gameplay regression before the player-centered orbit revision; shared MNG.Runtime.dll unchanged",
+    "scope": "Same camera/gameplay functionality before final HUD-width-only change",
     "errors": 0
   },
   "camera": {
     "badgeWidth": 128,
     "badgeAlpha": 0.95,
     "navyKeeperPositionDamping": 0.2,
-    "mouseMaxYawDegrees": 30,
+    "mouseMaxYawDegrees": 60,
     "strikerPositionDamping": 0.2,
     "aiSwitch": "Cut",
     "recenterDelaySeconds": 1.5,
@@ -36,17 +36,16 @@
       "NavyKeeper"
     ],
     "package": "com.unity.cinemachine@3.1.7",
-    "broadcastLabel": false,
-    "rotationPivot": "Player-centered vertical axis; position and view direction orbit together"
+    "broadcastLabel": false
   },
   "cleanup": {
     "retainedUIBuilds": 1,
-    "evidence": "Logs/Exhibition/orbit-20260927/retired-builds/cleanup.json",
-    "removedBuilds": 1
+    "evidence": "Logs/Exhibition/cameras-20260927/retired-builds/cleanup.json",
+    "removedBuilds": 4
   },
   "gameplayAssemblyUnchanged": true,
   "projectSettingsRestored": true,
   "editorBuildSettingsRestored": true,
-  "weeklyRemainingPercent": 83,
-  "previousCompletion": "docs/archive/exhibition/implementation-cameras-completion-20260927.json"
+  "weeklyRemainingPercent": 85,
+  "previousCompletion": "docs/archive/exhibition/implementation-pause-splash-completion-20260927.json"
 }

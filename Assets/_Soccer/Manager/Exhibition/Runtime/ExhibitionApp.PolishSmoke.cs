@@ -29,7 +29,7 @@ namespace MachineLearning.Soccer.Manager.Exhibition
                 Check(body.sharedMaterial.GetColor("_BaseColor")==C(keeper.Team==Team.Red?"#F05278":"#429CF2"),"Goalkeeper torso color: "+keeper.Team);
             }
             var goals=arena.GetComponentsInChildren<Renderer>().Where(r=>r.CompareTag("redGoal")||r.CompareTag("navyGoal")).ToArray();
-            Check(goals.Any(r=>r.CompareTag("redGoal"))&&goals.Any(r=>r.CompareTag("navyGoal"))&&goals.All(r=>r.sharedMaterials.All(m=>Mathf.Approximately(m.GetColor("_BaseColor").a,.40f)&&m.renderQueue==3000))
+            Check(goals.Any(r=>r.CompareTag("redGoal"))&&goals.Any(r=>r.CompareTag("navyGoal"))&&goals.All(r=>r.sharedMaterials.All(m=>Mathf.Approximately(m.GetColor("_BaseColor").a,.60f)&&m.renderQueue==3000))
                 &&arena.GetComponentInChildren<SoccerGoalOcclusionFader>()==null,"Both goals keep fixed translucent materials without dynamic fader");
             ball.enabled=false;ballBody.position=new Vector3(20,.6f,20);
             avatar.transform.SetPositionAndRotation(new Vector3(0,.52f,-5),Quaternion.identity);

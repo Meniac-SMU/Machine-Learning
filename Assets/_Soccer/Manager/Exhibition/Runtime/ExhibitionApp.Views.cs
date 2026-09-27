@@ -157,9 +157,10 @@ namespace MachineLearning.Soccer.Manager.Exhibition
         }
         void DrawControls()
         {
-            controls?.RemoveFromHierarchy();controls=null;controlsHuman=human.IsHuman;
-            if(Simulation)return;
-            float width=English?332:288,height=controlsHuman?126:46;
+            controls?.RemoveFromHierarchy();cameraBadge?.RemoveFromHierarchy();cameraBadge=null;
+            controlsHuman=human.IsHuman;controlsView=cameras.CurrentView;
+            float width=controlsHuman?(English?332:288):Simulation?(English?240:210):(English?300:246);
+            float height=controlsHuman?160:Simulation?46:84;
             controls=Box(screen,29,1051-height*1.12f,width,height,new Color(.063f,.137f,.098f,.93f));
             controls.name="controlsHud";ScaleHud(controls);
             if(controlsHuman)
@@ -172,7 +173,15 @@ namespace MachineLearning.Soccer.Manager.Exhibition
                     Text(controls,L(descriptions[i]),x+(i==3?62:43),y,width/2-(i==3?75:56),32,18,1);
                 }
             }
-            Text(controls,"H: "+L(controlsHuman?"aiSwitch":"humanSwitch"),12,controlsHuman?84:7,width-24,32,18,2);
+            if(!Simulation)Text(controls,"H: "+L(controlsHuman?"aiSwitch":"humanSwitch"),12,controlsHuman?84:7,width-24,32,18,2);
+            Text(controls,L(controlsHuman?"mouseLook":"cameraCycle"),12,controlsHuman?122:Simulation?7:45,width-24,32,18,2);
+            if(controlsView!=ExhibitionCamera.View.Broadcast)
+            {
+                bool navy=controlsView==ExhibitionCamera.View.NavyKeeper;
+                var color=C(navy?"#0D142C":"#2C0B12");color.a=.95f;
+                cameraBadge=Box(screen,29,1051-height*1.12f-51,128,39,color);cameraBadge.name="cameraBadge";ScaleHud(cameraBadge);
+                Text(cameraBadge,navy?"NAVY: GK":controlsView==ExhibitionCamera.View.RedStriker?"RED: ST":"RED: GK",0,0,128,39,21,3,Color.white,true);
+            }
         }
         void Results()
         {
