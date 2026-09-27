@@ -489,6 +489,16 @@
       "key": "description.reference-uniform-valid",
       "ko": "불가능한 행동을 제외하고 무작위로 선택합니다.",
       "en": "Randomly chooses among valid actions only."
+    },
+    {
+      "ko": "마우스 좌우: 시선 회전",
+      "en": "Mouse left/right: Look around",
+      "key": "MNG.Exhibition.mouseLook"
+    },
+    {
+      "ko": "← / →: 카메라 전환",
+      "en": "← / →: Switch camera",
+      "key": "MNG.Exhibition.cameraCycle"
     }
   ]
 }

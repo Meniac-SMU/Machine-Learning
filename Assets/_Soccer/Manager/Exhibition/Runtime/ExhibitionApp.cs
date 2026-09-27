@@ -17,7 +17,9 @@ namespace MachineLearning.Soccer.Manager.Exhibition
     {
         public ExhibitionAssets assets;
         public StyleSheet stylesheet;
-        VisualElement stage, viewport, screen, modal, pause, goal, controls;
+        VisualElement stage, viewport, screen, modal, pause, goal, controls, cameraBadge;
+        ExhibitionCamera cameras;
+        ExhibitionCamera.View controlsView;
         bool controlsHuman;
         Label score, clock, redDecision, navyDecision, redReward, navyReward;
         GameObject arena;
@@ -66,7 +68,8 @@ namespace MachineLearning.Soccer.Manager.Exhibition
             while (elapsed < .7f) { elapsed += Time.unscaledDeltaTime; stage.style.opacity = 1 - elapsed / .7f; yield return null; }
             stage.style.opacity = 1; Home();
             if (Array.IndexOf(Environment.GetCommandLineArgs(), "-exhibition-smoke") >= 0
-                || Array.IndexOf(Environment.GetCommandLineArgs(), "-exhibition-ui-smoke") >= 0) StartCoroutine(Smoke());
+                || Array.IndexOf(Environment.GetCommandLineArgs(), "-exhibition-ui-smoke") >= 0
+                || Array.IndexOf(Environment.GetCommandLineArgs(), "-exhibition-camera-smoke") >= 0) StartCoroutine(Smoke());
         }
         void Resize()
         {
@@ -116,7 +119,7 @@ namespace MachineLearning.Soccer.Manager.Exhibition
             }
             if (modalKind == "guide" && keyboard?.enterKey.wasPressedThisFrame == true) NextGuide();
             if (Page != "match" || match == null) return;
-            if (!Simulation && controlsHuman != human.IsHuman) DrawControls();
+            if (controlsHuman != human.IsHuman || controlsView != cameras.CurrentView) DrawControls();
             if (match.State == MNG_MatchState.Finished) { Results(); return; }
             score.text = $"{match.RedScore}  :  {match.NavyScore}";
             int secs = Mathf.CeilToInt(match.MatchRemainingSeconds);
@@ -171,6 +174,7 @@ namespace MachineLearning.Soccer.Manager.Exhibition
             FitCamera();
             match.ResetMatch();
             human = arena.GetComponentInChildren<MNG_HumanInput>(true);
+            cameras = arena.GetComponentInChildren<ExhibitionCamera>();
             human.enabled = !Simulation;
             if (human.IsHuman) human.ToggleOwner();
             rewards = arena.GetComponent<MNG_RewardEngine>();

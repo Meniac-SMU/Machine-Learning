@@ -31,8 +31,9 @@ namespace MachineLearning.Soccer.Manager.Exhibition
             smokeMouse=InputSystem.AddDevice<Mouse>("ExhibitionSmokeMouse");
             InputSystem.settings.backgroundBehavior=InputSettings.BackgroundBehavior.IgnoreFocus;
             Application.logMessageReceived+=SmokeLog;
-            bool uiOnly=Array.IndexOf(args,"-exhibition-ui-smoke")>=0;
-            var routine=uiOnly?UiSmokeSteps():SmokeSteps();
+            bool cameraOnly=Array.IndexOf(args,"-exhibition-camera-smoke")>=0;
+            bool uiOnly=cameraOnly||Array.IndexOf(args,"-exhibition-ui-smoke")>=0;
+            var routine=cameraOnly?CameraSmokeSteps():uiOnly?UiSmokeSteps():SmokeSteps();
             while(true)
             {
                 bool next=false;object current=null;
@@ -149,15 +150,15 @@ namespace MachineLearning.Soccer.Manager.Exhibition
             SetLanguage("ko");yield return null;
             ConfigureMatch(false,600,5,7);Kickoff();yield return new WaitForSecondsRealtime(2);
             Check(!human.IsHuman&&human.enabled,"Direct play starts under AI control");Check(Time.timeScale==1&&match.ConfiguredMatchDurationSeconds==600,"Direct play 1x and 10-minute option");
-            Check(controls.Query<Label>().ToList().Count==1&&controls.Query<Label>().First().text.Contains(L("humanSwitch")),"AI controls show only H to human");
-            var spectator=arena.GetComponentInChildren<MNG_SpectatorCamera>();
+            Check(controls.Query<Label>().ToList().Count==2&&controls.Query<Label>().First().text.Contains(L("humanSwitch")),"AI controls show H and camera keys");
+            var spectator=arena.GetComponentInChildren<ExhibitionCamera>();
             var overview=spectator.transform.position;
             yield return Capture("15-ai-start-ko");
             yield return Press(Key.H);yield return new WaitForSecondsRealtime(.5f);
             Check(human.IsHuman&&spectator.IsFollowingHuman&&Vector3.Distance(overview,spectator.transform.position)>1,"H transfers ownership and camera to RED striker");
             Check(spectator.IsTransitioning,"Human camera travels through an intermediate pose");
             yield return new WaitForSecondsRealtime(.5f);Check(!spectator.IsTransitioning,"Human camera transition completes");
-            Check(controls.Query<Label>().ToList().Count==9,"Human mode reveals movement pass shoot and H to AI");
+            Check(controls.Query<Label>().ToList().Count==10&&controls.Query<Label>().ToList().Any(l=>l.text==L("mouseLook")),"Human mode reveals movement pass shoot H and mouse-look controls");
             var humanStart=human.transform.position;
             InputSystem.QueueStateEvent(smokeKeyboard,new KeyboardState(Key.W));yield return new WaitForSecondsRealtime(.4f);
             InputSystem.QueueStateEvent(smokeKeyboard,new KeyboardState());yield return null;
@@ -228,7 +229,7 @@ namespace MachineLearning.Soccer.Manager.Exhibition
             yield return Press(Key.H);yield return new WaitForSecondsRealtime(.5f);Check(controls.Query<Label>().ToList().Any(l=>l.text=="H: Switch to AI"),"English human switch instruction");yield return Capture("17-human-en");
             Home();yield return null;ConfigureMatch(true,300,5,8);Kickoff();yield return new WaitForSecondsRealtime(2);
             var speed=screen.Q<VisualElement>("speedBadge");yield return null;
-            Check(controls==null&&Mathf.Approximately(speed.layout.center.x,960),"Simulation badge centered and no inactive human controls");
+            Check(controls.Query<Label>().ToList().Count==1&&Mathf.Approximately(speed.layout.center.x,960),"Simulation badge centered with camera-only controls");
             Check(speed.resolvedStyle.backgroundColor==C("#FFE6E9"),"Speed badge uses pale red background");
             Check(arena.GetComponentsInChildren<MNG_PlayerAvatar>().All(a=>a.Body.interpolation==RigidbodyInterpolation.Interpolate),"Exhibition simulation also keeps render interpolation");
             Check(Time.timeScale==2,"AI simulation runs at 2x");yield return Capture("12-match-en");TogglePause();yield return Capture("13-pause-en");TogglePause();
