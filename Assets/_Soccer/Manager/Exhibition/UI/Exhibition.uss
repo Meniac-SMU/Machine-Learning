@@ -1,0 +1,12 @@
+Label { margin: 0; padding: 0; white-space: nowrap; color: #f5f5ee; -unity-text-align: middle-left; -unity-font-style: normal; }
+Button { margin: 0; padding: 0; border-width: 0; border-radius: 0; background-color: #193a25; color: #ffffff; font-size: 28px; -unity-text-align: middle-center; -unity-font-style: normal; }
+Button:hover { background-color: #3e6241; }
+Button:focus { border-width: 3px; border-color: #baff40; }
+.primary { background-color: #b9f54e; color: #151b10; }
+.primary:hover { background-color: #cff98d; }
+.text-button { background-color: rgba(0,0,0,0); color: #f5f5ee; font-size: 23px; }
+.text-button:hover { color: #baff40; background-color: rgba(255,255,255,0.05); }
+.option { background-color: #f8fbf1; color: #1d351d; border-width: 1px; border-color: #b8c7aa; }
+.option:hover { background-color: #bfdc95; }
+.selected { background-color: #203d25; color: #f4faeb; }
+.selected:hover { background-color: #355a38; }

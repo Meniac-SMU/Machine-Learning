@@ -1,0 +1,494 @@
+{
+  "entries": [
+    {
+      "key": "MNG.Exhibition.quitGame",
+      "ko": "종료하기",
+      "en": "Quit game"
+    },
+    {
+      "key": "MNG.Exhibition.speedBadge",
+      "ko": "2배속",
+      "en": "2× SPEED"
+    },
+    {
+      "key": "MNG.Exhibition.pauseTitle",
+      "ko": "하이드레이션 브레이크!",
+      "en": "Hydration Break!"
+    },
+    {
+      "key": "MNG.Exhibition.resumeMatch",
+      "ko": "경기 재개",
+      "en": "Resume match"
+    },
+    {
+      "key": "MNG.Exhibition.quitMatch",
+      "ko": "경기 종료",
+      "en": "End match"
+    },
+    {
+      "key": "MNG.Exhibition.eyebrow",
+      "ko": "휴먼AI공학전공 · 2026 졸업 전시회",
+      "en": "Human Centered AI Major · EXHIBITION 2026"
+    },
+    {
+      "key": "MNG.Exhibition.tagline",
+      "ko": "강화학습 기반 4vs4 축구 게임 개발",
+      "en": "Developing a 4vs4 football game with reinforcement learning"
+    },
+    {
+      "key": "MNG.Exhibition.start",
+      "ko": "경기 준비 ↗",
+      "en": "PREPARE MATCH ↗"
+    },
+    {
+      "key": "MNG.Exhibition.language",
+      "ko": "Language",
+      "en": "Language"
+    },
+    {
+      "key": "MNG.Exhibition.credits",
+      "ko": "제작자",
+      "en": "Credits"
+    },
+    {
+      "key": "MNG.Exhibition.guide",
+      "ko": "가이드",
+      "en": "Guide"
+    },
+    {
+      "key": "MNG.Exhibition.matchSetup",
+      "ko": "경기 설정",
+      "en": "MATCH SETUP"
+    },
+    {
+      "key": "MNG.Exhibition.back",
+      "ko": "← 시작 화면",
+      "en": "← Title screen"
+    },
+    {
+      "key": "MNG.Exhibition.yourTeam",
+      "ko": "플레이어 팀",
+      "en": "YOUR TEAM"
+    },
+    {
+      "key": "MNG.Exhibition.opponent",
+      "ko": "상대 팀",
+      "en": "OPPONENT"
+    },
+    {
+      "key": "MNG.Exhibition.teamModel",
+      "ko": "팀 모델",
+      "en": "TEAM MODEL"
+    },
+    {
+      "key": "MNG.Exhibition.redCaption",
+      "ko": "직접 플레이 시 RED 공격수를 조작합니다.",
+      "en": "In Play mode, you control the RED striker."
+    },
+    {
+      "key": "MNG.Exhibition.navyCaption",
+      "ko": "선택한 AI가 NAVY 팀을 이끕니다.",
+      "en": "Your chosen AI manages the NAVY team."
+    },
+    {
+      "key": "MNG.Exhibition.playMode",
+      "ko": "경기 모드",
+      "en": "MATCH MODE"
+    },
+    {
+      "key": "MNG.Exhibition.humanMode",
+      "ko": "직접 플레이",
+      "en": "Play"
+    },
+    {
+      "key": "MNG.Exhibition.simMode",
+      "ko": "AI 시뮬레이션",
+      "en": "AI simulation"
+    },
+    {
+      "key": "MNG.Exhibition.duration",
+      "ko": "경기 시간",
+      "en": "MATCH DURATION"
+    },
+    {
+      "key": "MNG.Exhibition.five",
+      "ko": "5분",
+      "en": "5 min"
+    },
+    {
+      "key": "MNG.Exhibition.ten",
+      "ko": "10분",
+      "en": "10 min"
+    },
+    {
+      "key": "MNG.Exhibition.kickoff",
+      "ko": "경기 시작 ↗",
+      "en": "KICK OFF ↗"
+    },
+    {
+      "key": "MNG.Exhibition.exhibition",
+      "ko": "전시 경기",
+      "en": "EXHIBITION"
+    },
+    {
+      "key": "MNG.Exhibition.move",
+      "ko": "이동",
+      "en": "Move"
+    },
+    {
+      "key": "MNG.Exhibition.turn",
+      "ko": "회전",
+      "en": "Turn"
+    },
+    {
+      "key": "MNG.Exhibition.softKick",
+      "ko": "패스",
+      "en": "Pass"
+    },
+    {
+      "key": "MNG.Exhibition.strongKick",
+      "ko": "슈팅",
+      "en": "Shoot"
+    },
+    {
+      "key": "MNG.Exhibition.aiSwitch",
+      "ko": "AI 전환",
+      "en": "Switch to AI"
+    },
+    {
+      "key": "MNG.Exhibition.humanSwitch",
+      "ko": "사람 모드로 전환",
+      "en": "Switch to human control"
+    },
+    {
+      "key": "MNG.Exhibition.timeRemaining",
+      "ko": "남은 경기 시간",
+      "en": "TIME REMAINING"
+    },
+    {
+      "key": "MNG.Exhibition.fullTime",
+      "ko": "경기 종료",
+      "en": "FULL TIME"
+    },
+    {
+      "key": "MNG.Exhibition.matchStats",
+      "ko": "경기 기록",
+      "en": "MATCH STATISTICS"
+    },
+    {
+      "key": "MNG.Exhibition.shots",
+      "ko": "전체 슈팅",
+      "en": "Total shots"
+    },
+    {
+      "key": "MNG.Exhibition.aiShots",
+      "ko": "AI 슈팅",
+      "en": "AI shots"
+    },
+    {
+      "key": "MNG.Exhibition.humanShots",
+      "ko": "사람 슈팅",
+      "en": "Human shots"
+    },
+    {
+      "key": "MNG.Exhibition.shotSum",
+      "ko": "전체 슈팅 = AI 슈팅 + 사람 슈팅",
+      "en": "Total shots = AI shots + human shots"
+    },
+    {
+      "key": "MNG.Exhibition.resultHelp",
+      "ko": "종료 버튼을 누르면 시작 화면으로 돌아갑니다.",
+      "en": "Select Exit to return to the title screen."
+    },
+    {
+      "key": "MNG.Exhibition.exit",
+      "ko": "종료 ↗",
+      "en": "EXIT ↗"
+    },
+    {
+      "key": "MNG.Exhibition.finalReward",
+      "ko": "최종 누적 보상",
+      "en": "Final cumulative reward"
+    },
+    {
+      "key": "MNG.Exhibition.recoveries",
+      "ko": "공 회수",
+      "en": "Ball recoveries"
+    },
+    {
+      "key": "MNG.Exhibition.saves",
+      "ko": "선방",
+      "en": "Saves"
+    },
+    {
+      "key": "MNG.Exhibition.closeGuide",
+      "ko": "가이드 종료",
+      "en": "Close guide"
+    },
+    {
+      "key": "MNG.Exhibition.next",
+      "ko": "다음 장 →",
+      "en": "Next page →"
+    },
+    {
+      "key": "MNG.Exhibition.finishGuide",
+      "ko": "가이드 종료 ✓",
+      "en": "Finish guide ✓"
+    },
+    {
+      "key": "MNG.Exhibition.close",
+      "ko": "닫기",
+      "en": "Close"
+    },
+    {
+      "key": "MNG.Exhibition.stepTab",
+      "ko": "강화학습 모델",
+      "en": "RL MODELS"
+    },
+    {
+      "key": "MNG.Exhibition.referenceTab",
+      "ko": "규칙형 감독",
+      "en": "RULE-BASED MANAGERS"
+    },
+    {
+      "key": "MNG.Exhibition.neural",
+      "ko": "강화학습",
+      "en": "RL model"
+    },
+    {
+      "key": "MNG.Exhibition.rule",
+      "ko": "규칙형",
+      "en": "Rule-based"
+    },
+    {
+      "key": "MNG.Exhibition.aiTeam",
+      "ko": "AI 팀",
+      "en": "AI TEAM"
+    },
+    {
+      "key": "MNG.Exhibition.simulationLabel",
+      "ko": "AI vs AI · 시뮬레이션",
+      "en": "AI vs AI · SIMULATION"
+    },
+    {
+      "key": "MNG.Exhibition.draw",
+      "ko": "무승부",
+      "en": "DRAW"
+    },
+    {
+      "key": "MNG.Exhibition.wins",
+      "ko": "승리",
+      "en": "WINS"
+    },
+    {
+      "key": "MNG.Exhibition.selectModel",
+      "ko": "모델 선택",
+      "en": "SELECT MODEL"
+    },
+    {
+      "key": "MNG.Exhibition.stepsNotice",
+      "ko": "모든 강화학습 모델은 100만 회의 사전 학습을 거쳤습니다.",
+      "en": "All reinforcement learning models have completed 1 million pre-training steps."
+    },
+    {
+      "key": "MNG.Exhibition.referenceNotice",
+      "ko": "각 감독은 같은 선수 기술을 사용하며, 서로 다른 규칙으로 전략을 선택합니다.",
+      "en": "Each manager uses the same player skills and a different set of tactical rules."
+    },
+    {
+      "key": "MNG.Exhibition.managerLive",
+      "ko": "감독 현황",
+      "en": "MANAGERS"
+    },
+    {
+      "key": "MNG.Exhibition.currentDecision",
+      "ko": "현재 판단",
+      "en": "Current decision"
+    },
+    {
+      "key": "MNG.Exhibition.cumulativeReward",
+      "ko": "누적 보상",
+      "en": "Total reward"
+    },
+    {
+      "key": "MNG.Exhibition.goal",
+      "ko": "GOAL",
+      "en": "GOAL"
+    },
+    {
+      "key": "MNG.Exhibition.command0",
+      "ko": "전진 운반",
+      "en": "Advance carry"
+    },
+    {
+      "key": "MNG.Exhibition.command1",
+      "ko": "패스 전개",
+      "en": "Build with passes"
+    },
+    {
+      "key": "MNG.Exhibition.command2",
+      "ko": "슈팅 시도",
+      "en": "Attempt shot"
+    },
+    {
+      "key": "MNG.Exhibition.command3",
+      "ko": "적극 회수",
+      "en": "Recover ball"
+    },
+    {
+      "key": "MNG.Exhibition.command4",
+      "ko": "균형 유지",
+      "en": "Stay balanced"
+    },
+    {
+      "key": "MNG.Exhibition.command5",
+      "ko": "후방 보호",
+      "en": "Protect defence"
+    },
+    {
+      "key": "MNG.Exhibition.creditsAlt",
+      "ko": "제작자 소개 임시 이미지",
+      "en": "Temporary team credits image"
+    },
+    {
+      "key": "MNG.Exhibition.pitchAlt",
+      "ko": "경기장 구도 예시 이미지. 실제 게임 렌더링이 아닙니다.",
+      "en": "Schematic pitch view, not a Unity runtime capture."
+    },
+    {
+      "key": "MNG.Exhibition.guideAlt1",
+      "ko": "직접 플레이에서는 RED 공격수를 조작합니다.",
+      "en": "Control the RED striker in Play mode."
+    },
+    {
+      "key": "MNG.Exhibition.guideAlt2",
+      "ko": "W/S 이동, A/D 회전, E 패스, Space 슈팅, H AI 전환.",
+      "en": "W/S move, A/D turn, E pass, Space shoot, H switch AI."
+    },
+    {
+      "key": "MNG.Exhibition.guideAlt3",
+      "ko": "양 팀 모델과 5분 또는 10분을 선택하며, 경기 후 종료 버튼으로 시작 화면으로 돌아갑니다.",
+      "en": "Choose both models and 5 or 10 minutes. Exit returns to the title screen after the match."
+    },
+    {
+      "key": "model.stage-0",
+      "ko": "초기 모델",
+      "en": "Initial model"
+    },
+    {
+      "key": "selection.stage-0",
+      "ko": "초기 모델: 0회",
+      "en": "Initial model: 0 steps"
+    },
+    {
+      "key": "model.stage-400000",
+      "ko": "40만",
+      "en": "400K"
+    },
+    {
+      "key": "selection.stage-400000",
+      "ko": "40만",
+      "en": "400K"
+    },
+    {
+      "key": "model.stage-800000",
+      "ko": "80만",
+      "en": "800K"
+    },
+    {
+      "key": "selection.stage-800000",
+      "ko": "80만",
+      "en": "800K"
+    },
+    {
+      "key": "model.stage-1200000",
+      "ko": "120만",
+      "en": "1.2M"
+    },
+    {
+      "key": "selection.stage-1200000",
+      "ko": "120만",
+      "en": "1.2M"
+    },
+    {
+      "key": "model.stage-1600000",
+      "ko": "160만",
+      "en": "1.6M"
+    },
+    {
+      "key": "selection.stage-1600000",
+      "ko": "160만",
+      "en": "1.6M"
+    },
+    {
+      "key": "model.stage-2000000",
+      "ko": "200만",
+      "en": "2M"
+    },
+    {
+      "key": "selection.stage-2000000",
+      "ko": "200만",
+      "en": "2M"
+    },
+    {
+      "key": "model.reference-recover",
+      "ko": "회수 우선",
+      "en": "Recover"
+    },
+    {
+      "key": "selection.reference-recover",
+      "ko": "Recover: 회수 우선",
+      "en": "Recover"
+    },
+    {
+      "key": "description.reference-recover",
+      "ko": "공을 되찾는 선택을 우선합니다.",
+      "en": "Prioritizes recovering the ball."
+    },
+    {
+      "key": "model.reference-balanced",
+      "ko": "균형 유지",
+      "en": "Balanced"
+    },
+    {
+      "key": "selection.reference-balanced",
+      "ko": "Balanced: 균형 유지",
+      "en": "Balanced"
+    },
+    {
+      "key": "description.reference-balanced",
+      "ko": "균형 잡힌 팀 배치를 선택합니다.",
+      "en": "Chooses a balanced team shape."
+    },
+    {
+      "key": "model.reference-carry-shot",
+      "ko": "전진-슈팅",
+      "en": "Carry & Shoot"
+    },
+    {
+      "key": "selection.reference-carry-shot",
+      "ko": "Carry & Shoot: 전진-슈팅",
+      "en": "Carry & Shoot"
+    },
+    {
+      "key": "description.reference-carry-shot",
+      "ko": "소유와 슈팅 가능성을 보고 선택합니다.",
+      "en": "Chooses by possession and shot availability."
+    },
+    {
+      "key": "model.reference-uniform-valid",
+      "ko": "무작위 선택",
+      "en": "Random"
+    },
+    {
+      "key": "selection.reference-uniform-valid",
+      "ko": "Random: 무작위 선택",
+      "en": "Random"
+    },
+    {
+      "key": "description.reference-uniform-valid",
+      "ko": "불가능한 행동을 제외하고 무작위로 선택합니다.",
+      "en": "Randomly chooses among valid actions only."
+    }
+  ]
+}

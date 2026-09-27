@@ -1,0 +1,93 @@
+{
+  "viewport": {
+    "width": 1600,
+    "height": 1020
+  },
+  "comparisons": [
+    {
+      "name": "Home KO/EN",
+      "equal": true,
+      "differences": []
+    },
+    {
+      "name": "Setup KO/EN and model names",
+      "equal": true,
+      "differences": []
+    },
+    {
+      "name": "Neural choices KO/EN",
+      "equal": true,
+      "differences": []
+    },
+    {
+      "name": "Rule choices KO/EN",
+      "equal": true,
+      "differences": []
+    },
+    {
+      "name": "Match KO/EN",
+      "equal": true,
+      "differences": []
+    },
+    {
+      "name": "Goal RED/NAVY KO/EN",
+      "equal": true,
+      "differences": []
+    },
+    {
+      "name": "Result KO/EN",
+      "equal": true,
+      "differences": []
+    },
+    {
+      "name": "Guide Next/Finish",
+      "equal": true,
+      "differences": []
+    },
+    {
+      "name": "Score 0 to 100",
+      "equal": true,
+      "differences": []
+    }
+  ],
+  "matchKo": [
+    {
+      "height": 46.27874755859375,
+      "key": "scorebug",
+      "text": "RED0:0NAVY04:51",
+      "width": 384.416015625
+    },
+    {
+      "height": 102.73198699951172,
+      "key": "keyHints",
+      "text": "W S이동A D회전E패스SPACE슈팅HAI 전환",
+      "width": 210.7349853515625
+    },
+    {
+      "height": 156.8000030517578,
+      "key": "manager-panel",
+      "text": "감독 현황현재 판단누적 보상\n      RED강화학습 · 초기 모델적극 회수+0.075\n      NAVY규칙형 · 전진-슈팅전진 운반+0.120",
+      "width": 439.0375061035156
+    }
+  ],
+  "matchEn": [
+    {
+      "height": 46.27874755859375,
+      "key": "scorebug",
+      "text": "RED0:0NAVY04:46",
+      "width": 384.416015625
+    },
+    {
+      "height": 102.73198699951172,
+      "key": "keyHints",
+      "text": "W SMoveA DTurnEPassSPACEShootHSwitch AI",
+      "width": 210.7349853515625
+    },
+    {
+      "height": 156.8000030517578,
+      "key": "manager-panel",
+      "text": "MANAGERSCurrent decisionTotal reward\n      REDRL model · Initial modelStay balanced+0.110\n      NAVYRule-based · Carry & ShootAttempt shot+0.110",
+      "width": 439.0375061035156
+    }
+  ]
+}

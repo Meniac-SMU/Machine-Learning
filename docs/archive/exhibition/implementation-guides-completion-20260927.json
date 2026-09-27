@@ -1,0 +1,45 @@
+{
+  "status": "complete",
+  "completedAtUtc": "2026-09-27T07:29:25.2905835Z",
+  "build": "Builds/MNG_Exhibition/UI1-20260927T072438004Z/MANAGER.exe",
+  "revision": "docs/soccer/exhibition/guides-final-20260927.md",
+  "player": {
+    "processExitCode": 0,
+    "checks": 34,
+    "actualQuitButtonClick": true,
+    "errors": 0,
+    "evidence": "Logs/Exhibition/guides-final-20260927/player/result.json",
+    "passed": true,
+    "screenshotCount": 19
+  },
+  "guide": {
+    "managerActions": 6,
+    "pages": 5,
+    "enterAndEscapeVerified": true,
+    "playerActions": 12,
+    "languages": [
+      "ko",
+      "en"
+    ]
+  },
+  "colors": {
+    "quitText": "#BFC3BC",
+    "pauseOutline": "#FFFFFF",
+    "pauseOutlineWidth": 3,
+    "pauseTitle": "#14532D",
+    "goalBannerAlpha": 0.92,
+    "goalMaterialAlpha": 0.6,
+    "keeperKickPlate": "#E6FF00"
+  },
+  "cleanup": {
+    "retainedUIBuilds": 1,
+    "evidence": "Logs/Exhibition/guides-final-20260927/retired-builds/cleanup.json",
+    "removedLogicalBytes": 2061193075.0,
+    "removedBuilds": 12
+  },
+  "gameplayAssemblyUnchanged": true,
+  "projectSettingsRestored": true,
+  "editorBuildSettingsRestored": true,
+  "weeklyRemainingPercent": 89,
+  "previousCompletion": "docs/archive/exhibition/implementation-menu-colors-completion-20260927.json"
+}

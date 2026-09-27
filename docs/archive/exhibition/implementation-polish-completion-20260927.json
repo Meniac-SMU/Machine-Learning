@@ -1,0 +1,56 @@
+{
+  "status": "complete",
+  "completedAtUtc": "2026-09-26T19:00:05.9936897Z",
+  "build": "Builds/MNG_Exhibition/UI1-20260926T185254685Z/MANAGER.exe",
+  "scene": "Assets/_Soccer/Manager/Exhibition/Exhibition.unity",
+  "revision": "docs/soccer/exhibition/polish-20260927.md",
+  "player": {
+    "fullMatchGameSeconds": 300,
+    "evidence": "Logs/Exhibition/polish-20260927/player-2/result.json",
+    "captureResolution": "1600x900",
+    "errors": 0,
+    "simulationScale": 2,
+    "checks": 92,
+    "passed": true
+  },
+  "playMode": {
+    "cameraRetest": "Logs/Exhibition/polish-20260927/camera-playmode.xml",
+    "initialPassed": 34,
+    "unresolvedFailures": 0,
+    "skipped": 2,
+    "initialRun": "Logs/Exhibition/polish-20260927/playmode.xml",
+    "uniquePassed": 35,
+    "note": "Headless intermediate camera check changed to inspect early frames; full suite other 34 cases passed.",
+    "initialFailed": 1,
+    "cameraRetestPassed": 1
+  },
+  "movement": {
+    "evidence": "Logs/Exhibition/polish-20260927/player-2/physical-speed-parity.txt",
+    "requestedMaximum": 9,
+    "playerLinearDamping": 3,
+    "exhibitionInterpolatedBodies": 9,
+    "motorAcceleration": 30,
+    "trainingPrefabUnchanged": true,
+    "physicalAISpeed": 8.46,
+    "physicalHumanSpeed": 8.46
+  },
+  "keeperTouches": {
+    "observations244Unchanged": true,
+    "recontactIncrements": true,
+    "physicalBodyAndPlate": true,
+    "heldContactDeduplicated": true,
+    "survivesGoal": true,
+    "newMatchResets": true
+  },
+  "models": {
+    "evidence": "Logs/Exhibition/polish-20260927/model-hash-audit.json",
+    "unchangedOriginalsAndCopies": 6
+  },
+  "settings": {
+    "editorBuildSettingsRestored": true,
+    "evidence": "Logs/Exhibition/polish-20260927/settings-audit.json",
+    "projectSettingsRestored": true
+  },
+  "weeklyRemainingPercent": 92,
+  "previousCompletion": "docs/archive/exhibition/implementation-revision-completion-20260927.json"
+}

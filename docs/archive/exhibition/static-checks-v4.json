@@ -1,0 +1,15 @@
+{
+  "revision": 4,
+  "checkedDate": "2026-09-26",
+  "scope": "Design-only HTML/SVG; no Unity changes",
+  "uniqueHtmlIds": 72,
+  "localReferences": 11,
+  "localizedKeys": 68,
+  "localeCount": 2,
+  "modelChoices": 11,
+  "removedModelFooter": true,
+  "localizedStageLabels": true,
+  "pretrainingCopyAssumption": 1000000,
+  "validSvgFiles": 11,
+  "result": "PASS"
+}

@@ -21,6 +21,8 @@ EditorBuildSettings:
     path: Assets/_Soccer/Teams/Rule_PHC/Scenes/Stadium4v4_Rule.unity
     guid: 07389eb7854d75c4fbc86200b6e1f2b7
   m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: 74316caf4d35ab04e835f2fd6c88679c, type: 2}
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    com.unity.localization.settings: {fileID: 11400000, guid: 6f501b9528d1b7e4caed241c99ab326a, type: 2}
   m_UseUCBPForAssetBundles: 0

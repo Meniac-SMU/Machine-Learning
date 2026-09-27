@@ -1,0 +1,420 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: Exhibition Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: Exhibition
+  m_TableCollectionNameGuidString: a67cf58a328c60c40b67d95b7bc6b42f
+  m_Entries:
+  - m_Id: 792272896
+    m_Key: MNG.Exhibition.speedBadge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 817438720
+    m_Key: MNG.Exhibition.pauseTitle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827328
+    m_Key: MNG.Exhibition.resumeMatch
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827329
+    m_Key: MNG.Exhibition.quitMatch
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827330
+    m_Key: MNG.Exhibition.eyebrow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827331
+    m_Key: MNG.Exhibition.tagline
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827332
+    m_Key: MNG.Exhibition.start
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827333
+    m_Key: MNG.Exhibition.language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827334
+    m_Key: MNG.Exhibition.credits
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827335
+    m_Key: MNG.Exhibition.guide
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827336
+    m_Key: MNG.Exhibition.matchSetup
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827337
+    m_Key: MNG.Exhibition.back
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827338
+    m_Key: MNG.Exhibition.yourTeam
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827339
+    m_Key: MNG.Exhibition.opponent
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827340
+    m_Key: MNG.Exhibition.teamModel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827341
+    m_Key: MNG.Exhibition.redCaption
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827342
+    m_Key: MNG.Exhibition.navyCaption
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827343
+    m_Key: MNG.Exhibition.playMode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827344
+    m_Key: MNG.Exhibition.humanMode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827345
+    m_Key: MNG.Exhibition.simMode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827346
+    m_Key: MNG.Exhibition.duration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827347
+    m_Key: MNG.Exhibition.five
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827348
+    m_Key: MNG.Exhibition.ten
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827349
+    m_Key: MNG.Exhibition.kickoff
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827350
+    m_Key: MNG.Exhibition.exhibition
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827351
+    m_Key: MNG.Exhibition.move
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827352
+    m_Key: MNG.Exhibition.turn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827353
+    m_Key: MNG.Exhibition.softKick
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827354
+    m_Key: MNG.Exhibition.strongKick
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827355
+    m_Key: MNG.Exhibition.aiSwitch
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827356
+    m_Key: MNG.Exhibition.timeRemaining
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827357
+    m_Key: MNG.Exhibition.fullTime
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827358
+    m_Key: MNG.Exhibition.matchStats
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827359
+    m_Key: MNG.Exhibition.shots
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827360
+    m_Key: MNG.Exhibition.aiShots
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827361
+    m_Key: MNG.Exhibition.humanShots
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827362
+    m_Key: MNG.Exhibition.shotSum
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827363
+    m_Key: MNG.Exhibition.resultHelp
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827364
+    m_Key: MNG.Exhibition.exit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827365
+    m_Key: MNG.Exhibition.finalReward
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827366
+    m_Key: MNG.Exhibition.recoveries
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827367
+    m_Key: MNG.Exhibition.saves
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827368
+    m_Key: MNG.Exhibition.closeGuide
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827369
+    m_Key: MNG.Exhibition.next
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827370
+    m_Key: MNG.Exhibition.finishGuide
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827371
+    m_Key: MNG.Exhibition.close
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827372
+    m_Key: MNG.Exhibition.stepTab
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827373
+    m_Key: MNG.Exhibition.referenceTab
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827374
+    m_Key: MNG.Exhibition.neural
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827375
+    m_Key: MNG.Exhibition.rule
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827376
+    m_Key: MNG.Exhibition.aiTeam
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827377
+    m_Key: MNG.Exhibition.simulationLabel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827378
+    m_Key: MNG.Exhibition.draw
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827379
+    m_Key: MNG.Exhibition.wins
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827380
+    m_Key: MNG.Exhibition.selectModel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827381
+    m_Key: MNG.Exhibition.stepsNotice
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827382
+    m_Key: MNG.Exhibition.referenceNotice
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827383
+    m_Key: MNG.Exhibition.managerLive
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827384
+    m_Key: MNG.Exhibition.currentDecision
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827385
+    m_Key: MNG.Exhibition.cumulativeReward
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827386
+    m_Key: MNG.Exhibition.goal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827387
+    m_Key: MNG.Exhibition.command0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827388
+    m_Key: MNG.Exhibition.command1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827389
+    m_Key: MNG.Exhibition.command2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827390
+    m_Key: MNG.Exhibition.command3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827391
+    m_Key: MNG.Exhibition.command4
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827392
+    m_Key: MNG.Exhibition.command5
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827393
+    m_Key: MNG.Exhibition.creditsAlt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827394
+    m_Key: MNG.Exhibition.pitchAlt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827395
+    m_Key: MNG.Exhibition.guideAlt1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827396
+    m_Key: MNG.Exhibition.guideAlt2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827397
+    m_Key: MNG.Exhibition.guideAlt3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827398
+    m_Key: model.stage-0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827399
+    m_Key: selection.stage-0
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827400
+    m_Key: model.stage-400000
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827401
+    m_Key: selection.stage-400000
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827402
+    m_Key: model.stage-800000
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827403
+    m_Key: selection.stage-800000
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827404
+    m_Key: model.stage-1200000
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827405
+    m_Key: selection.stage-1200000
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827406
+    m_Key: model.stage-1600000
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827407
+    m_Key: selection.stage-1600000
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827408
+    m_Key: model.stage-2000000
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827409
+    m_Key: selection.stage-2000000
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827410
+    m_Key: model.reference-recover
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827411
+    m_Key: selection.reference-recover
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827412
+    m_Key: description.reference-recover
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827413
+    m_Key: model.reference-balanced
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827414
+    m_Key: selection.reference-balanced
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827415
+    m_Key: description.reference-balanced
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827416
+    m_Key: model.reference-carry-shot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827417
+    m_Key: selection.reference-carry-shot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827418
+    m_Key: description.reference-carry-shot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827419
+    m_Key: model.reference-uniform-valid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827420
+    m_Key: selection.reference-uniform-valid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 825827421
+    m_Key: description.reference-uniform-valid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18276326907904
+    m_Key: MNG.Exhibition.humanSwitch
+    m_Metadata:
+      m_Items: []
+  - m_Id: 216470402965504
+    m_Key: MNG.Exhibition.quitGame
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 5964445465447497752
+  references:
+    version: 2
+    RefIds:
+    - rid: 5964445465447497752
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1790440589932

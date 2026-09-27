@@ -1,0 +1,23 @@
+{
+  "revision": 2,
+  "checkedDate": "2026-09-26",
+  "scope": "Design preview only; no Unity runtime validation",
+  "uniqueHtmlIds": 68,
+  "localReferences": 11,
+  "validSvgFiles": 11,
+  "localizedKeys": 67,
+  "locales": [
+    "ko",
+    "en"
+  ],
+  "neuralFilesHashVerified": 6,
+  "ruleOrder": [
+    "회수",
+    "균형",
+    "운반슈팅",
+    "전체 규칙형",
+    "랜덤"
+  ],
+  "unmodifiedPretendardFontFiles": 6,
+  "result": "PASS"
+}

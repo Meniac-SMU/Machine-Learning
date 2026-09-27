@@ -5,6 +5,8 @@
 | 작업 | 먼저 읽기 | 필요할 때만 추가 |
 |---|---|---|
 | 현재 MNG 개발·학습 준비 | [MS v3 운영 기준](soccer/training/ms-v3-current.md) | [D4·D5 증거](soccer/training/ms3-v3-d4-d5-report-20260923.md), v3 registry/schema |
+| MS3-v3 패스 모방학습 계획 | [2M 기반 모방학습 → PPO 계획](soccer/training/ms3-v3-pass-imitation-plan-20260926.md) | 계획 단계이며 구현·수집·학습 미착수 |
+| 졸업 전시 게임 / UI 1차 최종본 | [Unity 구현·빌드 현황](soccer/exhibition/implementation-status.md) | [실행 안내](soccer/exhibition/player-guide.md), [승인 디자인](soccer/exhibition/design-spec.md), [클릭형 시안](soccer/exhibition/index.html) |
 | MNG 경기 기술 변경 | [MS v3 운영 기준](soccer/training/ms-v3-current.md) | [패스·드리블 보고서](soccer/training/ms2-forward-pass-center-report-20260923.md), 해당 Runtime·Tests |
 | 실행 도구 찾기 | [Tools 색인](../Tools/README.md) | 특정 스크립트·준비 manifest |
 | Core 경기·입력·물리 | [경기 계약](soccer/gameplay-contract.md) | [아키텍처](soccer/architecture.md) |

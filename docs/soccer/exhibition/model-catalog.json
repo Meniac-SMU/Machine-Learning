@@ -1,0 +1,155 @@
+{
+  "version": 6,
+  "checkedDate": "2026-09-26",
+  "scope": "Exhibition design mapping only. Korean rule picker uses bilingual names; English uses English only. No models loaded or evaluation eligibility changed.",
+  "pretrainingAssumption": {
+    "steps": 1000000,
+    "scope": "User-requested exhibition copy assumption, not verified model provenance."
+  },
+  "intervalSteps": 400000,
+  "sourceEvidence": "Logs/MNG-Rebuild/MS3-v3-r002-tournament-20260926/completion.json",
+  "models": [
+    {
+      "id": "stage-0",
+      "group": "steps",
+      "label": {
+        "ko": "초기 모델",
+        "en": "Initial model"
+      },
+      "kind": "neural",
+      "nominalStep": 0,
+      "actualStep": 0,
+      "source": "results/MNG_MS3V3-20260925-r002/MNG_ManagerV2/MNG_ManagerV2-0.onnx",
+      "sha256": "3e8cd87b21ce50d1dd45384ce9f28145442123dbfb41aed6ee0ae6ce12ec5fd7",
+      "selectionLabel": {
+        "ko": "초기 모델: 0회",
+        "en": "Initial model: 0 steps"
+      }
+    },
+    {
+      "id": "stage-400000",
+      "group": "steps",
+      "label": {
+        "ko": "40만",
+        "en": "400K"
+      },
+      "kind": "neural",
+      "nominalStep": 400000,
+      "actualStep": 400719,
+      "source": "results/MNG_MS3V3-20260925-r002/MNG_ManagerV2/MNG_ManagerV2-400719.onnx",
+      "sha256": "ba9c6599106f7373d5e522bcb95d5bef0bfc16dcbf2481a8facfb0b569db21c3"
+    },
+    {
+      "id": "stage-800000",
+      "group": "steps",
+      "label": {
+        "ko": "80만",
+        "en": "800K"
+      },
+      "kind": "neural",
+      "nominalStep": 800000,
+      "actualStep": 801184,
+      "source": "results/MNG_MS3V3-20260925-r002/MNG_ManagerV2/MNG_ManagerV2-801184.onnx",
+      "sha256": "5eb1d0e151f7cdc8f40324d3235eb7e52da80f0e885b49f80b4576bd4105a7ca"
+    },
+    {
+      "id": "stage-1200000",
+      "group": "steps",
+      "label": {
+        "ko": "120만",
+        "en": "1.2M"
+      },
+      "kind": "neural",
+      "nominalStep": 1200000,
+      "actualStep": 1200569,
+      "source": "results/MNG_MS3V3-20260925-r002/MNG_ManagerV2/MNG_ManagerV2-1200569.onnx",
+      "sha256": "6c51f7f1a6464b6be8fa523a09ceaff779d25def7cac5d00b4ddb5e2059f3442"
+    },
+    {
+      "id": "stage-1600000",
+      "group": "steps",
+      "label": {
+        "ko": "160만",
+        "en": "1.6M"
+      },
+      "kind": "neural",
+      "nominalStep": 1600000,
+      "actualStep": 1600333,
+      "source": "results/MNG_MS3V3-20260925-r002/MNG_ManagerV2/MNG_ManagerV2-1600333.onnx",
+      "sha256": "57be6b02bf08e83f058725552c2c0a9521685579680b3733acfb2d2bc1c1ceb9"
+    },
+    {
+      "id": "stage-2000000",
+      "group": "steps",
+      "label": {
+        "ko": "200만",
+        "en": "2M"
+      },
+      "kind": "neural",
+      "nominalStep": 2000000,
+      "actualStep": 2001834,
+      "source": "results/MNG_MS3V3-20260925-r002/MNG_ManagerV2/MNG_ManagerV2-2001834.onnx",
+      "sha256": "31b042143e5a01be5e5c2717126e6a967b1c16400d8a4167e72580acde4dc2a1"
+    },
+    {
+      "id": "reference-recover",
+      "group": "reference",
+      "label": {
+        "ko": "회수 우선",
+        "en": "Recover"
+      },
+      "description": {
+        "ko": "공을 되찾는 선택을 우선합니다.",
+        "en": "Prioritizes recovering the ball."
+      },
+      "kind": "rule",
+      "source": "recover",
+      "implementationSource": "Tools/mng_v2_evaluate.py"
+    },
+    {
+      "id": "reference-balanced",
+      "group": "reference",
+      "label": {
+        "ko": "균형 유지",
+        "en": "Balanced"
+      },
+      "description": {
+        "ko": "균형 잡힌 팀 배치를 선택합니다.",
+        "en": "Chooses a balanced team shape."
+      },
+      "kind": "rule",
+      "source": "balanced",
+      "implementationSource": "Tools/mng_v2_evaluate.py"
+    },
+    {
+      "id": "reference-carry-shot",
+      "group": "reference",
+      "label": {
+        "ko": "전진-슈팅",
+        "en": "Carry & Shoot"
+      },
+      "description": {
+        "ko": "소유와 슈팅 가능성을 보고 선택합니다.",
+        "en": "Chooses by possession and shot availability."
+      },
+      "kind": "rule",
+      "source": "carry-shot",
+      "implementationSource": "Tools/mng_v2_evaluate.py"
+    },
+    {
+      "id": "reference-uniform-valid",
+      "group": "reference",
+      "label": {
+        "ko": "무작위 선택",
+        "en": "Random"
+      },
+      "description": {
+        "ko": "불가능한 행동을 제외하고 무작위로 선택합니다.",
+        "en": "Randomly chooses among valid actions only."
+      },
+      "kind": "rule",
+      "source": "uniform-valid",
+      "implementationSource": "Tools/mng_v2_evaluate.py"
+    }
+  ]
+}

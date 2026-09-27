@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Localization-Assets-ko
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Localization-Assets-ko
+  m_GUID: f7bf3ea520544394eb69f4943dee4603
+  m_SerializeEntries:
+  - m_GUID: 0eb7df9a37442e44fab3e04aba76c2c3
+    m_Address: guide-ko-4
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ko
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2391ff28267424341b089dbcaebd918a
+    m_Address: guide-ko-2
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ko
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 64583d3b8583216498707abd067fa6e3
+    m_Address: guide-ko-5
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ko
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9643326b23b5c0f40975ac96c1879f2d
+    m_Address: guide-ko-1
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ko
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a3139b289386d144b959790f62eb3a3c
+    m_Address: guide-ko-3
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ko
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: af11ec142b801da4c82ca472adc0ad74
+    m_Address: credits-ko
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ko
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 1
+  m_Settings: {fileID: 11400000, guid: 731ed40ce7bb4bc47b08bc678f4c2f57, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 606abf44271429849bff8cbe402cfd96, type: 2}
+    - {fileID: 11400000, guid: 09d9d453646ece3469b88724645bc0bb, type: 2}
+    - {fileID: 11400000, guid: fe1e649c568c2ff4c88e7b2307590398, type: 2}

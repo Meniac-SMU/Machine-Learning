@@ -11,6 +11,10 @@
 
 ## 현재 작업 경계
 
+- 2026-09-27 사용자가 전시 시안을 **UI 1차 최종본**으로 확정하고 Unity 기능 구현·검증·Windows 빌드를 승인했다. 전시 전용 경로는 `Assets/_Soccer/Manager/Exhibition`, 진입점은 `docs/soccer/exhibition/implementation-status.md`, 재빌드는 `Tools/Build-Exhibition.ps1`이다. 이는 아래 패스 모방학습의 구현·수집·학습 승인과 별개다. 기존 모델·보상·관측 계약을 보존한다.
+
+- 2026-09-26 최신 패스 학습 요청은 **계획 수립 단계**다. `docs/soccer/training/ms3-v3-pass-imitation-plan-20260926.md`의2M 보존·패스/비패스 시범·짧은 BC→PPO 계획을 따른다. 구현·수집·학습은 아직 착수하지 않았고, 계획의 후보 수치나 optimizer 권장안을 실행 승인으로 해석하지 않는다.
+
 - MS3-v3 r002는 최신 승인 범위2M을 완료했다. 최종2,001,834 step 저장,100k별 점검,400k 간격1.2M·1.6M·2M 총960경기 평가를 마치고 학습·평가·자원 모니터를 종료했다. 무작위 상대는 제외했다. R6 완료를 유지한다. 이후 사용자가 승인한0k~2M 순차 토너먼트220경기로2M(실제2,001,834 step)를 champion으로 확정하고 registry에 등록했다. 기본40경기, 승률 차이5%p 이하20경기 추가, 이후 완전 동률만40경기 추가라는 사용자 규칙을 적용했다. 증거는 `Logs/MNG-Rebuild/MS3-v3-r002-tournament-20260926/completion.json`이다.2M 이후 학습은 별도 승인 대상이다. 주간 잔여4% 이하 또는 치명적 문제 시 저장·중단 조건은 유지한다. gate·원본·실패 복구·완료 증거는 `Logs/MNG-Rebuild/MS3-v3-r002-to2m-20260925`에 보존한다. 설정 변화는 명목 최대 step과 모델 보존 수21→64뿐이며 PPO·runtime·보상·상대 풀 규칙은 유지했다.1.7M 시작 포트 충돌은 원래 포트 해제 후 같은 난수 조건으로 복구했다. r001·r900은 재개/승격하지 않는다. 상태·증거의 단일 기준은 current-status다.
 - 활성 모델 자격은 `docs/soccer/training/ms-v3-model-registry.json`, ABI는 `ms-v3-schema.json`이다. v2 명칭의 코드·YAML·빌드는 v3에서 재사용할 수 있으므로 이름만으로 제거하지 않는다.
 - 향후 챔피언은 새 모델이 현 챔피언과 직접 대결에서 이기면 교체한다. 기본40경기·300초·진영 교대, 승률 차이5%p 이하20경기 추가, 이후 완전 동률만40경기 추가 후 누적 승수로 판정한다. 다양한 상대의 평가는400k 간격으로 유지하고100k에는 상태 점검만 한다. MS2·Full·Recover·carry-shot·Balanced·동일 Run 과거 정책의 성적과 패스/수비/진영 지표를 별도로 보고하며 이를 추가 승격 문턱으로 삼지 않는다. 무작위 상대는 제외한다. 상세 기준은 `docs/soccer/training/ms-v3-current.md`를 따른다.

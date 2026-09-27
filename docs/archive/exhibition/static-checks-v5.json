@@ -1,0 +1,15 @@
+{
+  "revision": 5,
+  "checkedDate": "2026-09-26",
+  "scope": "Design-only HTML/SVG; no Unity changes",
+  "uniqueHtmlIds": 72,
+  "localReferences": 11,
+  "localizedKeys": 68,
+  "localeCount": 2,
+  "neuralChoices": 6,
+  "ruleChoices": 4,
+  "validSvgFiles": 11,
+  "fixedGeometryComparisons": 9,
+  "fixedGeometryResult": "PASS",
+  "result": "PASS"
+}

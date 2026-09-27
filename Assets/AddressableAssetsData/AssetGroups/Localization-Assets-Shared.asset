@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Localization-Assets-Shared
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Localization-Assets-Shared
+  m_GUID: 943a050ca559de54299c2db6d3f0797d
+  m_SerializeEntries:
+  - m_GUID: 2c94ee191f059284ca63dc0ac341b454
+    m_Address: Assets/_Soccer/Manager/Exhibition/Localization/ExhibitionArt Shared
+      Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a67cf58a328c60c40b67d95b7bc6b42f
+    m_Address: Assets/_Soccer/Manager/Exhibition/Localization/Exhibition Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 1
+  m_Settings: {fileID: 11400000, guid: 731ed40ce7bb4bc47b08bc678f4c2f57, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: ed498b5ff6b720a44b6a237c3955c745, type: 2}
+    - {fileID: 11400000, guid: 8e22d57ffbaf2494a86ab9c31961abf1, type: 2}
+    - {fileID: 11400000, guid: 5ee0ef8de5481564b84e1cbbc1a3fd7b, type: 2}

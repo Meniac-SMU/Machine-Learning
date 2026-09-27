@@ -1,0 +1,26 @@
+{
+  "status": "complete",
+  "completedAtUtc": "2026-09-27T07:06:29.9234054Z",
+  "build": "Builds/MNG_Exhibition/UI1-20260927T070233440Z/MANAGER.exe",
+  "revision": "docs/soccer/exhibition/menu-colors-20260927.md",
+  "player": {
+    "evidence": "Logs/Exhibition/menu-colors-20260927/player-3/result.json",
+    "checks": 14,
+    "processExitCode": 0,
+    "passed": true,
+    "actualQuitButtonClick": true,
+    "errors": 0
+  },
+  "colors": {
+    "navyKeeper": "#429CF2",
+    "pauseTitle": "#76D943",
+    "goalBannerAlpha": 0.85,
+    "redKeeper": "#F05278",
+    "goalMaterialAlpha": 0.4
+  },
+  "gameplayAssemblyUnchanged": true,
+  "projectSettingsRestored": true,
+  "editorBuildSettingsRestored": true,
+  "weeklyRemainingPercent": 90,
+  "previousCompletion": "docs/archive/exhibition/implementation-polish-completion-20260927.json"
+}

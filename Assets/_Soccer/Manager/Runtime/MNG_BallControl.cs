@@ -617,7 +617,11 @@ namespace MachineLearning.Soccer.Manager
 
         void ApplyPlateStrike(MNG_PlayerAvatar avatar, int index, MNG_KickRequest kick)
         {
-            if (!m_Ledger.Carrier.IsValid
+            if (avatar.IsHuman)
+            {
+                if (!matchController.IsPlayActive || avatar.KickCooldownSeconds > 0f) return;
+            }
+            else if (!m_Ledger.Carrier.IsValid
                 || m_Ledger.Carrier.Team != avatar.Team
                 || m_Ledger.Carrier.Slot != avatar.Slot)
                 return;
@@ -630,7 +634,11 @@ namespace MachineLearning.Soccer.Manager
 
             m_Body.AddForce(impulse, ForceMode.Impulse);
             avatar.StartKickCooldown();
-            m_Ledger.ReleaseForKick(avatar.Team, avatar.Slot);
+            var carrier = m_Ledger.Carrier;
+            if (avatar.IsHuman && carrier.IsValid)
+                m_Ledger.ReleaseForKick(carrier.Team, carrier.Slot);
+            else
+                m_Ledger.ReleaseForKick(avatar.Team, avatar.Slot);
             m_KickBlocked[index] = true;
             m_ContactGraceSeconds[index] = 0f;
             m_KickId++;

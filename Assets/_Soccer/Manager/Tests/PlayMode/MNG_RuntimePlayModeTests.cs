@@ -998,13 +998,20 @@ namespace MachineLearning.Soccer.Manager.Tests
             var overviewPosition = cameras[0].transform.position;
 
             human.ToggleOwner();
-            for (var frame = 0; frame < 12; frame++) yield return null;
+            yield return null;
+            yield return null;
             Assert.That(spectator.IsFollowingHuman, Is.True);
+            Assert.That(spectator.IsTransitioning, Is.True);
+            yield return new WaitForSecondsRealtime(1f);
             Assert.That(Vector3.Distance(cameras[0].transform.position, overviewPosition), Is.GreaterThan(1f));
 
             human.ToggleOwner();
-            for (var frame = 0; frame < 45; frame++) yield return null;
+            yield return null;
+            yield return null;
+            Assert.That(spectator.IsTransitioning, Is.True);
+            yield return new WaitForSecondsRealtime(1f);
             Assert.That(spectator.IsFollowingHuman, Is.False);
+            Assert.That(spectator.IsTransitioning, Is.False);
             Assert.That(Vector3.Distance(cameras[0].transform.position, overviewPosition), Is.LessThan(0.5f));
         }
 

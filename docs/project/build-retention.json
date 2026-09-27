@@ -1,6 +1,6 @@
 {
   "schema": "project-build-retention-v1",
-  "reviewedOn": "2026-09-26",
+  "reviewedOn": "2026-09-27",
   "retained": [
     {
       "path": "Builds/MNG_V2/MS2-forward-pass-center-20260923/MS3V2",
@@ -26,6 +26,11 @@
       "path": "Builds/SoccerTraining",
       "reason": "Final shared player-curriculum build still referenced by training/evaluation tools; r017 remains suspended",
       "evidence": "docs/soccer/training/overview.md; Tools/evaluate_soccer_policy.py"
+    },
+    {
+      "reason": "Latest verified exhibition UI: title-only navy hydration panel and Unity splash disabled; replaces preceding verified UI build",
+      "evidence": "Logs/Exhibition/pause-splash-20260927/player/result.json",
+      "path": "Builds/MNG_Exhibition/UI1-20260927T074211233Z"
     }
   ],
   "deletionPolicy": "Review only. A missing retention entry, age, or old name alone never authorizes deletion. Verify current manifests, running processes, replacement, and retained evidence."

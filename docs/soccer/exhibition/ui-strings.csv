@@ -1,0 +1,73 @@
+﻿Key,Korean(ko),English(en)
+MNG.Exhibition.speedBadge,2배속,2× SPEED
+MNG.Exhibition.pauseTitle,하이드레이션 브레이크!,Hydration Break!
+MNG.Exhibition.resumeMatch,경기 재개,Resume match
+MNG.Exhibition.quitMatch,경기 종료,End match
+MNG.Exhibition.eyebrow,휴먼AI공학전공 · 2026 졸업 전시회,Human Centered AI Major · EXHIBITION 2026
+MNG.Exhibition.tagline,강화학습 기반 4vs4 축구 게임 개발,Developing a 4vs4 football game with reinforcement learning
+MNG.Exhibition.start,경기 준비 ↗,PREPARE MATCH ↗
+MNG.Exhibition.language,Language,Language
+MNG.Exhibition.credits,제작자,Credits
+MNG.Exhibition.guide,가이드,Guide
+MNG.Exhibition.matchSetup,경기 설정,MATCH SETUP
+MNG.Exhibition.back,← 시작 화면,← Title screen
+MNG.Exhibition.yourTeam,플레이어 팀,YOUR TEAM
+MNG.Exhibition.opponent,상대 팀,OPPONENT
+MNG.Exhibition.teamModel,팀 모델,TEAM MODEL
+MNG.Exhibition.redCaption,직접 플레이 시 RED 공격수를 조작합니다.,"In Play mode, you control the RED striker."
+MNG.Exhibition.navyCaption,선택한 AI가 NAVY 팀을 이끕니다.,Your chosen AI manages the NAVY team.
+MNG.Exhibition.playMode,경기 모드,MATCH MODE
+MNG.Exhibition.humanMode,직접 플레이,Play
+MNG.Exhibition.simMode,AI 시뮬레이션,AI simulation
+MNG.Exhibition.duration,경기 시간,MATCH DURATION
+MNG.Exhibition.five,5분,5 min
+MNG.Exhibition.ten,10분,10 min
+MNG.Exhibition.kickoff,경기 시작 ↗,KICK OFF ↗
+MNG.Exhibition.exhibition,전시 경기,EXHIBITION
+MNG.Exhibition.move,이동,Move
+MNG.Exhibition.turn,회전,Turn
+MNG.Exhibition.softKick,패스,Pass
+MNG.Exhibition.strongKick,슈팅,Shoot
+MNG.Exhibition.aiSwitch,AI 전환,Switch AI
+MNG.Exhibition.timeRemaining,남은 경기 시간,TIME REMAINING
+MNG.Exhibition.fullTime,경기 종료,FULL TIME
+MNG.Exhibition.matchStats,경기 기록,MATCH STATISTICS
+MNG.Exhibition.shots,전체 슈팅,Total shots
+MNG.Exhibition.aiShots,AI 슈팅,AI shots
+MNG.Exhibition.humanShots,사람 슈팅,Human shots
+MNG.Exhibition.shotSum,전체 슈팅 = AI 슈팅 + 사람 슈팅,Total shots = AI shots + human shots
+MNG.Exhibition.resultHelp,종료 버튼을 누르면 시작 화면으로 돌아갑니다.,Select Exit to return to the title screen.
+MNG.Exhibition.exit,종료 ↗,EXIT ↗
+MNG.Exhibition.finalReward,최종 누적 보상,Final cumulative reward
+MNG.Exhibition.recoveries,공 회수,Ball recoveries
+MNG.Exhibition.saves,선방,Saves
+MNG.Exhibition.closeGuide,가이드 종료,Close guide
+MNG.Exhibition.next,다음 장 →,Next page →
+MNG.Exhibition.finishGuide,가이드 종료 ✓,Finish guide ✓
+MNG.Exhibition.close,닫기,Close
+MNG.Exhibition.stepTab,강화학습 모델,RL MODELS
+MNG.Exhibition.referenceTab,규칙형 감독,RULE-BASED MANAGERS
+MNG.Exhibition.neural,강화학습,RL model
+MNG.Exhibition.rule,규칙형,Rule-based
+MNG.Exhibition.aiTeam,AI 팀,AI TEAM
+MNG.Exhibition.simulationLabel,AI vs AI · 시뮬레이션,AI vs AI · SIMULATION
+MNG.Exhibition.draw,무승부,DRAW
+MNG.Exhibition.wins,승리,WINS
+MNG.Exhibition.selectModel,모델 선택,SELECT MODEL
+MNG.Exhibition.stepsNotice,모든 강화학습 모델은 100만 회의 사전 학습을 거쳤습니다.,All reinforcement learning models have completed 1 million pre-training steps.
+MNG.Exhibition.referenceNotice,"각 감독은 같은 선수 기술을 사용하며, 서로 다른 규칙으로 전략을 선택합니다.",Each manager uses the same player skills and a different set of tactical rules.
+MNG.Exhibition.managerLive,감독 현황,MANAGERS
+MNG.Exhibition.currentDecision,현재 판단,Current decision
+MNG.Exhibition.cumulativeReward,누적 보상,Total reward
+MNG.Exhibition.goal,GOAL,GOAL
+MNG.Exhibition.command0,전진 운반,Advance carry
+MNG.Exhibition.command1,패스 전개,Build with passes
+MNG.Exhibition.command2,슈팅 시도,Attempt shot
+MNG.Exhibition.command3,적극 회수,Recover ball
+MNG.Exhibition.command4,균형 유지,Stay balanced
+MNG.Exhibition.command5,후방 보호,Protect defence
+MNG.Exhibition.creditsAlt,제작자 소개 임시 이미지,Temporary team credits image
+MNG.Exhibition.pitchAlt,경기장 구도 예시 이미지. 실제 게임 렌더링이 아닙니다.,"Schematic pitch view, not a Unity runtime capture."
+MNG.Exhibition.guideAlt1,직접 플레이에서는 RED 공격수를 조작합니다.,Control the RED striker in Play mode.
+MNG.Exhibition.guideAlt2,"W/S 이동, A/D 회전, E 패스, Space 슈팅, H AI 전환.","W/S move, A/D turn, E pass, Space shoot, H switch AI."
+MNG.Exhibition.guideAlt3,"양 팀 모델과 5분 또는 10분을 선택하며, 경기 후 종료 버튼으로 시작 화면으로 돌아갑니다.",Choose both models and 5 or 10 minutes. Exit returns to the title screen after the match.

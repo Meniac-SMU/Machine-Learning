@@ -1,0 +1,110 @@
+[
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\design-spec.md",
+    "Hash": "960757A25DFEAD42A8E922DA396F70E7CD09CCEF149BF3BB6DB7EDF155DE122D"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\index.html",
+    "Hash": "E86519182FCD2FC8F6432EFBE0D985660718CE9E8A01D9AF216C9646916F81A7"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\locales.js",
+    "Hash": "4B33246A085059092AB87CB1CE386B03A656EDCAAA3203D35B4EC9767C41ED62"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\model-catalog.js",
+    "Hash": "E13AF759879A48A342193560E6F75658378C5CC390137F6BCEC125D6D1E2B09B"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\model-catalog.json",
+    "Hash": "D50AED4802313737673173DCCF3D0BAF34D76CDF04DA50BBAECE07D86D01196F"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\preview.css",
+    "Hash": "C793511A0E4817B2E480AEB410EF4C0AA8CDD1A3A2E3DEDA80F8D29304CCCDDB"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\preview.js",
+    "Hash": "10876D252E7EDF006B3FA56CFC0FED5D0CBFCB63AD9EA83DE658501CD9452824"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\typography.css",
+    "Hash": "4F289457F0142D8676F4AA7A4E476C91E5898FBA234BEEBA71A55227A5867062"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\ui-strings.csv",
+    "Hash": "3DA162C7E4A8121E470E337C41500BA466A6D0AFE07752E365DEC667FC3CFE81"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\assets\\credits-en.svg",
+    "Hash": "4A91BE010BC15586B5824A156E1EACB5DA4DE46FD448DF3EFEBCA600DE872C27"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\assets\\credits-ko.svg",
+    "Hash": "7C1BAB6034E5058EEA04AEABDD1A150582441C9274135E9D5838FAF2466DF0C5"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\assets\\game-logo.svg",
+    "Hash": "C622E221D3AA3B5F28D6FCBD4F708DA2F7B411F9E568FA718D09F1021B15E562"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\assets\\guide-en-1.svg",
+    "Hash": "666893898606E44EA524266BA63EC4519C8A505AA12AD85D9B437D58FD4E3704"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\assets\\guide-en-2.svg",
+    "Hash": "2555C98D4B7C13ABE8A60F3D9C66FAD379066DEC74309FFADF207ABCC9A66AB2"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\assets\\guide-en-3.svg",
+    "Hash": "2CF557BAF97D467596912B521FF80D14EE204444C68F1D971BD6EEB9E677F8AF"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\assets\\guide-ko-1.svg",
+    "Hash": "B96B5CAE15D903A79A045BE0A30DD563893026B6C5F5F9139ED0A7FA72909432"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\assets\\guide-ko-2.svg",
+    "Hash": "B7EB4B078031D38EE3B13F8ED02ACA8DC10DC79B9B69C539B1370E1D142A5F2B"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\assets\\guide-ko-3.svg",
+    "Hash": "F62B049EA62A9716BA5FD49CC40607DACE861E069568EB0715D6764DC745E897"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\assets\\pitch.svg",
+    "Hash": "DEF3D8214E85E5AF50150F790C031D0542A2F74288C2BE22604A69CD08692A3B"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\assets\\team-logo.svg",
+    "Hash": "65EA1041973B49AD5B048460ADCA5F1561AC51D914853848DA460D8E4AB5B76A"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\assets\\fonts\\LICENSE.txt",
+    "Hash": "82E9C8A4B203261F10DDBA1296422D64914FF3D4B7BD8A12896D03F0F088D70A"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\assets\\fonts\\Pretendard-Black.otf",
+    "Hash": "94628B0BCEA8936B6E5C30D98D685EB9BBAFFB0FE2ED255542ECC656C248E021"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\assets\\fonts\\Pretendard-Bold.otf",
+    "Hash": "2E91915FAB54DF71CC9598EBF608B2BDB54C6FE3C066AC61DFF0BC44FCA71CC7"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\assets\\fonts\\Pretendard-ExtraBold.otf",
+    "Hash": "C35FE941B7568D52A96010561540E47F9D3948DFDE66BA25BC1908233E0A40CD"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\assets\\fonts\\Pretendard-Medium.otf",
+    "Hash": "D39E50E4BB52B4993B6A4EEB821A171254745BD824446AF01E1F616B89FFACE0"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\assets\\fonts\\Pretendard-Regular.otf",
+    "Hash": "3FFBACDE6AB8411F1D2DB54BB9B1F0B3EE2A738932033722CF0388C06AED1C93"
+  },
+  {
+    "Path": "C:\\GitHub\\Machine-Learning\\docs\\archive\\exhibition\\ui-v1-final-20260927\\assets\\fonts\\Pretendard-SemiBold.otf",
+    "Hash": "C89BC43027DC7CDE5726E96223376F8EEC09302B2FC1F8147FD5B57CFC376118"
+  }
+]

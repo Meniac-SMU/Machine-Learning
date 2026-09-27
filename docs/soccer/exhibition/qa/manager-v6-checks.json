@@ -1,0 +1,72 @@
+{
+  "revision": 6,
+  "viewport": {
+    "width": 1600,
+    "height": 1020
+  },
+  "koreanHud": [
+    {
+      "height": 46.27874755859375,
+      "key": "scorebug",
+      "text": "RED0:0NAVY04:51",
+      "width": 384.416015625
+    },
+    {
+      "height": 102.73198699951172,
+      "key": "keyHints",
+      "text": "W S이동A D회전E패스SPACE슈팅HAI 전환",
+      "width": 190.9739990234375
+    },
+    {
+      "height": 114.4625015258789,
+      "key": "manager-panel",
+      "text": "감독 현황현재 판단누적 보상\n      RED강화학습 · 초기 모델적극 회수+0.075\n      NAVY규칙형 · 무작위 선택균형 유지+0.120",
+      "width": 376.3125
+    }
+  ],
+  "englishHud": [
+    {
+      "height": 46.27874755859375,
+      "key": "scorebug",
+      "text": "RED0:0NAVY05:00",
+      "width": 384.416015625
+    },
+    {
+      "height": 102.73198699951172,
+      "key": "keyHints",
+      "text": "W SMoveA DTurnEPassSPACEShootHSwitch AI",
+      "width": 210.7349853515625
+    },
+    {
+      "height": 125.4375,
+      "key": "manager-panel",
+      "text": "MANAGERSCurrent decisionTotal reward\n      REDRL model · Initial modelAdvance carry+0.000\n      NAVYRule-based · Carry & ShootAdvance carry+0.000",
+      "width": 439.0375061035156
+    }
+  ],
+  "koreanFixedGeometry": {
+    "name": "Korean HUD score 0 to 12",
+    "equal": true,
+    "differences": []
+  },
+  "pause": {
+    "koreanClockFrozen": true,
+    "koreanRewardFrozen": true,
+    "englishClockFrozen": true,
+    "goalRibbonFrozen": true,
+    "resumeButton": true,
+    "resumeEscape": true,
+    "quitToHome": true,
+    "focusTrap": true
+  },
+  "overflow": {
+    "koreanHud": [],
+    "englishHud": [],
+    "koreanResult": [],
+    "englishResult": []
+  },
+  "tabsCenter": {
+    "modal": 800,
+    "tabs": 799.9999923706055
+  }
+}

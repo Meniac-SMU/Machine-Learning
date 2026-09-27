@@ -1,0 +1,7 @@
+{
+ "name":"MNG.Exhibition.Tests",
+ "references":["MNG.Exhibition","MNG.Runtime","Soccer.Runtime"],
+ "includePlatforms":["Editor"],
+ "optionalUnityReferences":["TestAssemblies"],
+ "autoReferenced":false
+}

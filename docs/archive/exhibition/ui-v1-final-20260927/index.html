@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MANAGER · 전시 UI 디자인</title>
+<link rel="stylesheet" href="typography.css">
+<link rel="stylesheet" href="preview.css">
+</head>
+<body>
+<header class="review-bar"><span><b>MENIAC</b> 전시 UI · 클릭형 디자인 시안</span><nav aria-label="시안 화면 바로가기"><button data-preview="splash">로고</button><button data-preview="home">시작</button><button data-preview="setup">경기 설정</button><button data-preview="match">경기</button><button data-preview="result">상황판</button></nav><span class="review-note">화면·예시 데이터 미리보기 / Unity 실행 아님</span></header>
+<main id="game" aria-label="MANAGER 전시 게임 화면" tabindex="-1">
+  <div class="screen splash" id="splash">
+    <div class="splash-logo"><img src="assets/team-logo.svg" alt="Meniac 개발팀 임시 로고"></div>
+  </div>
+  <section class="screen home" id="home" hidden>
+    <div class="home-left">
+      <div class="eyebrow"><i></i><span data-i18n="eyebrow">휴먼AI공학전공 · 2026 졸업 전시회</span></div>
+      <img class="game-logo" src="assets/game-logo.svg" alt="MANAGER 임시 게임 로고">
+      <p class="home-tagline" data-i18n="tagline">강화학습 기반 4vs4 축구 게임 개발</p>
+      <div class="home-menu">
+        <button class="menu-main" id="start" data-i18n="start">경기 준비 <span>↗</span></button>
+        <div class="menu-small">
+          <div class="language-anchor"><button class="text-button" id="language" aria-expanded="false" aria-controls="languageMenu"><span class="globe">◎</span> <span data-i18n="language">Language</span> <span class="chevron">⌄</span></button>
+            <div id="languageMenu" class="language-menu" role="menu" hidden>
+              <button role="menuitemradio" aria-checked="true" data-locale="ko">한국어 <span>✓</span></button>
+              <button role="menuitemradio" aria-checked="false" data-locale="en">English <span></span></button>
+            </div>
+          </div>
+          <button class="text-button" id="creditsOpen" data-i18n="credits">제작자</button>
+          <button class="text-button" id="guideOpen" data-i18n="guide">가이드</button>
+        </div>
+      </div>
+      <div class="home-bottom"><span>MENIAC</span><span>REINFORCEMENT LEARNING FOOTBALL</span></div>
+    </div>
+    <div class="home-art" aria-hidden="true"><div class="ribbon r1"></div><div class="ribbon r2"></div><div class="ribbon r3"></div><div class="ribbon r4"></div><div class="ribbon r5"></div><div class="art-label">THE GAME<br>IS LEARNING.</div><div class="ball-mark"><div>✦</div></div><div class="art-foot">RED <span>×</span> NAVY</div></div>
+  </section>
+  <section class="screen setup" id="setup" hidden>
+    <div class="screen-heading"><div><h1 data-i18n="matchSetup">경기 설정</h1></div><button class="back text-button" id="setupBack" data-i18n="back">← 시작 화면</button></div>
+    <div class="setup-body">
+      <div class="team-card red-card"><div class="team-card-top"><span class="team-index">01</span><span id="playerBadge" class="pill" data-i18n="yourTeam">플레이어 팀</span></div><div class="team-word">RED</div><div class="team-rule"></div><label data-i18n="teamModel">팀 모델</label><button class="model-pick" id="redPick"><span><strong id="redModel">2M</strong><small id="redKind">MS3-v3 · 신경망</small></span><span>⌄</span></button><p class="team-caption" data-i18n="redCaption">직접 플레이 시 RED 공격수를 조작합니다.</p></div>
+      <div class="versus"><span>VS</span><i></i><small>4 v 4</small></div>
+      <div class="team-card navy-card"><div class="team-card-top"><span class="team-index">02</span><span class="pill" data-i18n="opponent">상대 팀</span></div><div class="team-word">NAVY</div><div class="team-rule"></div><label data-i18n="teamModel">팀 모델</label><button class="model-pick" id="navyPick"><span><strong id="navyModel">2M</strong><small id="navyKind">MS3-v3 · 신경망</small></span><span>⌄</span></button><p class="team-caption" data-i18n="navyCaption">선택한 AI가 NAVY 팀을 이끕니다.</p></div>
+    </div>
+    <div class="setup-controls"><div><label data-i18n="playMode">경기 모드</label><div class="segmented"><button id="humanMode" aria-pressed="true" data-i18n="humanMode">직접 플레이</button><button id="simMode" aria-pressed="false" data-i18n="simMode">AI 시뮬레이션</button></div></div><div><label data-i18n="duration">경기 시간</label><div class="segmented duration"><button data-minutes="5" aria-pressed="true" data-i18n="five">5분</button><button data-minutes="10" aria-pressed="false" data-i18n="ten">10분</button></div></div><button id="kickoff" class="primary" data-i18n="kickoff">경기 시작 ↗</button></div>
+    <div class="spectrum" aria-hidden="true"></div>
+  </section>
+  <section class="screen match" id="match" hidden>
+    <img class="pitch" src="assets/pitch.svg" alt="경기장 구도 예시 이미지. 실제 게임 렌더링이 아닙니다.">
+    <div class="scorebug" aria-label="경기 점수와 남은 시간"><div class="bug-team red">RED</div><div class="bug-score"><span id="hudRedScore">0</span><span class="score-divider">:</span><span id="hudNavyScore">0</span></div><div class="bug-team navy">NAVY</div><div class="bug-time" id="clock">05:00</div><div class="speed-badge" id="speedBadge" data-i18n="speedBadge" hidden>2배속</div></div>
+    <div class="onair"><b>MENIAC</b></div>
+    <div class="match-bottom"><div class="key-hints" id="keyHints"><span><kbd>W S</kbd><em data-i18n="move">이동</em></span><span><kbd>A D</kbd><em data-i18n="turn">회전</em></span><span><kbd>E</kbd><em data-i18n="softKick">패스</em></span><span><kbd>SPACE</kbd><em data-i18n="strongKick">슈팅</em></span><span><kbd>H</kbd><em data-i18n="aiSwitch">AI 전환</em></span></div></div>
+    <aside class="manager-panel" aria-labelledby="managerPanelTitle">
+      <div class="manager-heading"><b id="managerPanelTitle" data-i18n="managerLive">감독 현황</b><span data-i18n="currentDecision">현재 판단</span><span data-i18n="cumulativeReward">누적 보상</span></div>
+      <div class="manager-row red-manager"><div class="manager-identity"><b>RED</b><span id="liveRedModel"></span></div><strong id="redDecision"></strong><b class="reward-value" id="redReward">+0.000</b></div>
+      <div class="manager-row navy-manager"><div class="manager-identity"><b>NAVY</b><span id="liveNavyModel"></span></div><strong id="navyDecision"></strong><b class="reward-value" id="navyReward">+0.000</b></div>
+    </aside>
+    <div class="goal-banner" id="goalBanner" hidden><span id="goalTeam">RED</span><strong data-i18n="goal">GOAL</strong></div>
+  </section>
+  <section class="screen result" id="result" hidden>
+    <div class="result-top"><span class="kicker" data-i18n="fullTime">경기 종료</span><b>MANAGER</b></div>
+    <h1 id="winner">RED 승리</h1>
+    <div class="result-scoreline"><div class="result-team"><span class="team-swatch red"></span><strong>RED</strong><small id="resultRedModel">2M</small></div><div class="result-numbers"><b id="resultRed">2</b><span>:</span><b id="resultNavy">1</b></div><div class="result-team"><span class="team-swatch navy"></span><strong>NAVY</strong><small id="resultNavyModel">2M</small></div></div>
+    <div class="stats-title"><span data-i18n="matchStats">경기 기록</span><span id="resultDuration">5분</span></div>
+    <div class="stat-row final-reward"><b id="resultRewardRed">+2.450</b><span data-i18n="finalReward">최종 누적 보상</span><b id="resultRewardNavy">+1.870</b></div>
+    <div class="stat-row total-shots"><b id="shotsRed">8</b><span data-i18n="shots">전체 슈팅</span><b id="shotsNavy">6</b></div>
+    <div class="stat-bar" aria-hidden="true"><i id="redShotBar"></i><i id="navyShotBar"></i></div>
+    <div class="stat-row breakdown"><b id="aiShotsRed">6</b><span data-i18n="aiShots">AI 슈팅</span><b id="aiShotsNavy">6</b></div>
+    <div class="stat-row breakdown"><b id="humanShotsRed">2</b><span data-i18n="humanShots">사람 슈팅</span><b id="humanShotsNavy">0</b></div>
+    <div class="stat-row recovery-stat"><b id="recoveriesRed">12</b><span data-i18n="recoveries">공 회수</span><b id="recoveriesNavy">9</b></div>
+    <div class="stat-row saves-stat"><b id="savesRed">—</b><span data-i18n="saves">선방</span><b id="savesNavy">—</b></div>
+    <div class="result-footer"><span data-i18n="resultHelp">종료 버튼을 누르면 시작 화면으로 돌아갑니다.</span><button id="exitResult" class="primary" data-i18n="exit">종료 ↗</button></div><div class="spectrum" aria-hidden="true"></div>
+  </section>
+  <div class="modal-shade" id="guideModal" hidden><section class="modal guide-modal" role="dialog" aria-modal="true" aria-labelledby="guideTitle"><div class="modal-heading"><span id="guideTitle" data-i18n="guide">가이드</span><button class="close" data-close="guideModal" aria-label="닫기">×</button></div><img id="guideImage" src="assets/guide-ko-1.svg" alt="가이드 1장"><div class="guide-foot"><span id="guidePage">01 / 03</span><span><kbd>ESC</kbd> <span data-i18n="closeGuide">가이드 종료</span></span><button id="guideNext"><kbd>ENTER</kbd> <span data-i18n="next">다음 장 →</span></button></div></section></div>
+  <div class="modal-shade" id="creditsModal" hidden><section class="modal credits-modal" role="dialog" aria-modal="true" aria-labelledby="creditsTitle"><div class="modal-heading"><span id="creditsTitle" data-i18n="credits">제작자</span><button class="close" data-close="creditsModal" aria-label="닫기">×</button></div><img id="creditsImage" src="assets/credits-ko.svg" alt="제작자 임시 이미지"><div class="credits-foot"><kbd>ESC</kbd> <span data-i18n="close">닫기</span></div></section></div>
+  <div class="modal-shade" id="modelModal" hidden><section class="modal model-modal" role="dialog" aria-modal="true" aria-labelledby="modelTitle"><div class="modal-heading"><span id="modelTitle">RED · 모델 선택</span><button class="close" data-close="modelModal" aria-label="닫기">×</button></div><div class="model-tabs"><button data-model-tab="steps" aria-selected="true" data-i18n="stepTab">강화학습 모델</button><button data-model-tab="reference" aria-selected="false" data-i18n="referenceTab">규칙형 감독</button></div><p id="modelNotice" class="model-notice"></p><div id="modelList" class="model-list reference"></div></section></div>
+  <div class="pause-shade" id="pauseModal" hidden><section class="pause-content" role="dialog" aria-modal="true" aria-labelledby="pauseTitle"><h1 id="pauseTitle" data-i18n="pauseTitle">하이드레이션 브레이크!</h1><div class="pause-actions"><button id="resumeMatch" class="pause-resume" data-i18n="resumeMatch">경기 재개</button><button id="quitMatch" class="pause-quit" data-i18n="quitMatch">경기 종료</button></div></section></div>
+</main>
+<footer class="review-footer"><span id="reviewStatus">팀 로고 · 자동으로 페이드 아웃</span><div><button id="sampleGoal">RED 예시 득점</button><button id="sampleNavyGoal">NAVY 예시 득점</button><button id="sampleEnd">예시 경기 종료</button><a href="design-spec.md">상세 설계 문서 ↗</a></div></footer>
+<script src="model-catalog.js"></script><script src="locales.js"></script><script src="preview.js"></script>
+</body>
+</html>

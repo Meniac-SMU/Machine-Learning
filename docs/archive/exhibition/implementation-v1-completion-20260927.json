@@ -1,0 +1,39 @@
+{
+  "status": "complete",
+  "completedAtUtc": "2026-09-26T17:01:58.3373150Z",
+  "build": "Builds/MNG_Exhibition/UI1-20260926T165503666Z/MANAGER.exe",
+  "scene": "Assets/_Soccer/Manager/Exhibition/Exhibition.unity",
+  "editMode": {
+    "failed": 0,
+    "passed": 220
+  },
+  "playMode": {
+    "passed": 35,
+    "failed": 0,
+    "skipped": 2
+  },
+  "player": {
+    "fullMatchGameSeconds": 300,
+    "simulationScale": 2,
+    "checks": 45,
+    "graphics": "D3D12",
+    "errors": 0,
+    "passed": true,
+    "captureResolution": "1600x900"
+  },
+  "models": {
+    "originalsUnchanged": 6,
+    "copiedHashesMatch": 6
+  },
+  "settings": {
+    "buildSettings": "Original scene list preserved; Localization and Addressables config objects added",
+    "projectSettingsRestored": true
+  },
+  "weeklyRemainingPercent": 25,
+  "knownScope": [
+    "Saves counter remains UI-only as requested",
+    "Title, logos and credits remain approved placeholders",
+    "Pretraining 1 million is approved exhibition-copy assumption",
+    "Automated smoke and screenshots do not constitute prolonged venue/user acceptance"
+  ]
+}

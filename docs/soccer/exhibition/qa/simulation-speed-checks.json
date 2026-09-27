@@ -1,0 +1,10 @@
+{
+  "date": "2026-09-26",
+  "scope": "Actual preview timer/resume function bodies in Node VM with controlled time; not Unity runtime",
+  "directPlayAfter5RealSeconds": 295,
+  "simulationAfter5RealSeconds": 290,
+  "simulationAfter60SecondsPaused": 290,
+  "simulationAfter5SecondsResumed": 280,
+  "simulationFiveMinuteMatchFinishesAfterRealSeconds": 150,
+  "result": "PASS"
+}
