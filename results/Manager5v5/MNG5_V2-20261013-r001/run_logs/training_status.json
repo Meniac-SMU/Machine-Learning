@@ -1,0 +1,237 @@
+{
+    "MNG5_Manager_v2": {
+        "elo": 1200.0,
+        "checkpoints": [
+            {
+                "steps": 0,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-0.onnx",
+                "reward": null,
+                "creation_time": 1791846771.0543098,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-0.pt"
+                ]
+            },
+            {
+                "steps": 9995,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-9995.onnx",
+                "reward": -0.17647058823529413,
+                "creation_time": 1791847159.6363475,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-9995.pt"
+                ]
+            },
+            {
+                "steps": 19908,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-19908.onnx",
+                "reward": 0.7272727272727273,
+                "creation_time": 1791847333.5168579,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-19908.pt"
+                ]
+            },
+            {
+                "steps": 29966,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-29966.onnx",
+                "reward": -0.3333333333333333,
+                "creation_time": 1791847511.8480873,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-29966.pt"
+                ]
+            },
+            {
+                "steps": 39948,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-39948.onnx",
+                "reward": 0.68,
+                "creation_time": 1791847679.2181365,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-39948.pt"
+                ]
+            },
+            {
+                "steps": 49959,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-49959.onnx",
+                "reward": null,
+                "creation_time": 1791847854.4739556,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-49959.pt"
+                ]
+            },
+            {
+                "steps": 59995,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-59995.onnx",
+                "reward": 0.35294117647058826,
+                "creation_time": 1791848019.3770375,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-59995.pt"
+                ]
+            },
+            {
+                "steps": 69950,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-69950.onnx",
+                "reward": 1.0294117647058822,
+                "creation_time": 1791848195.5762675,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-69950.pt"
+                ]
+            },
+            {
+                "steps": 79906,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-79906.onnx",
+                "reward": 1.5,
+                "creation_time": 1791848363.1344843,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-79906.pt"
+                ]
+            },
+            {
+                "steps": 89967,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-89967.onnx",
+                "reward": 1.8214285714285714,
+                "creation_time": 1791848533.9024951,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-89967.pt"
+                ]
+            },
+            {
+                "steps": 99941,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-99941.onnx",
+                "reward": 1.6,
+                "creation_time": 1791848713.2424152,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-99941.pt"
+                ]
+            },
+            {
+                "steps": 100042,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-100042.onnx",
+                "reward": 1.1666666666666667,
+                "creation_time": 1791848713.335615,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-100042.pt"
+                ]
+            },
+            {
+                "steps": 109929,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-109929.onnx",
+                "reward": 0.75,
+                "creation_time": 1791849092.400236,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-109929.pt"
+                ]
+            },
+            {
+                "steps": 119997,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-119997.onnx",
+                "reward": -0.08823529411764706,
+                "creation_time": 1791849274.3964996,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-119997.pt"
+                ]
+            },
+            {
+                "steps": 129907,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-129907.onnx",
+                "reward": 0.8,
+                "creation_time": 1791849443.2239654,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-129907.pt"
+                ]
+            },
+            {
+                "steps": 139999,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-139999.onnx",
+                "reward": 0.39285714285714285,
+                "creation_time": 1791849608.7053096,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-139999.pt"
+                ]
+            },
+            {
+                "steps": 149992,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-149992.onnx",
+                "reward": 0.8,
+                "creation_time": 1791849791.1421976,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-149992.pt"
+                ]
+            },
+            {
+                "steps": 159985,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-159985.onnx",
+                "reward": 0.6363636363636364,
+                "creation_time": 1791849960.03216,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-159985.pt"
+                ]
+            },
+            {
+                "steps": 169999,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-169999.onnx",
+                "reward": 0.23076923076923078,
+                "creation_time": 1791850127.2256105,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-169999.pt"
+                ]
+            },
+            {
+                "steps": 179923,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-179923.onnx",
+                "reward": 1.3333333333333333,
+                "creation_time": 1791850308.2790878,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-179923.pt"
+                ]
+            },
+            {
+                "steps": 189971,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-189971.onnx",
+                "reward": -0.375,
+                "creation_time": 1791850485.356241,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-189971.pt"
+                ]
+            },
+            {
+                "steps": 191523,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-191523.onnx",
+                "reward": -1.2857142857142858,
+                "creation_time": 1791850516.3866954,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-191523.pt"
+                ]
+            },
+            {
+                "steps": 199909,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-199909.onnx",
+                "reward": 1.0,
+                "creation_time": 1791852023.5241988,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-199909.pt"
+                ]
+            },
+            {
+                "steps": 200011,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-200011.onnx",
+                "reward": -0.5,
+                "creation_time": 1791852023.6051733,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-200011.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 200011,
+            "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2.onnx",
+            "reward": -0.5,
+            "creation_time": 1791852023.6051733,
+            "auxillary_file_paths": [
+                "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V2-20261013-r001\\MNG5_Manager_v2\\MNG5_Manager_v2-200011.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.2.0.dev0",
+        "torch_version": "2.2.2+cu121"
+    }
+}
