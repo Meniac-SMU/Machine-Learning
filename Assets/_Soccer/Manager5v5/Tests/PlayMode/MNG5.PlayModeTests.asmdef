@@ -1,0 +1,6 @@
+{
+  "name": "MNG5.PlayModeTests",
+  "references": ["MNG5.Runtime", "MNG5.Learning", "Soccer.Runtime", "Unity.ML-Agents"],
+  "optionalUnityReferences": ["TestAssemblies"],
+  "autoReferenced": false
+}

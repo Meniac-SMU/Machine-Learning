@@ -20,6 +20,7 @@ MonoBehaviour:
   - {fileID: 5022602860645237092, guid: 6b08d92b9bdfd20499e6dfc78a26937f, type: 3}
   - {fileID: 5022602860645237092, guid: 36baaec88a7e71840b8909ab4cdc009b, type: 3}
   - {fileID: 5022602860645237092, guid: bc5b8bcdaf01f2f40a3af820574da80d, type: 3}
+  - {fileID: 5022602860645237092, guid: 9066ed3aaf2e5104b8a3f2c4f6306608, type: 3}
   fonts:
   - {fileID: 11400000, guid: 4dd872684459c8c4187d066fd50aa3b3, type: 2}
   - {fileID: 11400000, guid: dd901876c5bdb174a9e2a49cc978db1d, type: 2}

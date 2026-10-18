@@ -415,6 +415,30 @@ MonoBehaviour:
     m_Key: MNG.Exhibition.cameraCycle
     m_Metadata:
       m_Items: []
+  - m_Id: 1092329607340032
+    m_Key: MNG.Exhibition.model.stage-2400000-pass
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1092329645088768
+    m_Key: MNG.Exhibition.selection.stage-2400000-pass
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1092329645088769
+    m_Key: MNG.Exhibition.description.stage-2400000-pass
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1093661441466368
+    m_Key: model.stage-2400000-pass
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1093661487603712
+    m_Key: selection.stage-2400000-pass
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1093661487603713
+    m_Key: description.stage-2400000-pass
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

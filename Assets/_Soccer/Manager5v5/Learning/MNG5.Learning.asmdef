@@ -1,0 +1,5 @@
+{
+  "name": "MNG5.Learning",
+  "references": ["MNG5.Runtime", "Soccer.Runtime", "Unity.ML-Agents", "Unity.InferenceEngine"],
+  "autoReferenced": true
+}

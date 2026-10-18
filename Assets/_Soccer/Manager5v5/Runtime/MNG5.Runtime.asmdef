@@ -1,0 +1,6 @@
+{
+  "name": "MNG5.Runtime",
+  "rootNamespace": "MachineLearning.Soccer.Manager5v5",
+  "references": ["Soccer.Runtime"],
+  "autoReferenced": true
+}

@@ -1,0 +1,114 @@
+[
+  {
+    "name": "RedRobot",
+    "source": "C:\\GitHub\\Red-Cube-Robot\\Red_Cube_Robot_v03.blend",
+    "source_sha256": "01b3cc61a6c2f72e056ebe6d751f464c5626929aa4a468fcd90e89320bb38d4b",
+    "fbx_sha256": "21b4a8594f1bc1ad0de69e30bd84a8d462a9feb0cc2cd9181cb69e745a56eb39",
+    "triangles": 5768,
+    "mesh_objects": 1,
+    "material_slots": 2,
+    "eye_hdr_linear": [
+      5.0,
+      0.29999999329447746,
+      0.5999999865889549
+    ],
+    "body_edge_meters": 1,
+    "roundtrip_bounds_error": 4.529873809389073e-09,
+    "blender_bounds_meters": [
+      [
+        -0.6759999990463257,
+        -0.8100000023841858,
+        -4.529873809389073e-09
+      ],
+      [
+        0.6759999990463257,
+        0.5724999904632568,
+        1.0399999618530273
+      ]
+    ]
+  },
+  {
+    "name": "NavyRobot",
+    "source": "C:\\GitHub\\Navy-Cube-Robot\\Navy_Cube_Robot_v02.blend",
+    "source_sha256": "8d2f9b5dc6a414073e255e8a9c0086bd48790d7b10fa33679bc3641450892a02",
+    "fbx_sha256": "89c8e1acbae855796b9d5cb0e6452eadae0d05ba302032148896293bdd614ec7",
+    "triangles": 5768,
+    "mesh_objects": 1,
+    "material_slots": 2,
+    "eye_hdr_linear": [
+      0.1620081625878811,
+      0.9406553208827972,
+      2.282746583223343
+    ],
+    "body_edge_meters": 1,
+    "roundtrip_bounds_error": 4.529873809389073e-09,
+    "blender_bounds_meters": [
+      [
+        -0.6759999990463257,
+        -0.8100000023841858,
+        -4.529873809389073e-09
+      ],
+      [
+        0.6759999990463257,
+        0.5724999904632568,
+        1.0399999618530273
+      ]
+    ]
+  },
+  {
+    "name": "PinkGoalkeeper",
+    "source": "C:\\GitHub\\Goalkeeper-Cube-Robots\\Goalkeeper_Pink_v02.blend",
+    "source_sha256": "a3d61af08d74c7eabde3357f2fa547a49ffec63ddd641809b32e022dd86320d9",
+    "fbx_sha256": "2d5d7102fb3bc0c8d6500eba92682ec8ecc37f79833556ecb6348a54d60854b6",
+    "triangles": 5768,
+    "mesh_objects": 1,
+    "material_slots": 2,
+    "eye_hdr_linear": [
+      5.0,
+      0.29999999329447746,
+      0.5999999865889549
+    ],
+    "body_edge_meters": 1,
+    "roundtrip_bounds_error": 4.529873809389073e-09,
+    "blender_bounds_meters": [
+      [
+        -0.6759999990463257,
+        -0.8100000023841858,
+        -4.529873809389073e-09
+      ],
+      [
+        0.6759999990463257,
+        0.5724999904632568,
+        1.0399999618530273
+      ]
+    ]
+  },
+  {
+    "name": "SkyGoalkeeper",
+    "source": "C:\\GitHub\\Goalkeeper-Cube-Robots\\Goalkeeper_Sky_v01.blend",
+    "source_sha256": "dfc21a0a83e0eec95d1fed072d3c3772612f89356299629d989dbf18ed12b663",
+    "fbx_sha256": "c3cbef9caa6f2b3082e44b203336fbec84220769356bec2d82bc01a9ca171724",
+    "triangles": 5768,
+    "mesh_objects": 1,
+    "material_slots": 2,
+    "eye_hdr_linear": [
+      0.1620081625878811,
+      0.9406553208827972,
+      2.282746583223343
+    ],
+    "body_edge_meters": 1,
+    "roundtrip_bounds_error": 4.529873809389073e-09,
+    "blender_bounds_meters": [
+      [
+        -0.6759999990463257,
+        -0.8100000023841858,
+        -4.529873809389073e-09
+      ],
+      [
+        0.6759999990463257,
+        0.5724999904632568,
+        1.0399999618530273
+      ]
+    ]
+  }
+]

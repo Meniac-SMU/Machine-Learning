@@ -1,6 +1,6 @@
 {
   "version": 6,
-  "checkedDate": "2026-09-26",
+  "checkedDate": "2026-09-30",
   "scope": "Exhibition design mapping only. Korean rule picker uses bilingual names; English uses English only. No models loaded or evaluation eligibility changed.",
   "pretrainingAssumption": {
     "steps": 1000000,
@@ -150,6 +150,29 @@
       "kind": "rule",
       "source": "uniform-valid",
       "implementationSource": "Tools/mng_v2_evaluate.py"
+    },
+    {
+      "id": "stage-2400000-pass",
+      "group": "steps",
+      "kind": "neural",
+      "nominalStep": 2400000,
+      "actualStep": 2401834,
+      "additionalStep": 400000,
+      "source": "results/MNG_MS3V3-20260929-r003/PS-400000.onnx",
+      "sha256": "4d3a0cf6664a43affa24212f538de4a357603d7828ef34e734b5a061c4bc8fd5",
+      "label": {
+        "ko": "240만: 패스 학습 시도",
+        "en": "2.4M: Pass"
+      },
+      "selectionLabel": {
+        "ko": "240만: 패스 학습 시도",
+        "en": "2.4M: Pass"
+      },
+      "status": "User-requested exhibition option; passing success not established; champion unchanged",
+      "branches": [
+        6,
+        5
+      ]
     }
   ]
 }

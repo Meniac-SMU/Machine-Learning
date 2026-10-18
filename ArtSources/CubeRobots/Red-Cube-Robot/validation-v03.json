@@ -1,0 +1,16 @@
+{
+  "before": {
+    "min_abs_x": 1.034999966621399,
+    "max_abs_x": 1.3969999551773071,
+    "min_z": 0.0
+  },
+  "after": {
+    "min_abs_x": 0.8899999856948853,
+    "max_abs_x": 1.3519999980926514,
+    "min_z": 0.0
+  },
+  "symmetry_error_except_exhaust": 7.450580596923828e-09,
+  "triangles": 5768,
+  "material_slots": 2,
+  "mesh_objects": 1
+}

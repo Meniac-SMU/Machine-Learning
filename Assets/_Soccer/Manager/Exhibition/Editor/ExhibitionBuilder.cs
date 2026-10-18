@@ -66,7 +66,7 @@ namespace MachineLearning.Soccer.Manager.Exhibition.Editor
             LocalizationEditorSettings.EditorEvents.RaiseCollectionModified(null,art);
             var assets=AssetDatabase.LoadAssetAtPath<ExhibitionAssets>(Root+"/ExhibitionAssets.asset");
             if(assets==null){assets=ScriptableObject.CreateInstance<ExhibitionAssets>();AssetDatabase.CreateAsset(assets,Root+"/ExhibitionAssets.asset");}
-            assets.models=ExhibitionAssets.Ids.Take(6).Select(id=>AssetDatabase.LoadAssetAtPath<ModelAsset>(Root+"/Models/"+id+".onnx")).ToArray();
+            assets.models=ExhibitionAssets.NeuralIds.Select(id=>AssetDatabase.LoadAssetAtPath<ModelAsset>(Root+"/Models/"+ExhibitionAssets.Ids[id]+".onnx")).ToArray();
             if(assets.models.Any(m=>m==null))throw new Exception("Missing exhibition neural model.");
             foreach(var model in assets.models)MNG_RuntimeV2.ValidateModelAsset(model);
             string[] weights={"Regular","Medium","SemiBold","Bold","ExtraBold","Black"};

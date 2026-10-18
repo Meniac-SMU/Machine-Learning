@@ -11,13 +11,13 @@ namespace MachineLearning.Soccer.Manager
         readonly int[] passBuildCarrier = { -1, -1 };
         readonly bool[] passBuildInFlight = new bool[2];
 
-        public bool IsPassBuildExecutionValid(Team team, int carrier, int receiver, Vector2 target)
+        public bool IsPassBuildExecutionValid(Team team, int carrier, int receiver, Vector2 target, bool directed = false)
         {
             // Capture live bodies, including opponents moving during plate extension.
             CaptureSnapshot();
             return m_Snapshot.Carrier.IsValid && m_Snapshot.Carrier.Team == team && m_Snapshot.Carrier.Slot == carrier
-                && MNG_TacticalTargetResolver.IsPassBuildReceiverValid(m_Snapshot, team, carrier, receiver)
-                && MNG_TacticalTargetResolver.IsPassBuildLaneOpen(m_Snapshot, team, target);
+                && MNG_PSPassing.Valid(m_Snapshot, team, carrier, receiver, directed)
+                && (directed || MNG_TacticalTargetResolver.IsPassBuildLaneOpen(m_Snapshot, team, target));
         }
         public void RecordPassBuildStrike(Team team)
         {
@@ -32,8 +32,8 @@ namespace MachineLearning.Soccer.Manager
                 var task=passBuildKick[t]; var carrier=m_Snapshot.Carrier;
                 var valid=task.ExpirySeconds>EpisodeElapsedSeconds && (passBuildInFlight[t] ? !carrier.IsValid
                     : carrier.IsValid && carrier.Team==(Team)t && carrier.Slot==passBuildCarrier[t]
-                    && MNG_TacticalTargetResolver.IsPassBuildReceiverValid(m_Snapshot,(Team)t,carrier.Slot,task.ReceiverSlot)
-                    && MNG_TacticalTargetResolver.IsPassBuildLaneOpen(m_Snapshot,(Team)t,task.Target));
+                    && MNG_PSPassing.Valid(m_Snapshot,(Team)t,carrier.Slot,task.ReceiverSlot,task.DirectedPass)
+                    && (task.DirectedPass || MNG_TacticalTargetResolver.IsPassBuildLaneOpen(m_Snapshot,(Team)t,task.Target)));
                 if(valid) continue;
                 var sender=passBuildCarrier[t];
                 passBuildCarrier[t]=-1;passBuildInFlight[t]=false;
@@ -49,7 +49,7 @@ namespace MachineLearning.Soccer.Manager
             if(passBuildCarrier[t]<0 && command==MNG_Command.PassBuild && carrier.IsValid && carrier.Team==team)
             {
                 var task=tasks[carrier.Slot];
-                if(task.Skill!=MNG_PlayerSkill.AimPass || !MNG_TacticalTargetResolver.IsPassBuildReceiverValid(m_Snapshot,team,carrier.Slot,task.ReceiverSlot)) return;
+                if(task.Skill!=MNG_PlayerSkill.AimPass || !MNG_PSPassing.Valid(m_Snapshot,team,carrier.Slot,task.ReceiverSlot,task.DirectedPass)) return;
                 task.PassBuildRule=true;task.ParentCommandId=revision*2+t;task.TaskId=task.ParentCommandId*4+carrier.Slot;
                 task.Source=m_Managers[t]!=null && m_Managers[t].isActiveAndEnabled ? MNG_ActionSource.PolicyCommand : MNG_ActionSource.RuleCommand;
                 passBuildKick[t]=task;passBuildCarrier[t]=carrier.Slot;passBuildInFlight[t]=false;

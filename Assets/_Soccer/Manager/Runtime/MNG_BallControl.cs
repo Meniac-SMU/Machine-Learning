@@ -626,13 +626,15 @@ namespace MachineLearning.Soccer.Manager
                 || m_Ledger.Carrier.Slot != avatar.Slot)
                 return;
             if (kick.PassBuildRule && !matchController.IsPassBuildExecutionValid(avatar.Team, avatar.Slot,
-                    kick.IntendedReceiverSlot, new Vector2(kick.Target.x, kick.Target.z))) return;
+                    kick.IntendedReceiverSlot, new Vector2(kick.Target.x, kick.Target.z), kick.DirectedPass)) return;
             var direction = kick.Target - m_Body.position;
             if (!MNG_KickSolver.TrySolvePlanarImpulse(
                     m_Body.linearVelocity, direction, kick.ExitSpeed, m_Body.mass, out var impulse))
                 return;
 
             m_Body.AddForce(impulse, ForceMode.Impulse);
+            if(MNG_PSPassing.ContactPassEnabled && kick.Intent==MNG_KickIntent.Pass && !kick.CommonRule)
+                avatar.KickPlate.IsolateFollowThrough(GetComponent<Collider>());
             avatar.StartKickCooldown();
             var carrier = m_Ledger.Carrier;
             if (avatar.IsHuman && carrier.IsValid)

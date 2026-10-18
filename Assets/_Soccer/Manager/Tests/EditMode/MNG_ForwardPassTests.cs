@@ -17,7 +17,7 @@ namespace MachineLearning.Soccer.Manager.Tests
         }
         [TestCase(Team.Red,0)] [TestCase(Team.Red,3)]
         [TestCase(Team.Navy,0)] [TestCase(Team.Navy,3)]
-        public void PassRequiresAheadOpenLaneAndDistanceFromGoal(Team team, int carrier)
+        public void LegacyPassRequiresAheadOpenLaneButIsAllowedNearGoal(Team team, int carrier)
         {
             var s=Fixture(team,carrier);var sign=team==Team.Red?1f:-1f;
             Assert.IsTrue(MNG_TacticalTargetResolver.Resolve(s,team).HasPassTarget);
@@ -33,7 +33,7 @@ namespace MachineLearning.Soccer.Manager.Tests
             var sender=s.GetPlayer(team,carrier);sender.Position=s.BallPosition;s.SetPlayer(team,carrier,sender);
             receiver.Position=s.BallPosition+sign*new Vector2(10,0);s.SetPlayer(team,1,receiver);
             var targets=MNG_TacticalTargetResolver.Resolve(s,team);
-            Assert.IsFalse(targets.HasPassTarget);Assert.IsTrue(targets.HasShotTarget);
+            Assert.IsTrue(targets.HasPassTarget);Assert.IsTrue(targets.HasShotTarget);
         }
         [TestCase(Team.Red,30f)] [TestCase(Team.Red,-30f)]
         [TestCase(Team.Navy,30f)] [TestCase(Team.Navy,-30f)]

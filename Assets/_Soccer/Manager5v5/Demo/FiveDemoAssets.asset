@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa9c8dbc96ad03c469af24919529c677, type: 3}
+  m_Name: FiveDemoAssets
+  m_EditorClassIdentifier: MNG5.Demo::MachineLearning.Soccer.Manager5v5.Demo.FiveDemoAssets
+  languageIcon: {fileID: 2800000, guid: 79003f7922f04d23b25a715c2f0d3cef, type: 3}
+  redCharacters:
+  - id: red-cube
+    displayName: RED CUBE
+    fieldPlayer: {fileID: 8784057538188087004, guid: edc1a0d66f760834990952461f4a5ff5, type: 3}
+    goalkeeper: {fileID: 842508270552446873, guid: c29e02b46b36c9542ac359a3e7912a9a, type: 3}
+  navyCharacters:
+  - id: navy-cube
+    displayName: NAVY CUBE
+    fieldPlayer: {fileID: 9035308596530724397, guid: 614ddd6523b276041b15e17f4f05e64f, type: 3}
+    goalkeeper: {fileID: 3261063514670196538, guid: 7ea0446192aa7ed46b29cfed2dc6e737, type: 3}
+  arena: {fileID: 8168334174237411559, guid: 5a2c519cce6041d4fa1a74baf2239ef5, type: 3}
+  models:
+  - {fileID: 5022602860645237092, guid: e0ba262ae4cee0649a9b73b73daa7653, type: 3}
+  - {fileID: 5022602860645237092, guid: 78aec83ca38ca3843b05bfc244383d5b, type: 3}
+  - {fileID: 5022602860645237092, guid: 3eb46f4cb1be5364f88a86284dc7026f, type: 3}
+  - {fileID: 5022602860645237092, guid: b3f33d4bf54adb440b1ff54b2751b136, type: 3}
+  - {fileID: 5022602860645237092, guid: 8460eb20c34d7b14a8a57963357b14ef, type: 3}
+  - {fileID: 5022602860645237092, guid: f50c8c5866dbc88468ad76329e6ca6bd, type: 3}
+  - {fileID: 5022602860645237092, guid: 3d879d3390127dc42aa53fc045717b89, type: 3}
+  - {fileID: 5022602860645237092, guid: f8284b59f01b5734fbaacfb7d77dcc4c, type: 3}
+  - {fileID: 5022602860645237092, guid: be627808cfda1dc4396176201c227a4c, type: 3}
+  - {fileID: 5022602860645237092, guid: 97c948960c2302c4a954b4a7cb316f3c, type: 3}
+  fonts:
+  - {fileID: 11400000, guid: 4dd872684459c8c4187d066fd50aa3b3, type: 2}
+  - {fileID: 11400000, guid: dd901876c5bdb174a9e2a49cc978db1d, type: 2}
+  - {fileID: 11400000, guid: fa1ad5b7c98b8874191c6d225bedf332, type: 2}
+  - {fileID: 11400000, guid: abf85a15f1e6f674da2f58a91bc74101, type: 2}
+  - {fileID: 11400000, guid: ee8c57dbc4744ac4bbdf6e3b639f5641, type: 2}
+  - {fileID: 11400000, guid: 6c2ee974ba91de1439f4bae05884166c, type: 2}
+  teamLogo: {fileID: 2800000, guid: 41db79a4748ec5d4e8cf7a3ac61c4e20, type: 3}
+  creditsKo: {fileID: 2800000, guid: af11ec142b801da4c82ca472adc0ad74, type: 3}
+  creditsEn: {fileID: 2800000, guid: f5bd28aa16d81c04bb690fd5f28ad235, type: 3}
+  cursorSource: {fileID: 2800000, guid: 8c07d70f72c31a948a8ac047165a2aa0, type: 3}
+  strings: {fileID: 4900000, guid: d71ea3e8f7d775f44876bd6ae955fe0c, type: 3}
+  catalog: {fileID: 4900000, guid: 73276fcf258b4414aaff6f0c950a8906, type: 3}
+  inferenceFixtures: {fileID: 4900000, guid: aba3219a58195f54d890a9aa138a37db, type: 3}

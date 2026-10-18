@@ -1,0 +1,84 @@
+{
+  "models": [
+    {
+      "step": 0,
+      "source": "results\\Manager5v5\\MNG5_V5-20261016-r001\\MNG5_Manager_v5\\MNG5_Manager_v5-0.onnx",
+      "sourceSha256": "e3ab49af9e29dba35f34858bd2472b7bdb07408070918dda9a5806fd25c3684b",
+      "asset": "Assets\\_Soccer\\Manager5v5\\Demo\\Models\\stage-0.onnx",
+      "assetSha256": "0bf9e980e536eba76abb9d1562cda6d50a14eabaccdf21534bd48d216b643a0c",
+      "purpose": "Unchanged weights; expose the same masked Softmax used by the existing evaluator. No training."
+    },
+    {
+      "step": 400000,
+      "source": "results\\Manager5v5\\MNG5_V5-20261016-r001\\MNG5_Manager_v5\\MNG5_Manager_v5-400000.onnx",
+      "sourceSha256": "dff62ae1c45737b3007e6f036227ef557bc9c68e6230314dbad1e4e5f582b58a",
+      "asset": "Assets\\_Soccer\\Manager5v5\\Demo\\Models\\stage-400000.onnx",
+      "assetSha256": "81547383375418b9d2cdabf01d10a2bf366d9754f1de96d756ea312d43c9cee7",
+      "purpose": "Unchanged weights; expose the same masked Softmax used by the existing evaluator. No training."
+    },
+    {
+      "step": 800000,
+      "source": "results\\Manager5v5\\MNG5_V5-20261016-r001\\MNG5_Manager_v5\\MNG5_Manager_v5-800000.onnx",
+      "sourceSha256": "ca3e00cf85c5a394933913aa5dcec91cfe5b23457518f7f9b2749ef113152332",
+      "asset": "Assets\\_Soccer\\Manager5v5\\Demo\\Models\\stage-800000.onnx",
+      "assetSha256": "877a0ec60d7b8351bebd677be17eadd9aee877ddc62718b3f17261c6e1fc377c",
+      "purpose": "Unchanged weights; expose the same masked Softmax used by the existing evaluator. No training."
+    },
+    {
+      "step": 1200000,
+      "source": "results\\Manager5v5\\MNG5_V5-20261016-r001\\MNG5_Manager_v5\\MNG5_Manager_v5-1200000.onnx",
+      "sourceSha256": "3c64b2c2fdf9aec6002d465370da068896a6b5f642cbe2984d00fd7c6f2e0c62",
+      "asset": "Assets\\_Soccer\\Manager5v5\\Demo\\Models\\stage-1200000.onnx",
+      "assetSha256": "e3276d8550830d8195a605e41c5470f4390bf0d8aee5e5c16485767e0cdabe25",
+      "purpose": "Unchanged weights; expose the same masked Softmax used by the existing evaluator. No training."
+    },
+    {
+      "step": 1600000,
+      "source": "results\\Manager5v5\\MNG5_V5-20261016-r001\\MNG5_Manager_v5\\MNG5_Manager_v5-1600000.onnx",
+      "sourceSha256": "7b9da3e4091d5484f34cb85e7a040bc94ed460bbc6adf88b0878bf9f89a67e1d",
+      "asset": "Assets\\_Soccer\\Manager5v5\\Demo\\Models\\stage-1600000.onnx",
+      "assetSha256": "24c27fadc032f8f8495a1b9bb0e29db336d15d2c9429e44a8a6728daa976461d",
+      "purpose": "Unchanged weights; expose the same masked Softmax used by the existing evaluator. No training."
+    },
+    {
+      "step": 2000000,
+      "source": "results\\Manager5v5\\MNG5_V5-20261016-r001\\MNG5_Manager_v5\\MNG5_Manager_v5-2000000.onnx",
+      "sourceSha256": "2b9711adfe82366ec36543968e0a7c6f0f7483a1598e7b28a0601ab88379932e",
+      "asset": "Assets\\_Soccer\\Manager5v5\\Demo\\Models\\stage-2000000.onnx",
+      "assetSha256": "6fdcd7917364ac518973f7b854fd953e91b94ed1f2ff0e3aa55e4a96ec4e5483",
+      "purpose": "Unchanged weights; expose the same masked Softmax used by the existing evaluator. No training."
+    },
+    {
+      "step": 2400000,
+      "source": "results\\Manager5v5\\MNG5_V5-20261016-r001\\MNG5_Manager_v5\\MNG5_Manager_v5-2400000.onnx",
+      "sourceSha256": "7ccda24fb17b02443d7346a013be1081e853a6b4a515ec41d60f14f6449febfa",
+      "asset": "Assets\\_Soccer\\Manager5v5\\Demo\\Models\\stage-2400000.onnx",
+      "assetSha256": "3ef3a4c581478a6ae4564ce9dbf4c4ccbafcc8539ca9ca461f191705352dc928",
+      "purpose": "Unchanged weights; expose the same masked Softmax used by the existing evaluator. No training."
+    },
+    {
+      "step": 2800000,
+      "source": "results\\Manager5v5\\MNG5_V6-20261016-r002\\MNG5_Manager_v6\\MNG5_Manager_v6-2800000.onnx",
+      "sourceSha256": "3cd1a76a01bd54947722262de290e9f6c13d6f5aafb6e97358670607e81d9557",
+      "asset": "Assets\\_Soccer\\Manager5v5\\Demo\\Models\\stage-2800000.onnx",
+      "assetSha256": "bff790db356fd2375d328c1a1e5c86e6feeed32ca57b88dc779e521b7f1df0ec",
+      "purpose": "Unchanged weights; expose the same masked Softmax used by the existing evaluator. No training."
+    },
+    {
+      "step": 3200000,
+      "source": "results/Manager5v5/MNG5_V6-20261017-r001/MNG5_Manager_v6/MNG5_Manager_v6-3200000.onnx",
+      "sourceSha256": "a2398bf5905820c39b0add5a8abafb05dc2dfa226797e9e103c76b8ebe93ce7d",
+      "asset": "Assets/_Soccer/Manager5v5/Demo/Models/stage-3200000.onnx",
+      "assetSha256": "cc3102012ccd31fc31fa3249b5719e900f630289d75f5f6d5599b111439fa464",
+      "purpose": "Original trained weights; expose masked Softmax for the demo."
+    },
+    {
+      "step": 3600000,
+      "source": "results/Manager5v5/MNG5_V6-20261017-r001/MNG5_Manager_v6/MNG5_Manager_v6-3600000.onnx",
+      "sourceSha256": "ff05fee5952dbc18a466c164bc7fc48d10582069bf5208fa6e517f844810247f",
+      "asset": "Assets/_Soccer/Manager5v5/Demo/Models/stage-3600000.onnx",
+      "assetSha256": "f8cccfc363510d333885bffc1636e5aa51356a08acf6c7c8108367c187f9b999",
+      "purpose": "Original trained weights; expose masked Softmax for the demo."
+    }
+  ]
+}

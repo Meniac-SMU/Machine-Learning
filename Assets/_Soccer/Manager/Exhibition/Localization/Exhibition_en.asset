@@ -421,6 +421,30 @@ MonoBehaviour:
     m_Localized: "\u2190 / \u2192: Switch camera"
     m_Metadata:
       m_Items: []
+  - m_Id: 1092329607340032
+    m_Localized: '2.4M: Pass'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1092329645088768
+    m_Localized: '2.4M: Pass'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1092329645088769
+    m_Localized: "PS-R3 \xB7 Pass learning attempt"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1093661441466368
+    m_Localized: '2.4M: Pass'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1093661487603712
+    m_Localized: '2.4M: Pass'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1093661487603713
+    m_Localized: "PS-R3 \xB7 Pass learning attempt"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

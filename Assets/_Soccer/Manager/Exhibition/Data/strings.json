@@ -499,6 +499,21 @@
       "ko": "← / →: 카메라 전환",
       "en": "← / →: Switch camera",
       "key": "MNG.Exhibition.cameraCycle"
+    },
+    {
+      "key": "model.stage-2400000-pass",
+      "ko": "240만: 패스 학습 시도",
+      "en": "2.4M: Pass"
+    },
+    {
+      "key": "selection.stage-2400000-pass",
+      "ko": "240만: 패스 학습 시도",
+      "en": "2.4M: Pass"
+    },
+    {
+      "key": "description.stage-2400000-pass",
+      "ko": "PS-R3 · 패스 학습 시도",
+      "en": "PS-R3 · Pass learning attempt"
     }
   ]
 }

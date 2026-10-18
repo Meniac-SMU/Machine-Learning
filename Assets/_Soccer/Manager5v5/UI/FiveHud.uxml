@@ -1,0 +1,12 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+  <ui:Style src="FiveHud.uss" />
+  <ui:VisualElement class="hud-root" picking-mode="Ignore">
+    <ui:VisualElement name="heads" class="heads" picking-mode="Ignore" />
+    <ui:Label name="score" text="5 v 5" class="score" picking-mode="Ignore" />
+    <ui:VisualElement class="controls">
+      <ui:VisualElement class="team-control"><ui:DropdownField name="red-mode" label="RED"/><ui:Label name="red-command"/></ui:VisualElement>
+      <ui:VisualElement class="match-control"><ui:Label name="status"/><ui:VisualElement class="buttons"><ui:Button name="pause" text="일시정지"/><ui:Button name="restart" text="새 경기"/></ui:VisualElement></ui:VisualElement>
+      <ui:VisualElement class="team-control"><ui:DropdownField name="navy-mode" label="NAVY"/><ui:Label name="navy-command"/></ui:VisualElement>
+    </ui:VisualElement>
+  </ui:VisualElement>
+</ui:UXML>

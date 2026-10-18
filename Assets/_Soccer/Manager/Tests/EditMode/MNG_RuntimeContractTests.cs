@@ -37,7 +37,7 @@ namespace MachineLearning.Soccer.Manager.Tests
         public void GlobalBallStallTrackerTriggersWithoutPossessionAndRetargetsUntilReleased()
         {
             var tracker = new MNG_GlobalBallStallTracker();
-            for (var step = 0; step < 59; step++)
+            for (var step = 0; step < 99; step++)
                 tracker.Update(Vector2.zero, Vector2.zero, 0.02f);
 
             Assert.That(tracker.IsActive, Is.False);
@@ -280,7 +280,7 @@ namespace MachineLearning.Soccer.Manager.Tests
             }
 
             var open = MNG_TacticalTargetResolver.Resolve(snapshot, Team.Red);
-            Assert.That(open.HasPassTarget, Is.False, "Near-goal choices prefer shooting");
+            Assert.That(open.HasPassTarget, Is.True, "Near-goal pass and shot are both available");
             Assert.That(open.HasShotTarget, Is.True);
 
             snapshot.BallPosition = new Vector2(42f, snapshot.GoalHalfWidth + 0.1f);
@@ -728,6 +728,38 @@ namespace MachineLearning.Soccer.Manager.Tests
             Assert.That(tasks[1].Skill, Is.Not.EqualTo(MNG_PlayerSkill.None));
             Assert.That(tasks[2].Skill, Is.Not.EqualTo(MNG_PlayerSkill.None));
             Assert.That(tasks[3].Skill, Is.Not.EqualTo(MNG_PlayerSkill.None));
+        }
+
+        [Test]
+        public void V2StationaryBallOverridesEveryCommandHeadcountButRespectsHumanAndKeeper()
+        {
+            var snapshot = CreateSnapshot();
+            snapshot.BallPosition = Vector2.zero;
+            snapshot.BallVelocity = Vector2.zero;
+            snapshot.BallStallRecoveryActive = true;
+            var tasks = new MNG_PlayerTask[4];
+            foreach (var team in new[] { Team.Red, Team.Navy })
+            for (var possession = -1; possession < 2; possession++)
+            for (var command = 0; command < 6; command++)
+            {
+                snapshot.Carrier = possession < 0 ? MNG_CarrierRef.None : MNG_CarrierRef.For((Team)possession, 3);
+                snapshot.Possession = possession < 0 ? MNG_Possession.Neutral : possession == 0 ? MNG_Possession.Red : MNG_Possession.Navy;
+                MNG_TeamPlanner.PlanV2(snapshot, team, (MNG_Command)command, CreateDecision(), 40, 10f, tasks);
+                for (var slot = 1; slot < 4; slot++)
+                {
+                    Assert.AreEqual(MNG_PlayerSkill.Press, tasks[slot].Skill);
+                    Assert.AreEqual(snapshot.BallPosition, tasks[slot].Target);
+                    Assert.AreEqual(MNG_ActionSource.SafetyEscape, tasks[slot].Source);
+                    Assert.IsFalse(tasks[slot].StateChanged);
+                }
+                Assert.AreNotEqual(MNG_PlayerSkill.Press, tasks[0].Skill);
+            }
+            var human = snapshot.GetPlayer(Team.Red, 2); human.IsHuman = true; snapshot.SetPlayer(Team.Red, 2, human);
+            MNG_TeamPlanner.PlanV2(snapshot, Team.Red, MNG_Command.ProtectBack, CreateDecision(), 41, 10f, tasks);
+            Assert.AreEqual(MNG_PlayerSkill.None, tasks[2].Skill);
+            snapshot.BallStallRecoveryActive = false; snapshot.Carrier = MNG_CarrierRef.None; snapshot.Possession = MNG_Possession.Neutral;
+            MNG_TeamPlanner.PlanV2(snapshot, Team.Red, MNG_Command.ProtectBack, CreateDecision(), 42, 10f, tasks);
+            Assert.IsFalse(System.Array.Exists(tasks, t => t.Skill == MNG_PlayerSkill.Press));
         }
 
         [Test]

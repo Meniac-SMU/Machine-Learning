@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "games": 1120,
+  "teamRows": 2240,
+  "pairRows": 56,
+  "rankingRows": 8,
+  "formulasChecked": true,
+  "rankingMatchesEvidence": true,
+  "exportedPackageVerified": true,
+  "allTeamRowCellsVerified": 85120,
+  "formulaCachesVerified": 27896,
+  "freezePanesVerified": true,
+  "visualReview": "All four sheets and both command table halves reviewed; Korean headers and percentages readable."
+}

@@ -34,6 +34,7 @@ namespace MachineLearning.Soccer.Manager
         public bool StateChanged;
         public bool CommonRule;
         public bool PassBuildRule;
+        public bool DirectedPass;
     }
 
     public static partial class MNG_TeamPlanner

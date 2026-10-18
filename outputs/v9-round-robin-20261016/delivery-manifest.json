@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "games": 1120,
+  "files": [
+    {
+      "path": "outputs\\v9-round-robin-20261016\\골키퍼가속도12배_8모델_1120경기.xlsx",
+      "bytes": 545973,
+      "sha256": "68ce447f2489c37cf7a8f602043b5eab8bf68a261e939d319104ff7606bb3d02"
+    },
+    {
+      "path": "outputs\\v9-round-robin-20261016\\경기별_전체지표.csv",
+      "bytes": 562398,
+      "sha256": "a4175e31c9b7c57a6a52fee8b9daa4a802ea00fae5cd0e3c8dc69c8386a347f4"
+    },
+    {
+      "path": "outputs\\v9-round-robin-20261016\\evaluation-data.json",
+      "bytes": 2342123,
+      "sha256": "e9b5f3cd43d354e8509abe858240e233719d7ce048fcb3ff9d41532193c96440"
+    },
+    {
+      "path": "docs\\soccer\\rebuild-5v5\\52_골키퍼가속도12배_8모델_전수평가.md",
+      "bytes": 10270,
+      "sha256": "a779c6138dd0e3240b5908954ad5b75ca239a68da19a38cd34d8fc8c02440a72"
+    }
+  ]
+}

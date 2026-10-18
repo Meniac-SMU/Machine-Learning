@@ -1,0 +1,32 @@
+[
+  {
+    "file": "C:\\GitHub\\Goalkeeper-Cube-Robots\\Goalkeeper_Pink_v01.blend",
+    "body": [
+      255,
+      165,
+      198,
+      255
+    ],
+    "front_kickplate": "#DCFF00",
+    "wheel_caps": "#1B4994",
+    "eye_unchanged": true,
+    "geometry_unchanged": true,
+    "triangles": 5768,
+    "materials": 2
+  },
+  {
+    "file": "C:\\GitHub\\Goalkeeper-Cube-Robots\\Goalkeeper_Sky_v01.blend",
+    "body": [
+      143,
+      211,
+      255,
+      255
+    ],
+    "front_kickplate": "#DCFF00",
+    "wheel_caps": "#1B4994",
+    "eye_unchanged": true,
+    "geometry_unchanged": true,
+    "triangles": 5768,
+    "materials": 2
+  }
+]

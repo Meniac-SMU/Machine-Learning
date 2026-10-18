@@ -1,0 +1,15 @@
+{
+  "body_dimensions": [
+    2.0,
+    2.0,
+    2.0
+  ],
+  "body_equal_axes": true,
+  "model_meshes": 38,
+  "evaluated_triangles": 9680,
+  "symmetry_excluding_exhaust_max_vertex_distance": 7.450580596923828e-09,
+  "symmetry_unmatched_vertex_count": 0,
+  "symmetry_vertex_count": 5364,
+  "rear_exhaust_side": "Rear view right (world -X)",
+  "export_performed": false
+}

@@ -1,0 +1,20 @@
+{
+  "file": "C:\\GitHub\\Goalkeeper-Cube-Robots\\Goalkeeper_Pink_v02.blend",
+  "wheel_cap_rgba": [
+    218,
+    6,
+    34,
+    255
+  ],
+  "accent_rgba": [
+    119,
+    51,
+    61,
+    255
+  ],
+  "eye_material": "08 | Pink luminous pixels",
+  "geometry_unchanged": true,
+  "triangles": 5768,
+  "material_slots": 2,
+  "preserved_body_and_front_bar": true
+}

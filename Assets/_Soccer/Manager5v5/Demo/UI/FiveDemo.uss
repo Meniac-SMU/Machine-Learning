@@ -1,0 +1,49 @@
+Label { margin: 0; padding: 0; white-space: nowrap; color: #f5f5ee; -unity-text-align: middle-left; -unity-font-style: normal; }
+Button { margin: 0; padding: 0; border-width: 0; border-radius: 0; background-color: #193a25; color: #ffffff; font-size: 28px; -unity-text-align: middle-center; -unity-font-style: normal; }
+Button:hover { background-color: #3e6241; }
+Button:focus { border-width: 3px; border-color: #baff40; }
+.primary { background-color: #b9f54e; color: #151b10; }
+.primary:hover { background-color: #cff98d; }
+.pause-primary { background-color: #f1f3f7; color: #172b50; border-width: 2px; border-color: #172b50; }
+.pause-primary:hover { background-color: #e2e7f0; }
+.pause-secondary { background-color: #172b50; color: #ffffff; }
+.pause-secondary:hover { background-color: #294371; }
+.text-button { background-color: rgba(0,0,0,0); color: #f5f5ee; font-size: 23px; }
+.text-button:hover { color: #baff40; background-color: rgba(255,255,255,0.05); }
+.option { background-color: #f8fbf1; color: #1d351d; border-width: 1px; border-color: #b8c7aa; }
+.option:hover { background-color: #bfdc95; }
+.selected { background-color: #203d25; color: #f4faeb; }
+.selected:hover { background-color: #355a38; }
+.match-setup .selected { background-color: #4f7d35; color: #ffffff; }
+.match-setup .selected:hover { background-color: #608e42; }
+.character-arrow { background-color: rgba(0,0,0,0.18); font-size: 48px; }
+.character-arrow:disabled { opacity: 0.55; color: #ffffff; }
+
+.model-picker.red .option { background-color: #fff8f9; color: #591824; border-color: #d6aeb7; }
+.model-picker.red .option:hover { background-color: #efd1d8; }
+.model-picker.red .selected { background-color: #591824; }
+.model-picker.red .selected:hover { background-color: #7a2637; }
+.model-picker.red Button:focus { border-color: #e88e9f; }
+.model-picker.navy .option { background-color: #f7f9ff; color: #111b3d; border-color: #aebbd6; }
+.model-picker.navy .option:hover { background-color: #ced9ef; }
+.model-picker.navy .selected { background-color: #111b3d; }
+.model-picker.navy .selected:hover { background-color: #263965; }
+.model-picker.navy Button:focus { border-color: #93b0f0; }
+.model-picker .text-button:hover { background-color: rgba(255,255,255,0.12); color: #ffffff; }
+
+.viewport { flex-grow: 1; overflow: hidden; }
+.stage { position: absolute; width: 1920px; height: 1080px; transform-origin: 0 0; overflow: hidden; }
+
+.keeper-badge.red { background-color: #2c0b12; }
+.keeper-badge.navy { background-color: #0d142c; }
+.demo-stamina-layer { position: absolute; left: 0; right: 0; top: 0; bottom: 0; }
+.demo-stamina { position: absolute; width: 40px; height: 6px; transform-origin: 50% 100%; background-color: rgb(20, 24, 30); border-bottom-width: 2px; }
+.demo-stamina.red { border-bottom-color: rgb(238, 66, 76); }
+.demo-stamina.navy { border-bottom-color: rgb(98, 159, 245); }
+.demo-stamina-fill { height: 100%; background-color: rgb(255, 255, 255); }
+.demo-stamina.tired .demo-stamina-fill { background-color: rgb(184, 133, 32); }
+.demo-stamina.exhausted .demo-stamina-fill { background-color: rgb(181, 54, 54); }
+.demo-stamina.close { width: 64px; height: 18px; opacity: 0.7; border-width: 2px; border-radius: 4px; padding: 2px; }
+.demo-stamina.close.red { border-color: rgb(238, 66, 76); }
+.demo-stamina.close.navy { border-color: rgb(98, 159, 245); }
+.demo-stamina.close.own { border-color: rgb(240, 248, 255); }

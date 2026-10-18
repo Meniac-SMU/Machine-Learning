@@ -102,7 +102,7 @@ namespace MachineLearning.Soccer.Manager
         {
             ValidateBindingsOrThrow();
             CaptureStartingState();
-            m_GlobalBallStall.Reset();
+            m_GlobalBallStall.ResetForKickoff();
             ApplyRegularMatchSpawnJitter(0, 0);
             CaptureSnapshot();
         }
@@ -163,7 +163,7 @@ namespace MachineLearning.Soccer.Manager
             players = configuredPlayers ?? Array.Empty<MNG_PlayerAvatar>();
             ValidateBindingsOrThrow();
             CaptureStartingState();
-            m_GlobalBallStall.Reset();
+            m_GlobalBallStall.ResetForKickoff();
             CaptureSnapshot();
         }
 
@@ -265,7 +265,7 @@ namespace MachineLearning.Soccer.Manager
             return true;
         }
 
-        public void AcceptPolicyCommand(Team team, MNG_Command command)
+        public void AcceptPolicyCommand(Team team, MNG_Command command, int recipientAction = 0)
         {
             var commandIndex = (int)command;
             if (commandIndex < 0 || commandIndex >= MNG_CommandMask.CommandCount)
@@ -275,7 +275,11 @@ namespace MachineLearning.Soccer.Manager
             // snapshot whose mask accompanied that action. The Agent validates against
             // that sent mask; rechecking the newer world state here would reject a valid
             // decision when possession changes during the communicator round trip.
-            ApplyAcceptedCommand(team, command, GetDecisionState(team));
+            var decision = GetDecisionState(team);
+            decision.DirectedPass = recipientAction > 0 && command == MNG_Command.PassBuild;
+            if (decision.DirectedPass) { decision.PendingPassReceiverSlot = recipientAction - 1; decision.HasPassTarget = true; }
+            ApplyAcceptedCommand(team, command, decision);
+            decision.DirectedPass = false;
         }
 
         void ApplyAcceptedCommand(Team team, MNG_Command command, MNG_TeamDecisionState decision)
@@ -451,7 +455,7 @@ namespace MachineLearning.Soccer.Manager
         void ResetRound()
         {
             GetComponentInChildren<MNG_BallControl>()?.ResetLedger();
-            m_GlobalBallStall.Reset();
+            m_GlobalBallStall.ResetForKickoff();
             ballBody.isKinematic = false;
             ballBody.transform.SetPositionAndRotation(m_BallStartingPosition, m_BallStartingRotation);
             ballBody.position = m_BallStartingPosition;
@@ -476,6 +480,7 @@ namespace MachineLearning.Soccer.Manager
             // Position variation is applied only at an initial spawn or a central
             // kickoff reset. No in-play transform correction is performed.
             ApplyRegularMatchSpawnJitter(m_EpisodeId, m_KickoffIndex);
+            ApplyPSCurriculum();
             GetComponent<MNG_V2Trace>()?.RecordSpawn(m_EpisodeId, m_KickoffIndex);
             m_Snapshot.Possession = MNG_Possession.Neutral;
             m_Snapshot.Carrier = MNG_CarrierRef.None;

@@ -6,7 +6,7 @@ namespace MachineLearning.Soccer.Manager
 {
     public static partial class MNG_TeamPlanner
     {
-        public const int PlannerV2Version = 12;
+        public const int PlannerV2Version = 13;
 
         public static void PlanV2(MNG_MatchSnapshot snapshot, Team team, MNG_Command command,
             MNG_TeamDecisionState decision, long revision, float expirySeconds, MNG_PlayerTask[] destination)
@@ -14,6 +14,22 @@ namespace MachineLearning.Soccer.Manager
             if (destination == null || destination.Length != 4) throw new ArgumentException("Four tasks required.");
             snapshot.ValidateOrThrow(); decision.ValidateOrThrow();
             if ((int)command < 0 || (int)command >= 6) throw new ArgumentOutOfRangeException(nameof(command));
+            if (snapshot.BallStallRecoveryActive)
+            {
+                var stallSign = team == Team.Red ? 1f : -1f;
+                for (var slot = 0; slot < 4; slot++)
+                {
+                    var player = snapshot.GetPlayer(team, slot);
+                    var available = player.Active && !player.IsHuman;
+                    destination[slot] = available && player.Role == MNG_PlayerRole.Keeper
+                        ? PlanKeeper(snapshot, team, slot, stallSign, revision, expirySeconds)
+                        : CreateTask(available ? MNG_PlayerSkill.Press : MNG_PlayerSkill.None,
+                            available ? snapshot.BallPosition : player.Position, -1, revision, expirySeconds);
+                    destination[slot].Source = player.Role == MNG_PlayerRole.Keeper
+                        ? MNG_ActionSource.KeeperTechnique : MNG_ActionSource.SafetyEscape;
+                }
+                return;
+            }
             var carrier = snapshot.Carrier.IsValid && snapshot.Carrier.Team == team ? snapshot.Carrier.Slot : -1;
             if (carrier >= 0)
             {
@@ -57,7 +73,7 @@ namespace MachineLearning.Soccer.Manager
             var keeperCarrier = snapshot.GetPlayer(team, carrier).Role == MNG_PlayerRole.Keeper;
             var receiver = command == MNG_Command.PassBuild && decision.HasPassTarget
                 ? decision.PendingPassReceiverSlot : -1;
-            if (!MNG_TacticalTargetResolver.IsPassBuildReceiverValid(snapshot, team, carrier, receiver)) receiver = -1;
+            if (!MNG_PSPassing.Valid(snapshot, team, carrier, receiver, decision.DirectedPass)) receiver = -1;
             var support = receiver >= 0 ? receiver : SelectAttackingSupport(snapshot, team, decision, carrier);
             for (var slot = 0; slot < 4; slot++)
             {
@@ -73,7 +89,7 @@ namespace MachineLearning.Soccer.Manager
                         if (command == MNG_Command.PassBuild)
                         {
                             if (receiver >= 0)
-                            { skill = MNG_PlayerSkill.AimPass; target = SelectPassTarget(snapshot, team, receiver); taskReceiver = receiver; }
+                            { skill = MNG_PlayerSkill.AimPass; target = decision.DirectedPass ? MNG_PSPassing.Target(snapshot, team, receiver) : SelectPassTarget(snapshot, team, receiver); taskReceiver = receiver; }
                         }
                         else if (command == MNG_Command.AttemptShot)
                         {
@@ -93,6 +109,8 @@ namespace MachineLearning.Soccer.Manager
                             target = EnforceAttackingCarryTarget(snapshot.BallPosition, target, team, snapshot.FieldHalfLength, snapshot.FieldHalfWidth);
                         if (MNG_TaskLifetime.IsKick(skill)) taskExpiry = snapshot.EpisodeElapsedSeconds + KickExecutionSeconds;
                     }
+                    else if (slot == receiver && decision.DirectedPass)
+                    { skill = MNG_PlayerSkill.ReceivePass; target = MNG_PSPassing.Target(snapshot, team, slot); taskExpiry = snapshot.EpisodeElapsedSeconds + KickExecutionSeconds; }
                     else if (player.Role == MNG_PlayerRole.Keeper)
                     {
                         tasks[slot] = PlanKeeper(snapshot, team, slot, sign, revision, expiry);
@@ -116,6 +134,7 @@ namespace MachineLearning.Soccer.Manager
                     }
                 }
                 tasks[slot] = CreateTask(skill, Clamp(target, snapshot), taskReceiver, revision, taskExpiry);
+                tasks[slot].DirectedPass = decision.DirectedPass && (slot == carrier || slot == receiver);
                 tasks[slot].StateChanged = slot == carrier && skill == MNG_PlayerSkill.None && player.Active;
             }
             ApplyTargetSeparation(snapshot, team, tasks);

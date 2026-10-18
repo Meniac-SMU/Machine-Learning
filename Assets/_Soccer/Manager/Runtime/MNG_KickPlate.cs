@@ -21,6 +21,7 @@ namespace MachineLearning.Soccer.Manager
         public readonly MNG_ActionSource Source;
         public readonly bool CommonRule;
         public readonly bool PassBuildRule;
+        public readonly bool DirectedPass;
 
         public MNG_KickRequest(Vector3 target, float exitSpeed)
             : this(target, exitSpeed, MNG_KickIntent.Unspecified)
@@ -29,7 +30,7 @@ namespace MachineLearning.Soccer.Manager
 
         public MNG_KickRequest(Vector3 target, float exitSpeed, MNG_KickIntent intent,
             long taskId = 0, long parentCommandId = 0, int intendedReceiverSlot = -1,
-            MNG_ActionSource source = MNG_ActionSource.PolicyCommand, bool commonRule = false, bool passBuildRule = false)
+            MNG_ActionSource source = MNG_ActionSource.PolicyCommand, bool commonRule = false, bool passBuildRule = false, bool directedPass = false)
         {
             Target = target;
             ExitSpeed = exitSpeed;
@@ -40,6 +41,7 @@ namespace MachineLearning.Soccer.Manager
             Source = source;
             CommonRule = commonRule;
             PassBuildRule = passBuildRule;
+            DirectedPass = directedPass;
         }
     }
 
@@ -75,6 +77,11 @@ namespace MachineLearning.Soccer.Manager
         float m_StateElapsed;
         bool m_StrikeConsumed;
         MNG_KickRequest m_PendingKick;
+        Collider m_FollowThroughBall;
+        Collider[] m_FollowThroughPlates;
+        bool[] m_PreviousCollisionIgnores;
+        bool[] m_RestoredBodyContacts;
+        float m_FollowThroughElapsed;
 
         public MNG_PlayerAvatar Owner => owner != null ? owner : owner = GetComponentInParent<MNG_PlayerAvatar>();
         public bool CanKick => isActiveAndEnabled && m_State == PlateState.Ready;
@@ -131,7 +138,54 @@ namespace MachineLearning.Soccer.Manager
                     }
                     break;
             }
+            if (m_State == PlateState.Ready) RestoreFollowThroughContacts();
+            else if(m_FollowThroughBall != null && m_FollowThroughPlates != null)
+            {
+                m_FollowThroughElapsed+=Time.fixedDeltaTime;
+                for(var i=0;i<m_FollowThroughPlates.Length;i++)
+                {
+                    var collider=m_FollowThroughPlates[i];
+                    if(collider==null || OwnsCollider(collider) || m_RestoredBodyContacts[i])continue;
+                    if(m_FollowThroughElapsed>=.10f && !collider.bounds.Intersects(m_FollowThroughBall.bounds))
+                    {
+                        Physics.IgnoreCollision(collider,m_FollowThroughBall,m_PreviousCollisionIgnores[i]);
+                        m_RestoredBodyContacts[i]=true;
+                    }
+                }
+            }
         }
+
+        // After a real selected-pass contact, the extending foot must not add a
+        // second body-forward impulse to the already directed kick. Only this
+        // foot/ball pair is suspended through recovery. The kicker capsule also
+        // gets a brief exit grace for side-foot/backheel kicks, ending once clear
+        // after 0.1s (and always by recovery/reset). Other players remain collidable.
+        public void IsolateFollowThrough(Collider ball)
+        {
+            RestoreFollowThroughContacts();
+            if (ball == null) return;
+            m_FollowThroughBall=ball;
+            m_FollowThroughPlates=Owner.GetComponentsInChildren<Collider>();
+            m_PreviousCollisionIgnores=new bool[m_FollowThroughPlates.Length];
+            m_RestoredBodyContacts=new bool[m_FollowThroughPlates.Length];m_FollowThroughElapsed=0f;
+            for(var i=0;i<m_FollowThroughPlates.Length;i++)
+            {
+                var plate=m_FollowThroughPlates[i];
+                m_PreviousCollisionIgnores[i]=Physics.GetIgnoreCollision(plate,ball);
+                Physics.IgnoreCollision(plate,ball,true);
+            }
+        }
+
+        void RestoreFollowThroughContacts()
+        {
+            if(m_FollowThroughBall != null && m_FollowThroughPlates != null)
+                for(var i=0;i<m_FollowThroughPlates.Length;i++)
+                    if(m_FollowThroughPlates[i] != null)
+                        Physics.IgnoreCollision(m_FollowThroughPlates[i],m_FollowThroughBall,m_PreviousCollisionIgnores[i]);
+            m_FollowThroughBall=null;m_FollowThroughPlates=null;m_PreviousCollisionIgnores=null;m_RestoredBodyContacts=null;
+        }
+
+        void OnDisable() => RestoreFollowThroughContacts();
 
         public void Configure(
             MNG_PlayerAvatar configuredOwner,
@@ -158,7 +212,7 @@ namespace MachineLearning.Soccer.Manager
 
             m_PendingKick = new MNG_KickRequest(target, exitSpeed, intent,
                 task.TaskId, task.ParentCommandId,
-                intent == MNG_KickIntent.Pass && task.TaskId > 0 ? task.ReceiverSlot : -1, task.Source, task.CommonRule, task.PassBuildRule);
+                intent == MNG_KickIntent.Pass && task.TaskId > 0 ? task.ReceiverSlot : -1, task.Source, task.CommonRule, task.PassBuildRule, task.DirectedPass);
             m_StrikeConsumed = false;
             SetState(PlateState.Extending);
             return true;
@@ -199,6 +253,7 @@ namespace MachineLearning.Soccer.Manager
 
         public void ResetPlate()
         {
+            RestoreFollowThroughContacts();
             transform.localPosition = retractedLocalPosition;
             m_PendingKick = default;
             m_StrikeConsumed = false;

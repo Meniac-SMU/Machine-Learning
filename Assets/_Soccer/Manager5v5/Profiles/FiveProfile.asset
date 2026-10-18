@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 690dcf4cc25386f43af449e6b23a8e10, type: 3}
+  m_Name: FiveProfile
+  m_EditorClassIdentifier: MNG5.Runtime::MachineLearning.Soccer.Manager5v5.FiveProfile
+  maxSpeed: 9
+  keeperSpeedMultiplier: 1.2
+  keeperAccelerationMultiplier: 1.2
+  acceleration: 30
+  deceleration: 45
+  turnRate: 125
+  dribbleTurnMultiplier: 0.64
+  staminaPerMetre: 0.00156
+  recoveryPerSecond: 0.03
+  slowRecoverySpeed: 3.6
+  keeperAreaDepth: 17.7
+  keeperAreaHalfWidth: 21.1
+  decisionSeconds: 3
+  duration: 300
+  goalPause: 3
+  freeBallDamping: 0.2
+  ballFrictionMultiplier: 2
+  maximumBallSpeed: 36.666668
+  ballContactOffset: 0.06
+  holdOffset: 1.188
+  acquirePadding: 0.5
+  releaseDistance: 2.8
+  releaseGrace: 0.24
+  dribbleGain: 12
+  dribbleAcceleration: 100
+  dribbleWallMargin: 0.16
+  challengeRecoverySeconds: 0.75
+  dribblePlateGap: 0.01
+  closeDribbleGain: 30
+  closeDribbleAcceleration: 160
+  frontReceiveSpeed: 1.2
+  contestSlowSpeed: 1.8
+  contestConfirmSeconds: 0.65
+  contestRadius: 3.5
+  contestActionSeconds: 2.4
+  contestRestartGrace: 2
+  contestReinforceSeconds: 6
+  fieldWallClearance: 4

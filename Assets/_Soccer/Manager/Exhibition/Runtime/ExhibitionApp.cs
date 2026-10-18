@@ -101,7 +101,7 @@ namespace MachineLearning.Soccer.Manager.Exhibition
         }
         string L(string key) => LocalizationSettings.StringDatabase.GetLocalizedString("Exhibition", key.Contains('.') ? key : "MNG.Exhibition." + key);
         string ModelName(int id, bool selection = false) => L((selection ? "selection." : "model.") + ExhibitionAssets.Ids[id]);
-        string Kind(int id) => L(id < 6 ? "neural" : "rule");
+        string Kind(int id) => L(ExhibitionAssets.IsNeural(id) ? "neural" : "rule");
         void NewPage(string name, Color background)
         {
             Page = name; stage.Clear(); modal = pause = goal = null; modalKind = null;
@@ -145,7 +145,7 @@ namespace MachineLearning.Soccer.Manager.Exhibition
         public void ConfigureMatch(bool simulation, int seconds, int red, int navy)
         {
             if (seconds != 300 && seconds != 600) throw new ArgumentOutOfRangeException(nameof(seconds));
-            if (red < 0 || red > 9 || navy < 0 || navy > 9) throw new ArgumentOutOfRangeException(nameof(red));
+            if (red < 0 || red >= ExhibitionAssets.Ids.Length || navy < 0 || navy >= ExhibitionAssets.Ids.Length) throw new ArgumentOutOfRangeException(nameof(red));
             Simulation = simulation; Duration = seconds; RedModel = red; NavyModel = navy;
         }
         public void Kickoff()
@@ -163,12 +163,14 @@ namespace MachineLearning.Soccer.Manager.Exhibition
                 behavior.BehaviorName = MNG_RuntimeV2.BehaviorName;
                 behavior.BrainParameters.VectorObservationSize = MNG_RuntimeV2.ObservationSize;
                 behavior.TeamId = (int)agent.Team;
-                behavior.Model = id < 6 ? assets.models[id] : null;
+                var neural = ExhibitionAssets.IsNeural(id);
+                agent.ConfigurePSRecipients(id == ExhibitionAssets.PassModelId);
+                behavior.Model = neural ? assets.models[ExhibitionAssets.NeuralIndex(id)] : null;
                 behavior.BehaviorType = BehaviorType.InferenceOnly;
                 agent.ConfigurePolicyAssistMode(MNG_PolicyAssistMode.None);
-                agent.enabled = id < 6; agent.GetComponent<DecisionRequester>().enabled = id < 6;
-                agent.gameObject.SetActive(id < 6);
-                if (id >= 6) { var rule = arena.AddComponent<ExhibitionRules>(); rule.team = agent.Team; rule.model = id; rule.match = match; }
+                agent.enabled = neural; agent.GetComponent<DecisionRequester>().enabled = neural;
+                agent.gameObject.SetActive(neural);
+                if (!neural) { var rule = arena.AddComponent<ExhibitionRules>(); rule.team = agent.Team; rule.model = id; rule.match = match; }
             }
             arena.SetActive(true);
             FitCamera();

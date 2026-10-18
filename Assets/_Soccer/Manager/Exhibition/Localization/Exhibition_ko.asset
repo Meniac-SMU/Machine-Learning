@@ -431,6 +431,30 @@ MonoBehaviour:
     m_Localized: "\u2190 / \u2192: \uCE74\uBA54\uB77C \uC804\uD658"
     m_Metadata:
       m_Items: []
+  - m_Id: 1092329607340032
+    m_Localized: "240\uB9CC: \uD328\uC2A4 \uD559\uC2B5 \uC2DC\uB3C4"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1092329645088768
+    m_Localized: "240\uB9CC: \uD328\uC2A4 \uD559\uC2B5 \uC2DC\uB3C4"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1092329645088769
+    m_Localized: "PS-R3 \xB7 \uD328\uC2A4 \uD559\uC2B5 \uC2DC\uB3C4"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1093661441466368
+    m_Localized: "240\uB9CC: \uD328\uC2A4 \uD559\uC2B5 \uC2DC\uB3C4"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1093661487603712
+    m_Localized: "240\uB9CC: \uD328\uC2A4 \uD559\uC2B5 \uC2DC\uB3C4"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1093661487603713
+    m_Localized: "PS-R3 \xB7 \uD328\uC2A4 \uD559\uC2B5 \uC2DC\uB3C4"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

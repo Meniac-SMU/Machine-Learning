@@ -120,12 +120,34 @@ namespace MachineLearning.Soccer.Manager.Tests
         }
 
         [Test]
+        public void KickoffGraceExcludesInitialStationaryTimeAndRearmsForNextRound()
+        {
+            var tracker = new MNG_GlobalBallStallTracker();
+            for (var round = 0; round < 2; round++)
+            {
+                tracker.ResetForKickoff();
+                Assert.IsFalse(tracker.Update(Vector2.zero, Vector2.zero, 1.5f));
+                Assert.That(tracker.StationarySeconds, Is.Zero);
+                Assert.IsFalse(tracker.Update(Vector2.zero, Vector2.zero, .75f));
+                Assert.That(tracker.StationarySeconds, Is.EqualTo(.25f).Within(.0001f));
+                Assert.IsFalse(tracker.Update(Vector2.zero, Vector2.zero, 1.5f));
+                Assert.IsTrue(tracker.Update(Vector2.zero, Vector2.zero, .25f));
+            }
+            Assert.That(tracker.EpisodeActivationCount, Is.EqualTo(2));
+            // A real escape clears the stall without adding another kickoff grace.
+            Assert.IsFalse(tracker.Update(Vector2.zero, Vector2.right * 4f, .02f));
+            Assert.IsTrue(tracker.Update(Vector2.zero, Vector2.zero, 2f));
+            tracker.Reset();
+            Assert.IsTrue(tracker.Update(Vector2.zero, Vector2.zero, 2f));
+        }
+
+        [Test]
         public void StallEpisodeCountersSurviveRoundResetButNotNewEpisode()
         {
             var tracker = new MNG_GlobalBallStallTracker();
             for (var round = 0; round < 2; round++)
             {
-                for (var tick = 0; tick < 100; tick++) tracker.Update(Vector2.zero, Vector2.zero, .02f);
+                for (var tick = 0; tick < 150; tick++) tracker.Update(Vector2.zero, Vector2.zero, .02f);
                 Assert.That(tracker.ActivationCount, Is.EqualTo(1));
                 tracker.Reset();
             }

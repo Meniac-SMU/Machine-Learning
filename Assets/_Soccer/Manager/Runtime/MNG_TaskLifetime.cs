@@ -31,7 +31,7 @@ namespace MachineLearning.Soccer.Manager
                 return Result(task, MNG_TaskResultKind.DeferredCommit, tick);
             }
             if (!KickConsumed && Current.ExpirySeconds > now && IsKick(task.Skill)
-                && task.CommonRule == Current.CommonRule && task.PassBuildRule == Current.PassBuildRule
+                && task.CommonRule == Current.CommonRule && task.PassBuildRule == Current.PassBuildRule && task.DirectedPass == Current.DirectedPass
                 && task.Skill == Current.Skill && task.ReceiverSlot == Current.ReceiverSlot
                 && task.Target == Current.Target)
                 return Result(Current, MNG_TaskResultKind.RetainedEquivalent, tick);

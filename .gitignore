@@ -109,3 +109,12 @@ InitTestScene*.unity*
 __pycache__/
 *.pyc
 *.pyo
+
+# Local agent instructions and documentation are excluded from GitHub by user request.
+AGENTS.md
+.codex/
+.agents/
+/docs/
+
+# Installed JavaScript dependencies are recreated from package sources.
+node_modules/

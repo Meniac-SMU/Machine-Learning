@@ -69,6 +69,10 @@ namespace MachineLearning.Soccer.Manager.Exhibition
         IEnumerator Click(string text)
         {
             var button=stage.Query<Button>().ToList().Single(b=>b.text==text);
+            yield return ClickButton(button);
+        }
+        IEnumerator ClickButton(Button button)
+        {
             var center=button.worldBound.center;var position=new Vector2(center.x,Screen.height-center.y);
             InputSystem.QueueStateEvent(smokeMouse,new MouseState{position=position});yield return null;
             InputSystem.QueueStateEvent(smokeMouse,new MouseState{position=position,buttons=1});yield return null;yield return null;
@@ -138,13 +142,40 @@ namespace MachineLearning.Soccer.Manager.Exhibition
             ShowImage("credits",0);yield return Capture("02-credits-ko");CloseModal();
             Setup();yield return Capture("03-setup-ko");PickModel(0,0);yield return Capture("04-models-ko");PickModel(0,1);yield return Capture("05-rules-ko");CloseModal();
             SetLanguage("en");yield return null;Home();yield return Capture("06-home-en");ShowImage("guide",1);yield return Capture("07-guide-en");CloseModal();Setup();PickModel(1,1);yield return Capture("08-rules-en");CloseModal();
+            PickModel(0,0);yield return Capture("08b-models-en");
+            Check(ModelName(10,true)=="2.4M: Pass","English PS-R3 label");
+            yield return ClickButton(modal.Q<Button>("model-10"));
+            Check(RedModel==10&&Page=="setup","Pointer selects PS-R3 on RED");
+            yield return Capture("08c-ps-selected-en");
+            SetLanguage("ko");yield return new WaitForSecondsRealtime(1);Setup();PickModel(1,0);
+            yield return Capture("08d-ps-navy-picker-ko");
+            Check(ModelName(10,true)=="240만: 패스 학습 시도","Korean PS-R3 label");
+            yield return ClickButton(modal.Q<Button>("model-10"));
+            Check(NavyModel==10&&Page=="setup","Pointer selects PS-R3 on NAVY (actual "+NavyModel+"/"+Page+")");
+            yield return Capture("08d-ps-selected-ko");
             // Every imported checkpoint executes real inference on both teams.
-            for(int id=0;id<10;id++)
+            for(int id=0;id<ExhibitionAssets.Ids.Length;id++)
             {
                 ConfigureMatch(true,300,id,id);Kickoff();yield return new WaitForSecondsRealtime(2);
                 Check(match.EpisodeElapsedSeconds>2,"Model "+id+" advances actual simulation");
-                if(id<6)Check(arena.GetComponentsInChildren<MNG_ManagerAgent>().All(a=>a.PolicyDecisionCount>0),"Both neural agents decide: "+id);
+                if(ExhibitionAssets.IsNeural(id))Check(arena.GetComponentsInChildren<MNG_ManagerAgent>().All(a=>a.PolicyDecisionCount>0),"Both neural agents decide: "+id);
                 Check(!human.enabled&&!human.IsHuman,"Simulation excludes human ownership: "+id);
+                Home();yield return null;
+            }
+            foreach(var psOnRed in new[]{true,false})
+            {
+                ConfigureMatch(true,300,psOnRed?10:5,psOnRed?5:10);Kickoff();
+                yield return new WaitForSecondsRealtime(4);
+                Check(screen.Q<VisualElement>("managerHud").Query<Label>().ToList()
+                    .Any(label=>label.text=="강화학습 · 240만 패스"), "Korean match HUD uses full PS-R3 name: "+psOnRed);
+                foreach(var agent in arena.GetComponentsInChildren<MNG_ManagerAgent>())
+                {
+                    var branches=agent.GetComponent<Unity.MLAgents.Policies.BehaviorParameters>().BrainParameters.ActionSpec.BranchSizes;
+                    Check(agent.PolicyDecisionCount>0,"Mixed PS-R3/2M inference: "+psOnRed+" "+agent.name);
+                    Check(branches.Length==(agent.UsesPSRecipients?2:1)&&branches[0]==6&&(!agent.UsesPSRecipients||branches[1]==5),"Per-team model action branches: "+psOnRed+" "+agent.name);
+                }
+                yield return Capture("mixed-ps-red-"+psOnRed);
+                Results();yield return Capture("mixed-ps-result-layout-"+psOnRed);
                 Home();yield return null;
             }
             SetLanguage("ko");yield return null;
@@ -227,7 +258,7 @@ namespace MachineLearning.Soccer.Manager.Exhibition
             SetLanguage("en");yield return null;ConfigureMatch(false,300,5,7);Kickoff();yield return new WaitForSecondsRealtime(.5f);
             Check(controls.Query<Label>().First().text=="H: Switch to human control","English AI switch instruction");yield return Capture("16-ai-start-en");
             yield return Press(Key.H);yield return new WaitForSecondsRealtime(.5f);Check(controls.Query<Label>().ToList().Any(l=>l.text=="H: Switch to AI"),"English human switch instruction");yield return Capture("17-human-en");
-            Home();yield return null;ConfigureMatch(true,300,5,8);Kickoff();yield return new WaitForSecondsRealtime(2);
+            Home();yield return null;ConfigureMatch(true,300,10,5);Kickoff();yield return new WaitForSecondsRealtime(2);
             var speed=screen.Q<VisualElement>("speedBadge");yield return null;
             Check(controls.Query<Label>().ToList().Count==1&&Mathf.Approximately(speed.layout.center.x,960),"Simulation badge centered with camera-only controls");
             Check(speed.resolvedStyle.backgroundColor==C("#FFE6E9"),"Speed badge uses pale red background");
@@ -241,7 +272,8 @@ namespace MachineLearning.Soccer.Manager.Exhibition
             Check(screen.Q("stat-saves").Query<Label>().First().text==keeperTouches.GetTouches(Team.Red).ToString(),"Finished scoreboard displays observed keeper touches");
             yield return Capture("14-result-en");yield return new WaitForSecondsRealtime(1);
             Check(Page=="result","Scoreboard remains until Exit");Home();Check(Page=="home","Result Exit returns home");
-            SetLanguage("ko");yield return null;
+            // Do not start locale AssetBundle preloads immediately before process shutdown.
+            yield return null;
         }
     }
 }

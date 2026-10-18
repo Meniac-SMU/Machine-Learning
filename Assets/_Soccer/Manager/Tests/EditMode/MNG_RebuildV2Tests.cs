@@ -32,7 +32,7 @@ namespace MachineLearning.Soccer.Manager.Tests
                 var sign = team == Team.Red ? 1f : -1f;
                 var s = new MNG_MatchSnapshot { BallPosition = new Vector2(sign * 20, 0),
                     Carrier = MNG_CarrierRef.For(team, 3), Possession = team == Team.Red ? MNG_Possession.Red : MNG_Possession.Navy,
-                    BallStallRecoveryActive = true, BallStationarySeconds = 6 };
+                    BallStallRecoveryActive = false, BallStationarySeconds = 0 };
                 for (var slot = 0; slot < 4; slot++) s.SetPlayer(team, slot, new MNG_PlayerState
                     { Active = true, Role = (MNG_PlayerRole)slot, Position = new Vector2(sign * (slot == 1 ? 28 : 20), sign * (slot - 2) * 8) });
                 var decision = new MNG_TeamDecisionState { HasPassTarget = true, HasShotTarget = true, PendingPassReceiverSlot = 1 };
@@ -64,13 +64,13 @@ namespace MachineLearning.Soccer.Manager.Tests
         [TestCase(MNG_Command.ActiveRecover, 2)]
         [TestCase(MNG_Command.Balanced, 1)]
         [TestCase(MNG_Command.ProtectBack, 0)]
-        public void PressureCountPreservesCommandEvenNearOwnGoalAndDuringStall(MNG_Command command, int expected)
+        public void PressureCountPreservesCommandNearOwnGoalWhenBallIsMoving(MNG_Command command, int expected)
         {
             foreach (var team in new[] { Team.Red, Team.Navy })
             {
                 var sign = team == Team.Red ? 1f : -1f;
                 var snapshot = new MNG_MatchSnapshot { BallPosition = new Vector2(-sign * 45, 0),
-                    BallStallRecoveryActive = true, BallStationarySeconds = 5,
+                    BallStallRecoveryActive = false, BallStationarySeconds = 0,
                     Possession = team == Team.Red ? MNG_Possession.Navy : MNG_Possession.Red };
                 for (var slot = 0; slot < 4; slot++) snapshot.SetPlayer(team, slot, new MNG_PlayerState
                     { Active = true, Role = (MNG_PlayerRole)slot, Position = new Vector2(-sign * 35, slot * 8) });

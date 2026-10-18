@@ -1,0 +1,7 @@
+{
+  "name": "MNG5.EditModeTests",
+  "references": ["MNG5.Runtime", "Soccer.Runtime"],
+  "includePlatforms": ["Editor"],
+  "optionalUnityReferences": ["TestAssemblies"],
+  "autoReferenced": false
+}

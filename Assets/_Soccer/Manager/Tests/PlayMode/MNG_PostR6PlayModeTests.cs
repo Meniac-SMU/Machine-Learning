@@ -16,6 +16,165 @@ namespace MachineLearning.Soccer.Manager.Tests
     public sealed class MNG_PostR6PlayModeTests
     {
         bool stepping; float scale;
+        [UnityTest]
+        public IEnumerator HeadOnPlayersRecoverBallBehindOpponentOnBothSides()
+        {
+#if UNITY_EDITOR
+            Academy.Instance.AutomaticSteppingEnabled = false;
+            yield return EditorSceneManager.LoadSceneAsyncInPlayMode(
+                "Assets/_Soccer/Manager/Curriculum/MS_V2/MNG_MS2V2_Train.unity", new LoadSceneParameters(LoadSceneMode.Single));
+            yield return null;
+            var match = Object.FindFirstObjectByType<MNG_MatchController>();
+            foreach (var rule in match.GetComponentsInChildren<MNG_RuleBasedManager>(true)) rule.enabled = false;
+            foreach (var manager in match.GetComponentsInChildren<MNG_ManagerAgent>(true))
+            { manager.GetComponent<DecisionRequester>().enabled = false; manager.enabled = false; }
+            match.GetComponent<MNG_MSController>().enabled = false;
+            match.ConfigureCommonRules(false, false);
+            var ball = match.GetComponentInChildren<MNG_BallControl>().GetComponent<Rigidbody>();
+            Time.timeScale = 10;
+            foreach (var sign in new[] { 1f, -1f })
+            foreach (var pinForBlockedRecovery in new[] { false, true })
+            {
+                match.ResetMatch();
+                if (pinForBlockedRecovery)
+                {
+                    Assert.IsTrue(match.GoalTouched(Team.Red));
+                    for (var pauseTick = 0; pauseTick < 170 && match.State == MNG_MatchState.GoalPause; pauseTick++)
+                        yield return new WaitForFixedUpdate();
+                    Assert.That(match.State, Is.EqualTo(MNG_MatchState.Playing));
+                }
+                foreach (var player in match.GetComponentsInChildren<MNG_PlayerAvatar>())
+                {
+                    var direction = player.Team == Team.Red ? sign : -sign;
+                    Pose(player, new Vector2(direction * (player.Slot == 0 ? -45 : -9), (player.Slot - 2) * 7), new Vector2(direction, 0));
+                    player.GetComponent<MNG_PlayerSkillExecutor>().Cancel();
+                }
+                var red = match.GetPlayerAvatar(Team.Red, 3); var navy = match.GetPlayerAvatar(Team.Navy, 3);
+                Pose(red, new Vector2(-.6f * sign, 0), new Vector2(sign, 0));
+                Pose(navy, new Vector2(.6f * sign, 0), new Vector2(-sign, 0));
+                var origin = new Vector3(-2f * sign, ball.position.y, 0);
+                ball.position = origin; ball.linearVelocity = ball.angularVelocity = Vector3.zero;
+                var helper = match.GetPlayerAvatar(Team.Red, 1); var helperOrigin = helper.Body.position;
+                Physics.SyncTransforms();
+                var bodies = match.GetComponentsInChildren<MNG_PlayerAvatar>().Select(a => a.Body).ToArray();
+                var constraints = bodies.Select(b => b.constraints).ToArray();
+                // Preserve the deadlock through two seconds of kickoff grace
+                // plus the two-second stationary trigger.
+                // Otherwise ordinary play can free the ball before recovery is needed.
+                foreach (var body in bodies) body.constraints = RigidbodyConstraints.FreezeAll;
+                var active = false; var moved = 0f;
+                for (var tick = 0; tick < 600; tick++)
+                {
+                    if (tick == (pinForBlockedRecovery ? 265 : 205))
+                    {
+                        var unstick = red.GetComponent<MNG_PlayerSkillExecutor>().StallUnstickAttempts
+                            + navy.GetComponent<MNG_PlayerSkillExecutor>().StallUnstickAttempts;
+                        if (pinForBlockedRecovery)
+                            Assert.Greater(unstick, 0, "A physically blocked field player must attempt retreat/turn");
+                        for (var bodyIndex = 0; bodyIndex < bodies.Length; bodyIndex++)
+                            bodies[bodyIndex].constraints = constraints[bodyIndex];
+                    }
+                    if (tick % 25 == 0)
+                    {
+                        match.AcceptPolicyCommand(Team.Red, MNG_Command.ProtectBack);
+                        match.AcceptPolicyCommand(Team.Navy, MNG_Command.ProtectBack);
+                    }
+                    yield return new WaitForFixedUpdate();
+                    if (tick < 190)
+                        Assert.IsFalse(match.IsGlobalBallStallRecoveryActive, "Kickoff grace must precede stationary observation");
+                    if (pinForBlockedRecovery && tick == 235)
+                        Assert.That(red.GetComponent<MNG_PlayerSkillExecutor>().StallUnstickAttempts
+                            + navy.GetComponent<MNG_PlayerSkillExecutor>().StallUnstickAttempts,
+                            Is.Zero, "Blocked recovery must wait a full second");
+                    active |= match.IsGlobalBallStallRecoveryActive;
+                    moved = Mathf.Max(moved, Vector3.Distance(origin, ball.position));
+                }
+                Assert.IsTrue(active, "Stationary ball must activate the exception");
+                Assert.Greater(moved, 2.25f, "Actual physical play must free the ball behind the opposed pair");
+                Assert.Greater(Vector3.Distance(helperOrigin, helper.Body.position), 2f, "ProtectBack must release additional field players");
+                var attempts = match.GetComponentsInChildren<MNG_PlayerSkillExecutor>().Sum(e => e.StallUnstickAttempts);
+                Debug.Log($"STALL RECOVERY sign={sign} pinned={pinForBlockedRecovery} ballDisplacement={moved:F3} unstickAttempts={attempts}");
+            }
+#else
+            yield break;
+#endif
+        }
+
+        [UnityTest]
+        public IEnumerator ControlledPassReachesKeeperAtSpeedOnBothTeams()
+        {
+#if UNITY_EDITOR
+            if (!MNG_PSPassing.ContactPassEnabled) Assert.Ignore("Requires -mngPSContactPass experiment flag");
+            Academy.Instance.AutomaticSteppingEnabled = false;
+            yield return EditorSceneManager.LoadSceneAsyncInPlayMode(
+                "Assets/_Soccer/Manager/Curriculum/MS_V2/MNG_MS2V2_Train.unity", new LoadSceneParameters(LoadSceneMode.Single));
+            yield return null;
+            var match = Object.FindFirstObjectByType<MNG_MatchController>();
+            foreach (var rule in match.GetComponentsInChildren<MNG_RuleBasedManager>(true)) rule.enabled=false;
+            foreach (var manager in match.GetComponentsInChildren<MNG_ManagerAgent>(true))
+            { manager.GetComponent<DecisionRequester>().enabled=false; manager.enabled=false; }
+            match.GetComponent<MNG_MSController>().enabled=false;
+            match.ConfigureCommonRules(false,false);
+            var control=match.GetComponentInChildren<MNG_BallControl>();
+            var ball=control.GetComponent<Rigidbody>();
+            var tracker=match.GetComponent<MNG_TacticalRewardTracker>();
+            var failures=new List<string>();
+            Time.timeScale=10;
+            foreach (var team in new[] {Team.Red,Team.Navy})
+            foreach (var side in new[] {Vector2.left,Vector2.up,Vector2.down})
+            foreach (var passDistance in new[] {12f,24f})
+            foreach (var initialSpeed in new[] {.5f,7f})
+            {
+                foreach (var p in match.GetComponentsInChildren<MNG_PlayerAvatar>(true)) p.gameObject.SetActive(true);
+                match.ResetMatch();
+                var sender=match.GetPlayerAvatar(team,3);var receiver=match.GetPlayerAvatar(team,0);
+                foreach(var p in match.GetComponentsInChildren<MNG_PlayerAvatar>(true))
+                { p.GetComponent<MNG_PlayerSkillExecutor>().enabled=false; if(p!=sender && p!=receiver)p.gameObject.SetActive(false); }
+                var sign=team==Team.Red?1f:-1f;var forward=new Vector2(sign,0);
+                Pose(sender,-forward*MNG_KickPlate.DribbleAnchorForward,forward);
+                Pose(receiver,side*sign*passDistance,-side*sign);
+                sender.Body.linearVelocity=new Vector3(forward.x,0,forward.y)*initialSpeed;
+                ball.position=new Vector3(0,ball.position.y,0);ball.linearVelocity=sender.Body.linearVelocity;ball.angularVelocity=Vector3.zero;
+                Physics.SyncTransforms();
+                for(var tick=0;tick<20;tick++)
+                {
+                    sender.GetComponent<MNG_PlayerMotor>().ApplyDesiredVelocity(forward*initialSpeed,forward,MNG_InputOwner.Manager,sender.Ownership.Revision,Time.fixedDeltaTime);
+                    yield return new WaitForFixedUpdate();
+                    if(control.Carrier.IsValid && control.Carrier.Team==team && control.Carrier.Slot==3)break;
+                }
+                Assert.IsTrue(control.Carrier.IsValid && control.Carrier.Team==team && control.Carrier.Slot==3,"Fixture must own the real ball");
+                var executor=sender.GetComponent<MNG_PlayerSkillExecutor>();executor.enabled=true;
+                var receiverExecutor=receiver.GetComponent<MNG_PlayerSkillExecutor>();receiverExecutor.enabled=true;
+                var target=new Vector2(receiver.Body.position.x,receiver.Body.position.z);
+                var task=new MNG_PlayerTask {Skill=MNG_PlayerSkill.AimPass,ReceiverSlot=0,Target=target,
+                    Revision=1000,TaskId=4003,ParentCommandId=1000,ExpirySeconds=match.EpisodeElapsedSeconds+2,DirectedPass=true};
+                executor.RequestTaskV2(task);task.Skill=MNG_PlayerSkill.ReceivePass;task.TaskId=4000;receiverExecutor.RequestTaskV2(task);
+                var before=tracker.GetPassStrikeCount(team);var receivedBefore=tracker.GetIntendedReceptionCount(team);var rotation=sender.Body.rotation;
+                for(var tick=0;tick<50 && tracker.GetPassStrikeCount(team)==before;tick++)yield return new WaitForFixedUpdate();
+                Assert.AreEqual(before+1,tracker.GetPassStrikeCount(team),$"One physical strike for {team}/{side}");
+                Assert.Less(Quaternion.Angle(rotation,sender.Body.rotation),110,"Only enough turn to clear the kicker body, not full target alignment");
+                Assert.IsFalse(control.TryKick(team,3,new Vector3(target.x,0,target.y),20,MNG_KickIntent.Pass,out _),"Cannot repeat a pass after releasing possession");
+                var closest=float.PositiveInfinity;var closestSpeed=0f;var everOwned=false;
+                var strikeSpeed=ball.linearVelocity.magnitude;
+                for(var tick=0;tick<100 && tracker.GetIntendedReceptionCount(team)==receivedBefore;tick++)
+                {
+                    yield return new WaitForFixedUpdate();
+                    var distance=receiver.KickPlate.DistanceToDribblePosition(ball.position);
+                    if(distance<closest){closest=distance;closestSpeed=(ball.linearVelocity-receiver.Body.linearVelocity).magnitude;}
+                    everOwned|=control.Carrier.IsValid && control.Carrier.Team==team && control.Carrier.Slot==0;
+                }
+                var diagnostic=$"PS CONTACT team={team} side={side} distance={passDistance} initialSpeed={initialSpeed} strikeSpeed={strikeSpeed:F3} closestPlate={closest:F3} relativeSpeedAtClosest={closestSpeed:F3} everOwned={everOwned} received={tracker.GetIntendedReceptionCount(team)-receivedBefore} ball={ball.position:F3} receiver={receiver.Body.position:F3} task={receiverExecutor.CurrentTask.Skill}";
+                Debug.Log(diagnostic);
+                if(tracker.GetIntendedReceptionCount(team)!=receivedBefore+1)failures.Add(diagnostic);
+                sender.KickPlate.ResetPlate();
+                foreach(var plateCollider in sender.GetComponentsInChildren<Collider>())
+                    Assert.IsFalse(Physics.GetIgnoreCollision(plateCollider,ball.GetComponent<Collider>()),"Reset restores foot/ball collision");
+            }
+            Assert.That(failures,Is.Empty,string.Join("\n",failures));
+#else
+            yield break;
+#endif
+        }
         [SetUp] public void Setup() { stepping = Academy.Instance.AutomaticSteppingEnabled; scale = Time.timeScale; }
         [TearDown] public void Cleanup() { Academy.Instance.AutomaticSteppingEnabled = stepping; Time.timeScale = scale; }
 

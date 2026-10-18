@@ -71,8 +71,8 @@ namespace MachineLearning.Soccer.Manager.Exhibition
             Text(card,team==0?"RED":"NAVY",46,96,672,150,125,5);Box(card,46,255,672,1,new Color(1,1,1,.28f));
             Text(card,L("teamModel"),46,282,672,25,21,2);
             var pick=Button(card,"",46,320,672,129,()=>PickModel(team,0));pick.style.backgroundColor=new Color(.039f,.047f,.082f,.83f);Border(pick,new Color(1,1,1,.26f),1);
-            Text(pick,ModelName(model),21,17,570,57,42,4);
-            Text(pick,model<6?"MS3-v3 · "+Kind(model):Kind(model),21,80,570,30,20,1,C("#D6D9E1"));
+            Text(pick,ModelName(model),21,17,570,57,model==ExhibitionAssets.PassModelId?30:42,4);
+            Text(pick,ExhibitionAssets.IsNeural(model)?"MS3-v3 · "+Kind(model):Kind(model),21,80,570,30,20,1,C("#D6D9E1"));
             Chevron(pick,613,51,26,Color.white);
             var caption=Text(card,L(team==0?"redCaption":"navyCaption"),46,471,672,60,20,1);
             caption.style.whiteSpace=WhiteSpace.Normal;
@@ -81,7 +81,7 @@ namespace MachineLearning.Soccer.Manager.Exhibition
         {
             CloseModal();pickerTeam=team;pickerGroup=group;modalKind="models";
             modal=Box(stage,0,0,1920,1080,new Color(.012f,.04f,.024f,.79f));
-            float h=English?538:499,y=(1080-h)/2;
+            float h=group==0?604:English?538:499,y=(1080-h)/2;
             var panel=Box(modal,240,y,1440,h,Paper);
             Box(panel,0,0,1440,73,Ink);
             Text(panel,(team==0?"RED":"NAVY")+" · "+L("selectModel"),38,0,1250,73,26,3);
@@ -90,15 +90,30 @@ namespace MachineLearning.Soccer.Manager.Exhibition
             Button(panel,L("stepTab"),720-tabWidth-20,78,tabWidth,68,()=>PickModel(team,0),group==0?"selected":"option");
             Button(panel,L("referenceTab"),740,78,tabWidth,68,()=>PickModel(team,1),group==1?"selected":"option");
             Text(panel,L(group==0?"stepsNotice":"referenceNotice"),38,155,1364,42,20,1,C("#4D6143"));
-            int count=group==0?6:4,cols=group==0?3:2;float gap=11,w=(1364-gap*(cols-1))/cols,ch=(h-226)/2;
+            int count=group==0?6:4,cols=group==0?3:2;
+            float gap=11,w=(1364-gap*(cols-1))/cols,rows=Mathf.Ceil(count/(float)cols),ch=group==0?116:(h-226-gap*(rows-1))/rows;
             for(int i=0;i<count;i++)
             {
-                int id=group==0?i:i+6;
+                int id=group==0?ExhibitionAssets.NeuralIds[i]:i+6;
                 var b=Button(panel,"",38+(i%cols)*(w+gap),208+(i/cols)*(ch+11),w,ch-4,()=>{if(team==0)RedModel=id;else NavyModel=id;Setup();},(team==0?RedModel:NavyModel)==id?"selected":"option");
+                b.name="model-"+id;
                 var col=(team==0?RedModel:NavyModel)==id?Color.white:Ink;
-                Text(b,ModelName(id,true),20,7,w-40,50,group==0?33.6f:30,4,col);
+                Text(b,ModelName(id,true),20,7,w-40,50,id==ExhibitionAssets.PassModelId?26:group==0?33.6f:30,4,col);
                 var details=Text(b,id<6?ExhibitionAssets.Steps[id].ToString("N0",System.Globalization.CultureInfo.InvariantCulture)+" steps":L("description."+ExhibitionAssets.Ids[id]),20,62,w-40,ch-72,20,1,col);
                 details.style.whiteSpace=WhiteSpace.Normal;
+            }
+            if(group==0)
+            {
+                int id=ExhibitionAssets.PassModelId;
+                bool selected=(team==0?RedModel:NavyModel)==id;
+                var pass=Button(panel,"",38,470,1364,106,()=>{if(team==0)RedModel=id;else NavyModel=id;Setup();},selected?"selected":"option");
+                pass.name="model-"+id;
+                var color=selected?Color.white:Ink;
+                Box(pass,0,0,6,106,selected?Lime:C("#78964B"));
+                Text(pass,ModelName(id,true),26,10,700,46,30,4,color);
+                Text(pass,L("description."+ExhibitionAssets.Ids[id]),26,60,700,30,19,1,color);
+                Text(pass,"2,401,834 steps",940,22,365,48,23,2,color,true);
+                Chevron(pass,1317,43,20,color);
             }
         }
         void ShowImage(string kind,int page)
@@ -144,7 +159,8 @@ namespace MachineLearning.Soccer.Manager.Exhibition
                 float y=English?39+i*53:35+i*49;
                 Box(managers,13,y,4,44,C(i==0?"#F45667":"#809DFF"));
                 Text(managers,i==0?"RED":"NAVY",23,y,first-30,19,18,4);
-                Text(managers,Kind(i==0?RedModel:NavyModel)+" · "+ModelName(i==0?RedModel:NavyModel),23,y+21,first-26,20,15,1,C("#C5D1C2"));
+                var model=i==0?RedModel:NavyModel;
+                Text(managers,model==ExhibitionAssets.PassModelId?(English?"2.4M: Pass":"강화학습 · 240만 패스"):Kind(model)+" · "+ModelName(model),23,y+21,first-26,20,15,1,C("#C5D1C2"));
                 var d=Text(managers,"",first,y+7,second,30,16.3f,2);
                 var r=Text(managers,"0.000",first+second,y+7,mw-first-second-10,30,20.5f,3,C("#D1F69D"),true);
                 if(i==0){redDecision=d;redReward=r;}else{navyDecision=d;navyReward=r;}
@@ -192,8 +208,8 @@ namespace MachineLearning.Soccer.Manager.Exhibition
             Text(screen,match.RedScore==match.NavyScore?L("draw"):(match.RedScore>match.NavyScore?"RED":"NAVY")+" "+L("wins"),240,97,1440,74,61.2f,5,Ink,true);
             Text(screen,"RED",450,224,270,85,59.1f,5,C("#CA2A3E"),true);
             Text(screen,"NAVY",1200,224,270,85,59.1f,5,C("#25377D"),true);
-            Text(screen,ModelName(RedModel),430,319,310,34,21.5f,2,Ink,true);
-            Text(screen,ModelName(NavyModel),1180,319,310,34,21.5f,2,Ink,true);
+            Text(screen,ModelName(RedModel),430,319,310,34,RedModel==ExhibitionAssets.PassModelId?18:21.5f,2,Ink,true);
+            Text(screen,ModelName(NavyModel),1180,319,310,34,NavyModel==ExhibitionAssets.PassModelId?18:21.5f,2,Ink,true);
             Text(screen,$"{match.RedScore} : {match.NavyScore}",720,185,480,163,133,5,Ink,true);
             Text(screen,L("matchStats"),240,392,1440,38,22.8f,3,Ink,true);
             Stat("finalReward",rewards.GetCumulativeReward(Team.Red).ToString("+0.000;-0.000;0.000"),rewards.GetCumulativeReward(Team.Navy).ToString("+0.000;-0.000;0.000"),450,68,true);

@@ -1,0 +1,5 @@
+{
+  "name": "MNG5.Demo.Editor",
+  "references": ["MNG5.Demo", "MNG5.Runtime", "MNG5.Editor", "Soccer.Runtime", "Unity.InferenceEngine"],
+  "includePlatforms": ["Editor"]
+}

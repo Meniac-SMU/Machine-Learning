@@ -1,0 +1,5 @@
+{
+  "name": "MNG5.Editor",
+  "references": ["MNG5.Runtime", "MNG5.Learning", "MNG.Runtime", "Soccer.Runtime"],
+  "includePlatforms": ["Editor"]
+}

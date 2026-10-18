@@ -89,6 +89,15 @@ namespace MachineLearning.Soccer.Manager
         System.Random m_DiagnosticRandom;
         bool m_PassRepairMode;
         long m_LastObservationTick;
+        bool? m_PSRecipientsOverride;
+        public bool UsesPSRecipients => m_PSRecipientsOverride ?? MNG_PSPassing.Enabled;
+        public void ConfigurePSRecipients(bool enabled)
+        {
+            if (isActiveAndEnabled) throw new InvalidOperationException("Configure receiver ABI before activating the agent.");
+            m_PSRecipientsOverride = enabled;
+            GetComponent<BehaviorParameters>().BrainParameters.ActionSpec = enabled
+                ? ActionSpec.MakeDiscrete(6, 5) : ActionSpec.MakeDiscrete(6);
+        }
 
         public Team Team => team;
         public long PolicyDecisionCount => m_PolicyDecisionCount;
@@ -121,6 +130,13 @@ namespace MachineLearning.Soccer.Manager
                     $"Mask-count destination must contain {MNG_CommandMask.CommandCount} entries.",
                     nameof(destination));
             Array.Copy(m_AllMaskAvailability, destination, destination.Length);
+        }
+
+        protected override void OnEnable()
+        {
+            if (UsesPSRecipients)
+                GetComponent<BehaviorParameters>().BrainParameters.ActionSpec = ActionSpec.MakeDiscrete(6, 5);
+            base.OnEnable();
         }
 
         public override void Initialize()
@@ -194,6 +210,20 @@ namespace MachineLearning.Soccer.Manager
             if (!matchController.TryGetSnapshot(out var snapshot))
                 throw new InvalidOperationException("MNG snapshot is unavailable while writing the action mask.");
             MNG_CommandMask.Write(snapshot, team, matchController.GetDecisionState(team), m_CommandMaskBuffer);
+            if (UsesPSRecipients)
+            {
+                var carrier = snapshot.Carrier.IsValid && snapshot.Carrier.Team == team ? snapshot.Carrier.Slot : -1;
+                var ready = carrier >= 0 && !snapshot.GetPlayer(team, carrier).IsHuman
+                    && matchController.GetDecisionState(team).ControlMask[carrier] && snapshot.GetPlayer(team, carrier).KickCooldownSeconds <= 0;
+                actionMask.SetActionEnabled(1, 0, true);
+                for (int slot = 0; slot < 4; slot++)
+                {
+                    var valid = ready && MNG_PSPassing.Valid(snapshot, team, carrier, slot)
+                        && matchController.GetDecisionState(team).ControlMask[slot];
+                    actionMask.SetActionEnabled(1, slot + 1, valid);
+                    if (valid) m_CommandMaskBuffer[1] = true;
+                }
+            }
             if (matchController.UseRuntimeV2)
                 matchController.GetComponent<MNG_V2Trace>()?.RecordPassContext(snapshot, team, matchController.GetDecisionState(team));
             if (m_PassRepairMode)
@@ -222,7 +252,7 @@ namespace MachineLearning.Soccer.Manager
 
         public override void OnActionReceived(ActionBuffers actions)
         {
-            if (actions.DiscreteActions.Length != 1)
+            if (actions.DiscreteActions.Length != (UsesPSRecipients ? 2 : 1))
                 throw new InvalidOperationException("MNG policy contract v1 requires one discrete branch.");
 
             var rawCommand = actions.DiscreteActions[0];
@@ -250,7 +280,7 @@ namespace MachineLearning.Soccer.Manager
                     decision,
                     requested)
                 : requested;
-            matchController.AcceptPolicyCommand(team, effective);
+            matchController.AcceptPolicyCommand(team, effective, UsesPSRecipients ? actions.DiscreteActions[1] : 0);
             if (matchController.UseRuntimeV2)
                 matchController.GetComponent<MNG_V2Trace>()?.RecordPolicyDecision(team,
                     m_LastObservationTick, requested, effective, m_CommandMaskBuffer);

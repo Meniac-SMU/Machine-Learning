@@ -1,0 +1,2 @@
+using UnityEditor;using UnityEngine;using System.Linq;using System.IO;
+namespace MachineLearning.Soccer.Manager5v5.Editor { public static class FivePitchInspect { public static void Run(){var m=AssetDatabase.LoadAllAssetsAtPath("Assets/Hayq Art/GrantStadium/Meshes/Props/Stadium_Props/SM_Football_Field.fbx").OfType<Mesh>().First();Debug.Log("PITCH_BOUNDS "+m.bounds);for(int i=0;i<8;i++)Debug.Log("PITCH_V "+m.vertices[i].ToString("F6")+" UV "+m.uv[i]);EditorApplication.Exit(0);}}}

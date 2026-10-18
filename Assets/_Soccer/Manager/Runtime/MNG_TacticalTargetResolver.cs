@@ -61,7 +61,6 @@ namespace MachineLearning.Soccer.Manager
         {
             if (carrierSlot < 0 || carrierSlot >= 4 || receiverSlot < 0 || receiverSlot >= 4 || carrierSlot == receiverSlot) return false;
             var sign = team == Team.Red ? 1f : -1f;
-            if (Vector2.Distance(snapshot.BallPosition, new Vector2(sign * snapshot.FieldHalfLength, 0)) <= MaximumShotDistance) return false;
             var carrier = snapshot.GetPlayer(team, carrierSlot);
             var receiver = snapshot.GetPlayer(team, receiverSlot);
             if (!carrier.Active || !receiver.Active || receiver.IsHuman || (receiver.Position.x - carrier.Position.x) * sign <= 0f) return false;

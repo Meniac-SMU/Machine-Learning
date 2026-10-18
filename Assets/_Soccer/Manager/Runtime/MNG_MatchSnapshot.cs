@@ -178,6 +178,7 @@ namespace MachineLearning.Soccer.Manager
         public int PendingPassReceiverSlot { get; set; } = -1;
         public float SecondsSincePossessionLoss { get; set; } = -1f;
         public bool HasPassTarget { get; set; }
+        public bool DirectedPass { get; set; }
         public bool HasShotTarget { get; set; }
         public int PrimaryPresserSlot { get; set; } = -1;
         public float PresserHoldUntilSeconds { get; set; }

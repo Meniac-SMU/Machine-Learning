@@ -1,0 +1,21 @@
+.hud-root { flex-grow: 1; }
+.score { align-self: center; margin-top: 18px; padding: 10px 24px; background-color: rgba(13, 21, 31, 0.92); color: rgb(245, 247, 250); font-size: 22px; -unity-font-style: bold; border-radius: 6px; }
+.heads { position: absolute; left: 0; right: 0; top: 0; bottom: 0; }
+.head-stamina { position: absolute; width: 40px; height: 5px; min-height: 0; max-height: 5px; margin: 0; padding: 0; }
+.head-stamina.red { border-bottom-width: 1px; border-bottom-color: rgb(238, 66, 76); }
+.head-stamina.navy { border-bottom-width: 1px; border-bottom-color: rgb(98, 159, 245); }
+.head-stamina .unity-progress-bar__container { height: 4px; min-height: 0; max-height: 4px; margin: 0; padding: 0; flex-shrink: 1; }
+.head-stamina .unity-progress-bar__background { flex-grow: 1; height: 4px; min-height: 0; max-height: 4px; margin: 0; padding: 0; border-width: 0; background-color: rgb(20, 24, 30); border-radius: 1px; }
+.head-stamina .unity-progress-bar__progress { height: 4px; min-height: 0; max-height: 4px; margin: 0; padding: 0; border-width: 0; background-color: rgb(69, 181, 111); }
+.head-stamina .unity-progress-bar__title { display: none; }
+.tired .unity-progress-bar__progress { background-color: rgb(184, 133, 32); }
+.exhausted .unity-progress-bar__progress { background-color: rgb(181, 54, 54); }
+.controls { position: absolute; bottom: 14px; left: 24px; right: 24px; flex-direction: row; justify-content: space-between; color: white; font-size: 16px; }
+.team-control, .match-control { background-color: rgba(13, 21, 31, 0.93); border-radius: 6px; padding: 10px 16px; min-width: 250px; }
+.team-control .unity-base-field__label { min-width: 48px; }
+.team-control .unity-base-popup-field__input { min-width: 170px; }
+.buttons { flex-direction: row; justify-content: center; margin-top: 6px; }
+.buttons Button { min-width: 110px; height: 30px; }
+.buttons Button, .team-control .unity-base-popup-field__input { background-color: rgb(39, 55, 73); color: rgb(247, 249, 252); }
+.buttons Button:hover, .team-control .unity-base-popup-field__input:hover { background-color: rgb(56, 77, 100); }
+.buttons Button:focus, .team-control .unity-base-popup-field__input:focus { border-color: rgb(117, 176, 244); }

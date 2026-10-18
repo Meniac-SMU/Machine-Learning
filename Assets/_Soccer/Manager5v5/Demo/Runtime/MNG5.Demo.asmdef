@@ -1,0 +1,5 @@
+{
+  "name": "MNG5.Demo",
+  "references": ["MNG5.Runtime", "Soccer.Runtime", "Unity.InferenceEngine", "Unity.InputSystem", "Unity.Cinemachine"],
+  "autoReferenced": true
+}

@@ -39,6 +39,11 @@ namespace MachineLearning.Soccer.Manager
         Vector2 m_EmergencySeparationDirection;
         long m_ReceivingTaskId = -1;
         Vector2 m_ReceiveApproach;
+        Vector2 m_StallLastPosition;
+        float m_StallBlockedSeconds, m_StallEscapeRemaining;
+        Vector2 m_StallRetreatDirection;
+        bool m_WasStallRecovering;
+        public int StallUnstickAttempts { get; private set; }
 
         public MNG_PlayerTask CurrentTask => m_Task;
         readonly MNG_TaskLifetime m_Lifetime = new MNG_TaskLifetime();
@@ -209,6 +214,9 @@ namespace MachineLearning.Soccer.Manager
                 return;
             }
 
+            if (TryRecoverStationaryBall(revision))
+            { ReportExecutionSource(MNG_ActionSource.SafetyEscape); return; }
+
             if (ballControl != null
                 && ballControl.TryGetBoundaryEscapePlan(
                     m_Avatar.Team,
@@ -293,6 +301,56 @@ namespace MachineLearning.Soccer.Manager
                         MoveWhileRespectingRoleFacing(m_Task.Target, revision);
                     break;
             }
+        }
+
+        bool TryRecoverStationaryBall(long revision)
+        {
+            if (!matchController.IsGlobalBallStallRecoveryActive || m_Avatar.Role == MNG_PlayerRole.Keeper)
+            {
+                m_WasStallRecovering = false;
+                m_StallBlockedSeconds = m_StallEscapeRemaining = 0f;
+                return false;
+            }
+            if (m_Avatar.KickPlate.IsStrikeActive) return false;
+            var position = new Vector2(m_Avatar.Body.position.x, m_Avatar.Body.position.z);
+            var ball = matchController.Snapshot.BallPosition;
+            var toBall = ball - position;
+            var forward = new Vector2(m_Avatar.transform.forward.x, m_Avatar.transform.forward.z);
+            var dt = Time.fixedDeltaTime;
+            if (!m_WasStallRecovering)
+            { m_WasStallRecovering = true; m_StallLastPosition = position; }
+            var progressed = Vector2.Distance(position, m_StallLastPosition) > .40f * dt;
+            m_StallLastPosition = position;
+            m_StallBlockedSeconds = toBall.magnitude < 6f && !progressed
+                ? m_StallBlockedSeconds + dt : 0f;
+            if (m_StallEscapeRemaining <= 0 && m_StallBlockedSeconds >= 1f)
+            {
+                m_StallRetreatDirection = -forward;
+                m_StallEscapeRemaining = .70f;
+                m_StallBlockedSeconds = 0f;
+                StallUnstickAttempts++;
+            }
+            m_Motor.ManagerPace = 1f;
+            if (m_StallEscapeRemaining > 0)
+            {
+                var side = new Vector2(-m_StallRetreatDirection.y, m_StallRetreatDirection.x);
+                var sideSign = ((m_Avatar.Slot + (int)m_Avatar.Team + StallUnstickAttempts) & 1) == 0 ? 1f : -1f;
+                var velocity = m_StallEscapeRemaining > .42f
+                    ? m_StallRetreatDirection * 2.5f : side * sideSign * 2.5f;
+                m_StallEscapeRemaining = Mathf.Max(0, m_StallEscapeRemaining - dt);
+                m_Motor.ApplyDesiredVelocity(velocity, toBall, MNG_InputOwner.Manager, revision, dt);
+                return true;
+            }
+            var carrier = ballControl.Carrier;
+            var controlled = carrier.IsValid && carrier.Team == m_Avatar.Team && carrier.Slot == m_Avatar.Slot
+                && m_Avatar.KickPlate.IsAtDribblePosition(new Vector3(ball.x, 0, ball.y));
+            // Use ordinary motor/physical contact only. No ball impulse, teleport,
+            // forced ownership or opponent collision exemption is introduced.
+            var desired = controlled ? forward * 3f
+                : toBall.normalized * Mathf.Clamp(toBall.magnitude * 2f, 1.5f, m_Motor.Profile.MaximumPlayerSpeed);
+            m_Motor.ApplyDesiredVelocity(desired, controlled ? forward : toBall,
+                MNG_InputOwner.Manager, revision, dt);
+            return true;
         }
 
         void MoveWhileRespectingRoleFacing(Vector2 target, long revision)
@@ -609,6 +667,9 @@ namespace MachineLearning.Soccer.Manager
 
         public void ResetForRound()
         {
+            m_WasStallRecovering = false;
+            m_StallBlockedSeconds = m_StallEscapeRemaining = 0f;
+            StallUnstickAttempts = 0;
             m_ReceivingTaskId = -1;
             m_Lifetime.Reset();
             m_LatestTaskRevision = -1;
@@ -820,7 +881,7 @@ namespace MachineLearning.Soccer.Manager
             float exitSpeed,
             MNG_KickIntent intent)
         {
-            if (m_Task.PassBuildRule && !matchController.IsPassBuildExecutionValid(m_Avatar.Team, m_Avatar.Slot, m_Task.ReceiverSlot, target2))
+            if (m_Task.PassBuildRule && !matchController.IsPassBuildExecutionValid(m_Avatar.Team, m_Avatar.Slot, m_Task.ReceiverSlot, target2, m_Task.DirectedPass))
             {
                 if (IsV2) CancelV2(MNG_TaskResultKind.CancelledMatchState);
                 else { m_Task = default; m_KickConsumed = true; }
@@ -833,6 +894,8 @@ namespace MachineLearning.Soccer.Manager
             var kickDirection = target - ballPosition;
             kickDirection.y = 0f;
             if (kickDirection.sqrMagnitude <= 0.0001f) return;
+            if (MNG_PSPassing.ContactPassEnabled && intent == MNG_KickIntent.Pass && !m_Task.CommonRule)
+                exitSpeed = MNG_PSPassing.ContactExitSpeed(kickDirection.magnitude,ballControl.GetComponent<Rigidbody>().linearDamping);
             kickDirection.Normalize();
             var approach = ballPosition - kickDirection * MNG_KickPlate.DribbleAnchorForward;
             var approach2 = new Vector2(approach.x, approach.z);
@@ -841,6 +904,25 @@ namespace MachineLearning.Soccer.Manager
             var carrier = ballControl != null ? ballControl.Carrier : MNG_CarrierRef.None;
             var ownsBall = carrier.IsValid && carrier.Team == m_Avatar.Team
                 && carrier.Slot == m_Avatar.Slot;
+            // A selected pass may use a side-foot/backheel contact without rotating
+            // the entire carrier. Ownership, cooldown, plate extension and actual
+            // collision still govern the strike; the receiver may miss/intercept.
+            // This optional skill applies equally to both managers and never selects
+            // a command or receiver. Shots retain their existing aiming contract.
+            if (MNG_PSPassing.ContactPassEnabled && intent == MNG_KickIntent.Pass && !m_Task.CommonRule && ownsBall)
+            {
+                var forward = new Vector2(m_Avatar.transform.forward.x, m_Avatar.transform.forward.z).normalized;
+                var velocity=m_Avatar.Body.linearVelocity;
+                var speed=Mathf.Max(.5f,new Vector2(velocity.x,velocity.z).magnitude);
+                m_Motor.ApplyDesiredVelocity(forward * speed, forward,
+                    MNG_InputOwner.Manager, m_Avatar.Ownership.Revision, Time.fixedDeltaTime);
+                if (!m_KickConsumed && ballControl.TryKick(m_Avatar.Team, m_Avatar.Slot, target, exitSpeed, intent, out _))
+                {
+                    m_KickConsumed = true;
+                    if (IsV2) m_Lifetime.ConsumeKick();
+                }
+                return;
+            }
             // Turn the occupied plate with the ball; moving toward a new approach point
             // first would pull the carrier away from its own ball during a lateral kick.
             if (approachDistance <= 0.75f || ownsBall)
@@ -913,5 +995,6 @@ namespace MachineLearning.Soccer.Manager
 
         static bool IsKickSkill(MNG_PlayerSkill skill)
             => skill == MNG_PlayerSkill.AimPass || skill == MNG_PlayerSkill.AimShot;
+
     }
 }

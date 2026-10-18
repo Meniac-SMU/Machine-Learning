@@ -1,0 +1,15 @@
+{
+  "file": "C:\\GitHub\\Navy-Cube-Robot\\Navy_Cube_Robot_v01.blend",
+  "source": "C:\\GitHub\\Red-Cube-Robot\\Red_Cube_Robot_v03.blend",
+  "geometry_identical": true,
+  "geometry_sha256": "2152ac1a42422ff85b51b997eb779cda172b39e29dc6484ecd290fbabb969b66",
+  "triangles": 5768,
+  "mesh_objects": 1,
+  "material_slots": 2,
+  "colors": {
+    "body_and_wheel_caps": "#18356A",
+    "kickplate_and_rear_trim": "#101F3B",
+    "eye_emission_base": "#48A5F5"
+  },
+  "eye_light_spill": false
+}
