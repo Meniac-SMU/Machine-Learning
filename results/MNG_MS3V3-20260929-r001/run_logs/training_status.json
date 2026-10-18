@@ -1,0 +1,30 @@
+{
+    "MNG_ManagerV2": {
+        "elo": 1186.588559757126,
+        "checkpoints": [
+            {
+                "steps": 2001834,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\MNG_MS3V3-20260929-r001\\MNG_ManagerV2\\MNG_ManagerV2-2001834.onnx",
+                "reward": null,
+                "creation_time": 1790615057.7897654,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\MNG_MS3V3-20260929-r001\\MNG_ManagerV2\\MNG_ManagerV2-2001834.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 2001834,
+            "file_path": "C:\\GitHub\\Machine-Learning\\results\\MNG_MS3V3-20260929-r001\\MNG_ManagerV2.onnx",
+            "reward": null,
+            "creation_time": 1790615057.7897654,
+            "auxillary_file_paths": [
+                "C:\\GitHub\\Machine-Learning\\results\\MNG_MS3V3-20260929-r001\\MNG_ManagerV2\\MNG_ManagerV2-2001834.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.2.0.dev0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

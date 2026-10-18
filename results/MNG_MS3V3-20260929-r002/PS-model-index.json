@@ -1,0 +1,141 @@
+{
+  "run": "MNG_MS3V3-20260929-r002",
+  "parentRun": "MNG_MS3V3-20260925-r002",
+  "parentStep": 2001834,
+  "stages": [
+    {
+      "stage": "PS2-pressure",
+      "additionalEnvironmentSteps": 0,
+      "artifact": "Logs/MNG-Rebuild/PS-20260929/bc-v3/PS2-update-500.onnx",
+      "sha256": "2a9a0e23271d4d898162a97f1d6ac232729de44cc7773d47ea9957e2f8cc1a39",
+      "gameplaySuccessJudged": false
+    },
+    {
+      "stage": "PS2-mixed",
+      "additionalEnvironmentSteps": 0,
+      "artifact": "Logs/MNG-Rebuild/PS-20260929/bc-v3/PS2-update-1500.onnx",
+      "sha256": "16882f20d2eddd2cb1bb17410714e10948723746f8687ac440d6211afd7f15c6",
+      "gameplaySuccessJudged": false
+    },
+    {
+      "stage": "PS2-selected",
+      "additionalEnvironmentSteps": 0,
+      "artifact": "results/MNG_MS3V3-20260929-r002/MNG_ManagerV2/PS2-BC.onnx",
+      "sha256": "9bc27621c1cb82e03346320bca457cbda5b4bdb91e4a37e46f38d08007f27558",
+      "gameplaySuccessJudged": false
+    },
+    {
+      "stage": "PS3",
+      "targetAdditional": 100000,
+      "step": 2104259,
+      "additionalSteps": 102425,
+      "optimizerUpdates": 1131.0,
+      "validation": {
+        "n": 2667,
+        "positives": 18,
+        "legalUnnecessary": 79,
+        "positivePass": 0.004363782238215208,
+        "unnecessaryPass": 0.04193812236189842,
+        "preservationKL": 0.029079124331474304,
+        "illegalProbabilityMax": 0.0
+      },
+      "artifacts": {
+        "pt": {
+          "path": "results/MNG_MS3V3-20260929-r002/MNG_ManagerV2/MNG_ManagerV2-2104259.pt",
+          "sha256": "acc2f9c7526591e62585f0fd1332e7ef009fb141772ef3a56318912e5e50e592"
+        },
+        "onnx": {
+          "path": "results/MNG_MS3V3-20260929-r002/MNG_ManagerV2/MNG_ManagerV2-2104259.onnx",
+          "sha256": "df9945d1964475e0b7b03ce9d0bf76d7f907b7a4c10b04ad0de70f4c28fbe0fd"
+        }
+      },
+      "gameplaySuccessJudged": false
+    },
+    {
+      "stage": "PS4",
+      "targetAdditional": 200000,
+      "step": 2203730,
+      "additionalSteps": 201896,
+      "optimizerUpdates": 2268.0,
+      "validation": {
+        "n": 2667,
+        "positives": 18,
+        "legalUnnecessary": 79,
+        "positivePass": 0.23584941029548645,
+        "unnecessaryPass": 0.12002860754728317,
+        "preservationKL": 0.03050977550446987,
+        "illegalProbabilityMax": 0.0
+      },
+      "artifacts": {
+        "pt": {
+          "path": "results/MNG_MS3V3-20260929-r002/MNG_ManagerV2/MNG_ManagerV2-2203730.pt",
+          "sha256": "9505b5bd81b7ddefcff4be4bd525e4a08873841afd1a2f18c4f604e893160bd1"
+        },
+        "onnx": {
+          "path": "results/MNG_MS3V3-20260929-r002/MNG_ManagerV2/MNG_ManagerV2-2203730.onnx",
+          "sha256": "871ece5541ed4d115f0e0c66daabf68b8d90b834bf008226c55c4a21dbbf4b2f"
+        }
+      },
+      "gameplaySuccessJudged": false
+    },
+    {
+      "stage": "PS4",
+      "targetAdditional": 300000,
+      "step": 2301868,
+      "additionalSteps": 300034,
+      "optimizerUpdates": 3351.0,
+      "validation": {
+        "n": 2667,
+        "positives": 18,
+        "legalUnnecessary": 79,
+        "positivePass": 0.25645533204078674,
+        "unnecessaryPass": 0.1304808259010315,
+        "preservationKL": 0.035107772797346115,
+        "illegalProbabilityMax": 0.0
+      },
+      "artifacts": {
+        "pt": {
+          "path": "results/MNG_MS3V3-20260929-r002/MNG_ManagerV2/MNG_ManagerV2-2301868.pt",
+          "sha256": "f0880829dcb20c3faace837647aeb821a61f85b6f9ab7c0c5439c4b0a38eff55"
+        },
+        "onnx": {
+          "path": "results/MNG_MS3V3-20260929-r002/MNG_ManagerV2/MNG_ManagerV2-2301868.onnx",
+          "sha256": "cf58f3a012a94f23a41a07bf282672000f2f175ab3fa4531a59665b4fb4cf669"
+        }
+      },
+      "gameplaySuccessJudged": false
+    },
+    {
+      "stage": "PS4",
+      "targetAdditional": 400000,
+      "step": 2403429,
+      "additionalSteps": 401595,
+      "optimizerUpdates": 4473.0,
+      "validation": {
+        "n": 2667,
+        "positives": 18,
+        "legalUnnecessary": 79,
+        "positivePass": 0.2630743682384491,
+        "unnecessaryPass": 0.13265956938266754,
+        "preservationKL": 0.034836698323488235,
+        "illegalProbabilityMax": 0.0
+      },
+      "artifacts": {
+        "pt": {
+          "path": "results/MNG_MS3V3-20260929-r002/MNG_ManagerV2/MNG_ManagerV2-2403429.pt",
+          "sha256": "e534ff533a732f6ec8b01927c344764d0259830a1faeaa99c6239a025e8696c2"
+        },
+        "onnx": {
+          "path": "results/MNG_MS3V3-20260929-r002/MNG_ManagerV2/MNG_ManagerV2-2403429.onnx",
+          "sha256": "284372f8305f76224376d0fc36dd47ee187750ec56189b62618b51443fb19c57"
+        }
+      },
+      "gameplaySuccessJudged": true,
+      "gameplaySuccess": false
+    }
+  ],
+  "exhibitionAdded": false,
+  "status": "completed-quality-failed",
+  "evaluationReport": "Logs/MNG-Rebuild/PS-20260929/candidate-400k/report.json",
+  "completion": "Logs/MNG-Rebuild/PS-20260929/completion.json"
+}

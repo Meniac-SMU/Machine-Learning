@@ -1,0 +1,7 @@
+{"event": "restored", "step": 2400000, "optimizerUpdates": 27888, "policySha": "cc6b1627d5e553e95b5a2f07bbb96f150d9029c3d7480011c9edc36582181347"}
+{"event": "learning-exposure", "start": 2400000, "end": 2400101, "team": 1, "learnerTransitions": 101, "opponentTransitions": 102}
+{"event": "learning-exposure", "start": 2400101, "end": 2400206, "team": 1, "learnerTransitions": 105, "opponentTransitions": 105}
+{"event": "learning-exposure", "start": 2400206, "end": 2400310, "team": 1, "learnerTransitions": 104, "opponentTransitions": 104}
+{"event": "learning-exposure", "start": 2400310, "end": 2400413, "team": 1, "learnerTransitions": 103, "opponentTransitions": 105}
+{"event": "learning-exposure", "start": 2400413, "end": 2400516, "team": 1, "learnerTransitions": 103, "opponentTransitions": 103}
+{"event": "saved", "step": 2400619, "optimizerUpdates": 27888, "sha256": "5252c020de73c0a7159d4a5c67b4ca04b342cde0118a59669c32df02533bd7ce"}

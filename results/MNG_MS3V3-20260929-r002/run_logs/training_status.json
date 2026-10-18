@@ -1,0 +1,102 @@
+{
+    "MNG_ManagerV2": {
+        "checkpoints": [
+            {
+                "steps": 2005930,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\MNG_MS3V3-20260929-r002\\MNG_ManagerV2\\MNG_ManagerV2-2005930.onnx",
+                "reward": null,
+                "creation_time": 1790615764.1885872,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\MNG_MS3V3-20260929-r002\\MNG_ManagerV2\\MNG_ManagerV2-2005930.pt"
+                ]
+            },
+            {
+                "steps": 2099904,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\MNG_MS3V3-20260929-r002\\MNG_ManagerV2\\MNG_ManagerV2-2099904.onnx",
+                "reward": null,
+                "creation_time": 1790631424.096916,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\MNG_MS3V3-20260929-r002\\MNG_ManagerV2\\MNG_ManagerV2-2099904.pt"
+                ]
+            },
+            {
+                "steps": 2104259,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\MNG_MS3V3-20260929-r002\\MNG_ManagerV2\\MNG_ManagerV2-2104259.onnx",
+                "reward": null,
+                "creation_time": 1790631482.3465393,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\MNG_MS3V3-20260929-r002\\MNG_ManagerV2\\MNG_ManagerV2-2104259.pt"
+                ]
+            },
+            {
+                "steps": 2199990,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\MNG_MS3V3-20260929-r002\\MNG_ManagerV2\\MNG_ManagerV2-2199990.onnx",
+                "reward": null,
+                "creation_time": 1790633366.617819,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\MNG_MS3V3-20260929-r002\\MNG_ManagerV2\\MNG_ManagerV2-2199990.pt"
+                ]
+            },
+            {
+                "steps": 2203730,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\MNG_MS3V3-20260929-r002\\MNG_ManagerV2\\MNG_ManagerV2-2203730.onnx",
+                "reward": null,
+                "creation_time": 1790633424.2301435,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\MNG_MS3V3-20260929-r002\\MNG_ManagerV2\\MNG_ManagerV2-2203730.pt"
+                ]
+            },
+            {
+                "steps": 2299899,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\MNG_MS3V3-20260929-r002\\MNG_ManagerV2\\MNG_ManagerV2-2299899.onnx",
+                "reward": null,
+                "creation_time": 1790635060.3507543,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\MNG_MS3V3-20260929-r002\\MNG_ManagerV2\\MNG_ManagerV2-2299899.pt"
+                ]
+            },
+            {
+                "steps": 2301868,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\MNG_MS3V3-20260929-r002\\MNG_ManagerV2\\MNG_ManagerV2-2301868.onnx",
+                "reward": -3.240000158548355,
+                "creation_time": 1790635081.397534,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\MNG_MS3V3-20260929-r002\\MNG_ManagerV2\\MNG_ManagerV2-2301868.pt"
+                ]
+            },
+            {
+                "steps": 2399950,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\MNG_MS3V3-20260929-r002\\MNG_ManagerV2\\MNG_ManagerV2-2399950.onnx",
+                "reward": -0.5314286583591075,
+                "creation_time": 1790636809.6675062,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\MNG_MS3V3-20260929-r002\\MNG_ManagerV2\\MNG_ManagerV2-2399950.pt"
+                ]
+            },
+            {
+                "steps": 2403429,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\MNG_MS3V3-20260929-r002\\MNG_ManagerV2\\MNG_ManagerV2-2403429.onnx",
+                "reward": 1.2969998560845852,
+                "creation_time": 1790636870.436949,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\MNG_MS3V3-20260929-r002\\MNG_ManagerV2\\MNG_ManagerV2-2403429.pt"
+                ]
+            }
+        ],
+        "elo": 1178.4152740892357,
+        "final_checkpoint": {
+            "steps": 2403429,
+            "file_path": "C:\\GitHub\\Machine-Learning\\results\\MNG_MS3V3-20260929-r002\\MNG_ManagerV2.onnx",
+            "reward": 1.2969998560845852,
+            "creation_time": 1790636870.436949,
+            "auxillary_file_paths": [
+                "C:\\GitHub\\Machine-Learning\\results\\MNG_MS3V3-20260929-r002\\MNG_ManagerV2\\MNG_ManagerV2-2403429.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.2.0.dev0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

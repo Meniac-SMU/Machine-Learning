@@ -1,0 +1,93 @@
+{
+    "MNG5_Manager_v5": {
+        "elo": 1200.0,
+        "checkpoints": [
+            {
+                "steps": 0,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V5-20261016-r001\\MNG5_Manager_v5\\MNG5_Manager_v5-0.onnx",
+                "reward": null,
+                "creation_time": 1792083675.0145853,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V5-20261016-r001\\MNG5_Manager_v5\\MNG5_Manager_v5-0.pt"
+                ]
+            },
+            {
+                "steps": 30167,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V5-20261016-r001\\MNG5_Manager_v5\\MNG5_Manager_v5-30167.onnx",
+                "reward": 0.5454545454545454,
+                "creation_time": 1792084388.2170386,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V5-20261016-r001\\MNG5_Manager_v5\\MNG5_Manager_v5-30167.pt"
+                ]
+            },
+            {
+                "steps": 49950,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V5-20261016-r001\\MNG5_Manager_v5\\MNG5_Manager_v5-49950.onnx",
+                "reward": 1.5,
+                "creation_time": 1792084896.1125028,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V5-20261016-r001\\MNG5_Manager_v5\\MNG5_Manager_v5-49950.pt"
+                ]
+            },
+            {
+                "steps": 99973,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V5-20261016-r001\\MNG5_Manager_v5\\MNG5_Manager_v5-99973.onnx",
+                "reward": -0.6666666666666666,
+                "creation_time": 1792085605.1857257,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V5-20261016-r001\\MNG5_Manager_v5\\MNG5_Manager_v5-99973.pt"
+                ]
+            },
+            {
+                "steps": 149946,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V5-20261016-r001\\MNG5_Manager_v5\\MNG5_Manager_v5-149946.onnx",
+                "reward": 0.9,
+                "creation_time": 1792086255.3527277,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V5-20261016-r001\\MNG5_Manager_v5\\MNG5_Manager_v5-149946.pt"
+                ]
+            },
+            {
+                "steps": 168948,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V5-20261016-r001\\MNG5_Manager_v5\\MNG5_Manager_v5-168948.onnx",
+                "reward": -0.47058823529411764,
+                "creation_time": 1792086532.2176175,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\MNG5_V5-20261016-r001\\MNG5_Manager_v5\\MNG5_Manager_v5-168948.pt"
+                ]
+            },
+            {
+                "steps": 173948,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\P9-V8-CUDA-verify-20261016\\MNG5_Manager_v5\\MNG5_Manager_v5-173948.onnx",
+                "reward": 1.0,
+                "creation_time": 1792086730.9201484,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\P9-V8-CUDA-verify-20261016\\MNG5_Manager_v5\\MNG5_Manager_v5-173948.pt"
+                ]
+            },
+            {
+                "steps": 180948,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\P9-V8-CUDA-verify-20261016\\MNG5_Manager_v5\\MNG5_Manager_v5-180948.onnx",
+                "reward": 0.41379310344827586,
+                "creation_time": 1792086921.8281608,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\P9-V8-CUDA-verify-20261016\\MNG5_Manager_v5\\MNG5_Manager_v5-180948.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 180948,
+            "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\P9-V8-CUDA-verify-20261016\\MNG5_Manager_v5.onnx",
+            "reward": 0.41379310344827586,
+            "creation_time": 1792086921.8281608,
+            "auxillary_file_paths": [
+                "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\P9-V8-CUDA-verify-20261016\\MNG5_Manager_v5\\MNG5_Manager_v5-180948.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.2.0.dev0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

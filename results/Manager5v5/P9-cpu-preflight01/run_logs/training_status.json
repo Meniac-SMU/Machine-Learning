@@ -1,0 +1,39 @@
+{
+    "MNG5_Manager_v2": {
+        "elo": 1200.0,
+        "checkpoints": [
+            {
+                "steps": 4551,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\P9-cpu-preflight01\\MNG5_Manager_v2\\MNG5_Manager_v2-4551.onnx",
+                "reward": -0.5,
+                "creation_time": 1791846579.5160227,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\P9-cpu-preflight01\\MNG5_Manager_v2\\MNG5_Manager_v2-4551.pt"
+                ]
+            },
+            {
+                "steps": 9510,
+                "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\P9-cpu-preflight01\\MNG5_Manager_v2\\MNG5_Manager_v2-9510.onnx",
+                "reward": 0.875,
+                "creation_time": 1791846714.3045878,
+                "auxillary_file_paths": [
+                    "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\P9-cpu-preflight01\\MNG5_Manager_v2\\MNG5_Manager_v2-9510.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 9510,
+            "file_path": "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\P9-cpu-preflight01\\MNG5_Manager_v2.onnx",
+            "reward": 0.875,
+            "creation_time": 1791846714.3045878,
+            "auxillary_file_paths": [
+                "C:\\GitHub\\Machine-Learning\\results\\Manager5v5\\P9-cpu-preflight01\\MNG5_Manager_v2\\MNG5_Manager_v2-9510.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.2.0.dev0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

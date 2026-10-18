@@ -1,0 +1,127 @@
+{"event": "restored", "step": 2400000, "optimizerUpdates": 27888, "policySha": "04492d8fc3c1c8ad019171b7009e757d23dac2130886e348ab566961aeb02764"}
+{"event": "learning-exposure", "start": 2400000, "end": 2400102, "team": 1, "learnerTransitions": 102, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2400102, "end": 2400205, "team": 1, "learnerTransitions": 103, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2400205, "end": 2400412, "team": 1, "learnerTransitions": 207, "opponentTransitions": 208}
+{"event": "learning-exposure", "start": 2400412, "end": 2400517, "team": 1, "learnerTransitions": 105, "opponentTransitions": 106}
+{"event": "opponent-swap", "step": 2400618, "team": 1, "opponent": 4, "poolCount": 8, "deployed": {"MNG5_Manager_v6?team=0": "116e1fd38a9db3688501d971b626289b850aa20e93c1f47c65251666a92f0084", "MNG5_Manager_v6?team=1": "04492d8fc3c1c8ad019171b7009e757d23dac2130886e348ab566961aeb02764"}}
+{"event": "learning-exposure", "start": 2400517, "end": 2400618, "team": 1, "learnerTransitions": 101, "opponentTransitions": 101}
+{"event": "learning-exposure", "start": 2400618, "end": 2400720, "team": 1, "learnerTransitions": 102, "opponentTransitions": 102}
+{"event": "learning-exposure", "start": 2400720, "end": 2400927, "team": 1, "learnerTransitions": 207, "opponentTransitions": 205}
+{"event": "learning-exposure", "start": 2400927, "end": 2401031, "team": 1, "learnerTransitions": 104, "opponentTransitions": 104}
+{"event": "learning-exposure", "start": 2401031, "end": 2401136, "team": 1, "learnerTransitions": 105, "opponentTransitions": 105}
+{"event": "learning-exposure", "start": 2401136, "end": 2401239, "team": 1, "learnerTransitions": 103, "opponentTransitions": 104}
+{"event": "learning-exposure", "start": 2401239, "end": 2401341, "team": 1, "learnerTransitions": 102, "opponentTransitions": 102}
+{"event": "learning-exposure", "start": 2401341, "end": 2401445, "team": 1, "learnerTransitions": 104, "opponentTransitions": 104}
+{"event": "learning-exposure", "start": 2401445, "end": 2401548, "team": 1, "learnerTransitions": 103, "opponentTransitions": 103}
+{"event": "opponent-swap", "step": 2401651, "team": 1, "opponent": -1, "poolCount": 8, "deployed": {"MNG5_Manager_v6?team=0": "04492d8fc3c1c8ad019171b7009e757d23dac2130886e348ab566961aeb02764", "MNG5_Manager_v6?team=1": "04492d8fc3c1c8ad019171b7009e757d23dac2130886e348ab566961aeb02764"}}
+{"event": "learning-exposure", "start": 2401548, "end": 2401651, "team": 1, "learnerTransitions": 103, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2401651, "end": 2401755, "team": 1, "learnerTransitions": 104, "opponentTransitions": 105}
+{"event": "learning-exposure", "start": 2401755, "end": 2401859, "team": 1, "learnerTransitions": 104, "opponentTransitions": 104}
+{"event": "learning-exposure", "start": 2401859, "end": 2401962, "team": 1, "learnerTransitions": 103, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2401962, "end": 2402066, "team": 1, "learnerTransitions": 104, "opponentTransitions": 104}
+{"event": "learning-exposure", "start": 2402066, "end": 2402168, "team": 1, "learnerTransitions": 102, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2402168, "end": 2402271, "team": 1, "learnerTransitions": 103, "opponentTransitions": 104}
+{"event": "learning-exposure", "start": 2402271, "end": 2402370, "team": 1, "learnerTransitions": 99, "opponentTransitions": 101}
+{"event": "learning-exposure", "start": 2402370, "end": 2402473, "team": 1, "learnerTransitions": 103, "opponentTransitions": 102}
+{"event": "learning-exposure", "start": 2402473, "end": 2402575, "team": 1, "learnerTransitions": 102, "opponentTransitions": 103}
+{"event": "opponent-swap", "step": 2402680, "team": 1, "opponent": 2, "poolCount": 8, "deployed": {"MNG5_Manager_v6?team=0": "467d0f5dc84af5b9f6226acb4be3907c2a63c839630ee3ca85a07ab1f55fdf9e", "MNG5_Manager_v6?team=1": "04492d8fc3c1c8ad019171b7009e757d23dac2130886e348ab566961aeb02764"}}
+{"event": "learning-exposure", "start": 2402575, "end": 2402680, "team": 1, "learnerTransitions": 105, "opponentTransitions": 105}
+{"event": "learning-exposure", "start": 2402680, "end": 2402783, "team": 1, "learnerTransitions": 103, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2402783, "end": 2402886, "team": 1, "learnerTransitions": 103, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2402886, "end": 2402988, "team": 1, "learnerTransitions": 102, "opponentTransitions": 102}
+{"event": "learning-exposure", "start": 2402988, "end": 2403090, "team": 1, "learnerTransitions": 102, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2403090, "end": 2403191, "team": 1, "learnerTransitions": 101, "opponentTransitions": 104}
+{"event": "learning-exposure", "start": 2403191, "end": 2403295, "team": 1, "learnerTransitions": 104, "opponentTransitions": 102}
+{"event": "learning-exposure", "start": 2403295, "end": 2403399, "team": 1, "learnerTransitions": 104, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2403399, "end": 2403608, "team": 1, "learnerTransitions": 209, "opponentTransitions": 203}
+{"event": "opponent-swap", "step": 2403711, "team": 1, "opponent": -1, "poolCount": 8, "deployed": {"MNG5_Manager_v6?team=0": "04492d8fc3c1c8ad019171b7009e757d23dac2130886e348ab566961aeb02764", "MNG5_Manager_v6?team=1": "04492d8fc3c1c8ad019171b7009e757d23dac2130886e348ab566961aeb02764"}}
+{"event": "learning-exposure", "start": 2403608, "end": 2403711, "team": 1, "learnerTransitions": 103, "opponentTransitions": 104}
+{"event": "learning-exposure", "start": 2403711, "end": 2403817, "team": 1, "learnerTransitions": 106, "opponentTransitions": 105}
+{"event": "learning-exposure", "start": 2403817, "end": 2403921, "team": 1, "learnerTransitions": 104, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2403921, "end": 2404027, "team": 1, "learnerTransitions": 106, "opponentTransitions": 105}
+{"event": "learning-exposure", "start": 2404027, "end": 2404129, "team": 1, "learnerTransitions": 102, "opponentTransitions": 102}
+{"event": "learning-exposure", "start": 2404129, "end": 2404232, "team": 1, "learnerTransitions": 103, "opponentTransitions": 101}
+{"event": "learning-exposure", "start": 2404232, "end": 2404335, "team": 1, "learnerTransitions": 103, "opponentTransitions": 102}
+{"event": "learning-exposure", "start": 2404335, "end": 2404439, "team": 1, "learnerTransitions": 104, "opponentTransitions": 106}
+{"event": "opponent-swap", "step": 2404543, "team": 0, "opponent": 0, "poolCount": 8, "deployed": {"MNG5_Manager_v6?team=0": "1bbceec4c75356ead6e67ded3d27c38e783ff4bbe0830c2e47ccbc75a2198069", "MNG5_Manager_v6?team=1": "241057b0123c17d1f996c6b5084b7818226b12b25583f5b3396a9220c76c1e36"}}
+{"event": "learning-exposure", "start": 2404439, "end": 2404543, "team": 1, "learnerTransitions": 104, "opponentTransitions": 105}
+{"event": "learning-exposure", "start": 2404543, "end": 2404647, "team": 0, "learnerTransitions": 104, "opponentTransitions": 104}
+{"event": "learning-exposure", "start": 2404647, "end": 2404751, "team": 0, "learnerTransitions": 104, "opponentTransitions": 104}
+{"event": "learning-exposure", "start": 2404751, "end": 2404853, "team": 0, "learnerTransitions": 102, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2404853, "end": 2404956, "team": 0, "learnerTransitions": 103, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2404956, "end": 2405000, "team": 0, "learnerTransitions": 44, "opponentTransitions": 102}
+{"event": "saved", "step": 2405000, "optimizerUpdates": 27936, "sha256": "1fc63b88e2d8cb382399a53878ad113532a58a41710891cead3a0bd1550a8b57"}
+{"event": "restored", "step": 2405000, "optimizerUpdates": 27936, "policySha": "1bbceec4c75356ead6e67ded3d27c38e783ff4bbe0830c2e47ccbc75a2198069"}
+{"event": "learning-exposure", "start": 2405000, "end": 2405102, "team": 0, "learnerTransitions": 102, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2405102, "end": 2405204, "team": 0, "learnerTransitions": 102, "opponentTransitions": 104}
+{"event": "learning-exposure", "start": 2405204, "end": 2405306, "team": 0, "learnerTransitions": 102, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2405306, "end": 2405411, "team": 0, "learnerTransitions": 105, "opponentTransitions": 102}
+{"event": "opponent-swap", "step": 2405620, "team": 0, "opponent": 3, "poolCount": 8, "deployed": {"MNG5_Manager_v6?team=1": "269ac4aa15da3c116c6882223019ec80624f10228947711c589167085ce1c5d6", "MNG5_Manager_v6?team=0": "1bbceec4c75356ead6e67ded3d27c38e783ff4bbe0830c2e47ccbc75a2198069"}}
+{"event": "learning-exposure", "start": 2405411, "end": 2405620, "team": 0, "learnerTransitions": 209, "opponentTransitions": 210}
+{"event": "learning-exposure", "start": 2405620, "end": 2405724, "team": 0, "learnerTransitions": 104, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2405724, "end": 2405826, "team": 0, "learnerTransitions": 102, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2405826, "end": 2405928, "team": 0, "learnerTransitions": 102, "opponentTransitions": 102}
+{"event": "learning-exposure", "start": 2405928, "end": 2406031, "team": 0, "learnerTransitions": 103, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2406031, "end": 2406135, "team": 0, "learnerTransitions": 104, "opponentTransitions": 101}
+{"event": "learning-exposure", "start": 2406135, "end": 2406239, "team": 0, "learnerTransitions": 104, "opponentTransitions": 104}
+{"event": "learning-exposure", "start": 2406239, "end": 2406343, "team": 0, "learnerTransitions": 104, "opponentTransitions": 104}
+{"event": "learning-exposure", "start": 2406343, "end": 2406446, "team": 0, "learnerTransitions": 103, "opponentTransitions": 102}
+{"event": "learning-exposure", "start": 2406446, "end": 2406548, "team": 0, "learnerTransitions": 102, "opponentTransitions": 103}
+{"event": "opponent-swap", "step": 2406651, "team": 0, "opponent": -1, "poolCount": 8, "deployed": {"MNG5_Manager_v6?team=1": "1bbceec4c75356ead6e67ded3d27c38e783ff4bbe0830c2e47ccbc75a2198069", "MNG5_Manager_v6?team=0": "1bbceec4c75356ead6e67ded3d27c38e783ff4bbe0830c2e47ccbc75a2198069"}}
+{"event": "learning-exposure", "start": 2406548, "end": 2406651, "team": 0, "learnerTransitions": 103, "opponentTransitions": 102}
+{"event": "learning-exposure", "start": 2406651, "end": 2406860, "team": 0, "learnerTransitions": 209, "opponentTransitions": 208}
+{"event": "learning-exposure", "start": 2406860, "end": 2406962, "team": 0, "learnerTransitions": 102, "opponentTransitions": 102}
+{"event": "learning-exposure", "start": 2406962, "end": 2407066, "team": 0, "learnerTransitions": 104, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2407066, "end": 2407168, "team": 0, "learnerTransitions": 102, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2407168, "end": 2407269, "team": 0, "learnerTransitions": 101, "opponentTransitions": 100}
+{"event": "learning-exposure", "start": 2407269, "end": 2407476, "team": 0, "learnerTransitions": 207, "opponentTransitions": 208}
+{"event": "learning-exposure", "start": 2407476, "end": 2407579, "team": 0, "learnerTransitions": 103, "opponentTransitions": 104}
+{"event": "opponent-swap", "step": 2407679, "team": 0, "opponent": 3, "poolCount": 8, "deployed": {"MNG5_Manager_v6?team=1": "269ac4aa15da3c116c6882223019ec80624f10228947711c589167085ce1c5d6", "MNG5_Manager_v6?team=0": "1bbceec4c75356ead6e67ded3d27c38e783ff4bbe0830c2e47ccbc75a2198069"}}
+{"event": "learning-exposure", "start": 2407579, "end": 2407679, "team": 0, "learnerTransitions": 100, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2407679, "end": 2407784, "team": 0, "learnerTransitions": 105, "opponentTransitions": 104}
+{"event": "learning-exposure", "start": 2407784, "end": 2407887, "team": 0, "learnerTransitions": 103, "opponentTransitions": 101}
+{"event": "learning-exposure", "start": 2407887, "end": 2407989, "team": 0, "learnerTransitions": 102, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2407989, "end": 2408091, "team": 0, "learnerTransitions": 102, "opponentTransitions": 101}
+{"event": "learning-exposure", "start": 2408091, "end": 2408193, "team": 0, "learnerTransitions": 102, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2408193, "end": 2408294, "team": 0, "learnerTransitions": 101, "opponentTransitions": 102}
+{"event": "learning-exposure", "start": 2408294, "end": 2408397, "team": 0, "learnerTransitions": 103, "opponentTransitions": 104}
+{"event": "learning-exposure", "start": 2408397, "end": 2408501, "team": 0, "learnerTransitions": 104, "opponentTransitions": 104}
+{"event": "learning-exposure", "start": 2408501, "end": 2408604, "team": 0, "learnerTransitions": 103, "opponentTransitions": 102}
+{"event": "opponent-swap", "step": 2408707, "team": 0, "opponent": -1, "poolCount": 8, "deployed": {"MNG5_Manager_v6?team=1": "8b76bd6e68ea61fc997ef28daa019daa0caef2633d0ba4318b022d3c7944f11c", "MNG5_Manager_v6?team=0": "8b76bd6e68ea61fc997ef28daa019daa0caef2633d0ba4318b022d3c7944f11c"}}
+{"event": "learning-exposure", "start": 2408604, "end": 2408707, "team": 0, "learnerTransitions": 103, "opponentTransitions": 105}
+{"event": "learning-exposure", "start": 2408707, "end": 2408806, "team": 0, "learnerTransitions": 99, "opponentTransitions": 101}
+{"event": "learning-exposure", "start": 2408806, "end": 2408909, "team": 0, "learnerTransitions": 103, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2408909, "end": 2409012, "team": 0, "learnerTransitions": 103, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2409012, "end": 2409113, "team": 0, "learnerTransitions": 101, "opponentTransitions": 101}
+{"event": "learning-exposure", "start": 2409113, "end": 2409217, "team": 0, "learnerTransitions": 104, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2409217, "end": 2409318, "team": 0, "learnerTransitions": 101, "opponentTransitions": 102}
+{"event": "learning-exposure", "start": 2409318, "end": 2409422, "team": 0, "learnerTransitions": 104, "opponentTransitions": 104}
+{"event": "learning-exposure", "start": 2409422, "end": 2409523, "team": 0, "learnerTransitions": 101, "opponentTransitions": 101}
+{"event": "learning-exposure", "start": 2409523, "end": 2409629, "team": 0, "learnerTransitions": 106, "opponentTransitions": 104}
+{"event": "opponent-swap", "step": 2409731, "team": 0, "opponent": 6, "poolCount": 8, "deployed": {"MNG5_Manager_v6?team=1": "6d292b40b0f105ff776cec5cd0170f5a456d74b36e2faa38703337fe8665df6f", "MNG5_Manager_v6?team=0": "8b76bd6e68ea61fc997ef28daa019daa0caef2633d0ba4318b022d3c7944f11c"}}
+{"event": "learning-exposure", "start": 2409629, "end": 2409731, "team": 0, "learnerTransitions": 102, "opponentTransitions": 101}
+{"event": "learning-exposure", "start": 2409731, "end": 2409834, "team": 0, "learnerTransitions": 103, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2409834, "end": 2409937, "team": 0, "learnerTransitions": 103, "opponentTransitions": 103}
+{"event": "learning-exposure", "start": 2409937, "end": 2410040, "team": 0, "learnerTransitions": 103, "opponentTransitions": 105}
+{"event": "learning-exposure", "start": 2410040, "end": 2410143, "team": 0, "learnerTransitions": 103, "opponentTransitions": 102}
+{"event": "learning-exposure", "start": 2410143, "end": 2410246, "team": 0, "learnerTransitions": 103, "opponentTransitions": 101}
+{"event": "learning-exposure", "start": 2410246, "end": 2410347, "team": 0, "learnerTransitions": 101, "opponentTransitions": 102}
+{"event": "learning-exposure", "start": 2410347, "end": 2410452, "team": 0, "learnerTransitions": 105, "opponentTransitions": 105}
+{"event": "learning-exposure", "start": 2410452, "end": 2410553, "team": 0, "learnerTransitions": 101, "opponentTransitions": 100}
+{"event": "learning-exposure", "start": 2410553, "end": 2410655, "team": 0, "learnerTransitions": 102, "opponentTransitions": 102}
+{"event": "opponent-swap", "step": 2410756, "team": 0, "opponent": 6, "poolCount": 8, "deployed": {"MNG5_Manager_v6?team=1": "6d292b40b0f105ff776cec5cd0170f5a456d74b36e2faa38703337fe8665df6f", "MNG5_Manager_v6?team=0": "8b76bd6e68ea61fc997ef28daa019daa0caef2633d0ba4318b022d3c7944f11c"}}
+{"event": "learning-exposure", "start": 2410655, "end": 2410756, "team": 0, "learnerTransitions": 101, "opponentTransitions": 104}
+{"event": "learning-exposure", "start": 2410756, "end": 2410860, "team": 0, "learnerTransitions": 104, "opponentTransitions": 105}
+{"event": "learning-exposure", "start": 2410860, "end": 2410963, "team": 0, "learnerTransitions": 103, "opponentTransitions": 102}
+{"event": "learning-exposure", "start": 2410963, "end": 2411063, "team": 0, "learnerTransitions": 100, "opponentTransitions": 102}
+{"event": "learning-exposure", "start": 2411063, "end": 2411168, "team": 0, "learnerTransitions": 105, "opponentTransitions": 101}
+{"event": "learning-exposure", "start": 2411168, "end": 2411373, "team": 0, "learnerTransitions": 205, "opponentTransitions": 206}
+{"event": "learning-exposure", "start": 2411373, "end": 2411475, "team": 0, "learnerTransitions": 102, "opponentTransitions": 102}
+{"event": "learning-exposure", "start": 2411475, "end": 2411579, "team": 0, "learnerTransitions": 104, "opponentTransitions": 102}
+{"event": "learning-exposure", "start": 2411579, "end": 2411681, "team": 0, "learnerTransitions": 102, "opponentTransitions": 102}
+{"event": "opponent-swap", "step": 2411783, "team": 0, "opponent": -1, "poolCount": 8, "deployed": {"MNG5_Manager_v6?team=1": "8b76bd6e68ea61fc997ef28daa019daa0caef2633d0ba4318b022d3c7944f11c", "MNG5_Manager_v6?team=0": "8b76bd6e68ea61fc997ef28daa019daa0caef2633d0ba4318b022d3c7944f11c"}}
+{"event": "learning-exposure", "start": 2411681, "end": 2411783, "team": 0, "learnerTransitions": 102, "opponentTransitions": 101}
+{"event": "learning-exposure", "start": 2411783, "end": 2411887, "team": 0, "learnerTransitions": 104, "opponentTransitions": 105}
+{"event": "learning-exposure", "start": 2411887, "end": 2411990, "team": 0, "learnerTransitions": 103, "opponentTransitions": 104}
+{"event": "learning-exposure", "start": 2411990, "end": 2412000, "team": 0, "learnerTransitions": 10, "opponentTransitions": 101}
+{"event": "saved", "step": 2412000, "optimizerUpdates": 27984, "sha256": "01f46a17997ef8400d113fc1577b1418c039b298ec2743bdffa4276f9de9a2be"}
